@@ -1,5 +1,6 @@
 package eu.simuline.util;
 
+import eu.simuline.testhelpers.Actions;
 import eu.simuline.testhelpers.GUIRunListener;
 import eu.simuline.testhelpers.Accessor;
 import eu.simuline.testhelpers.Assert;
@@ -25,6 +26,7 @@ import junit.framework.JUnit4TestAdapter;
 import java.util.BitSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Describe class TestBitSetList here.
@@ -50,11 +52,26 @@ public class BitSetListTest {
 	@Test public void testConstr() throws Exception {
 	    BitSetListTest.TEST.testConstr();	    
 	}
+	@Test public void testEquals() {
+	    BitSetListTest.TEST.testEquals();	    
+	}
 	@Test public void testAdd() {
 	    BitSetListTest.TEST.testAdd();	    
 	}
 	@Test public void testContains() {
 	    BitSetListTest.TEST.testContains();	    
+	}
+	@Test public void testSize() {
+	    BitSetListTest.TEST.testSize();	    
+	}
+	@Test public void testRemove() {
+	    BitSetListTest.TEST.testRemove();	    
+	}
+	@Test public void testSet() {
+	    BitSetListTest.TEST.testSet();	    
+	}
+	@Test public void testGet() {
+	    BitSetListTest.TEST.testGet();	    
 	}
     }
 
@@ -67,7 +84,7 @@ public class BitSetListTest {
 	BitSetList<Integer> bitSetList;
 
 
-	bitSetList = new BitSetList<Integer>(25,0);
+	bitSetList = new BitSetList<Integer>(25);
 	assertTrue(bitSetList.isEmpty());
 	assertEquals(64,
 		     ((BitSet)Accessor.getField(bitSetList,"wrapped")).size());
@@ -95,25 +112,48 @@ public class BitSetListTest {
 
     } // testConstr() 
 
+    public void testEquals() {
+	BitSetList<Integer> bitSetList;
+	List<Integer> listCmp;
+
+	bitSetList = new BitSetList<Integer>(25);
+	listCmp = new ArrayList<Integer>();
+
+	bitSetList.add(0);
+	bitSetList.add(1);
+	bitSetList.add(0);
+	bitSetList.add(0);
+	bitSetList.add(1);
+
+	listCmp.add(0);
+	listCmp.add(1);
+	listCmp.add(0);
+	listCmp.add(0);
+	listCmp.add(1);
+
+	assertEquals(listCmp,bitSetList);
+
+
+	bitSetList.remove(3);
+	listCmp.remove(3);
+	assertEquals(listCmp,bitSetList);
+
+	bitSetList.add(3,1);
+	listCmp.add(3,1);
+	assertEquals(listCmp,bitSetList);
+
+	bitSetList.add(3,0);
+	listCmp.add(3,0);
+	assertEquals(listCmp,bitSetList);
+
+    } // testEquals
+
     public void testAdd() {
 	BitSetList<Integer> bitSetList;
 	bitSetList = new BitSetList<Integer>();
 
 	assertEquals(0,bitSetList.size());
 	assertTrue(bitSetList.isEmpty());
-	assertTrue(!bitSetList.contains(new Integer(3)));
-	try {
-	    bitSetList.contains(null);
-	    fail("Exception expected");
-	} catch (NullPointerException e) {
-	    // ok 
-	}
-	try {
-	    bitSetList.contains(new Double(0));
-	    fail("Exception expected");
-	} catch (ClassCastException e) {
-	    // ok 
-	}
 	assertTrue(!bitSetList.iterator().hasNext());
 	assertTrue(!bitSetList.listIterator().hasNext());
 	assertEquals(0,bitSetList.toArray().length);
@@ -205,6 +245,96 @@ public class BitSetListTest {
 
     } // testContains() 
 
+    public void testSize() {
+	BitSetList<Integer> bitSetList;
+	bitSetList = new BitSetList<Integer>();
+
+	assertEquals(0,bitSetList.size());
+
+	bitSetList.add(1);
+	bitSetList.add(1);
+	bitSetList.add(0);
+	bitSetList.add(0);
+	assertEquals(4,bitSetList.size());
+	bitSetList.remove(0);
+	assertEquals(3,bitSetList.size());
+	assertEquals("[1, 0, 0]",bitSetList.toString());
+
+    }
+
+    public void testRemove() {
+	BitSetList<Integer> bitSetList;
+	bitSetList = new BitSetList<Integer>();
+
+	try {
+	    bitSetList.remove(0);
+	    fail();
+	} catch (IndexOutOfBoundsException e) {
+	    // ok
+	}
+
+	bitSetList.add(1);
+	bitSetList.add(1);
+	bitSetList.add(0);
+	bitSetList.add(0);
+
+	bitSetList.remove(0);
+	bitSetList.remove(2);
+
+assertEquals("[1, 0]",bitSetList.toString());
+assertEquals(2,bitSetList.size());
+    }
+
+    public void testSet() {
+	BitSetList<Integer> bitSetList;
+	bitSetList = new BitSetList<Integer>();
+	try {
+	    bitSetList.set(0,1);
+	    fail();
+	} catch (IndexOutOfBoundsException e) {
+	    // ok
+	}
+
+	bitSetList.add(1);
+	bitSetList.add(1);
+	bitSetList.add(0);
+	bitSetList.add(0);
+
+	bitSetList.set(3,1);
+	bitSetList.set(0,0);
+	bitSetList.set(1,1);
+assertEquals("[0, 1, 0, 1]",bitSetList.toString());
+assertEquals(4,bitSetList.size());
+
+    }
+
+    public void testGet() {
+	BitSetList<Integer> bitSetList;
+	bitSetList = new BitSetList<Integer>();
+	bitSetList.add(1);
+	bitSetList.add(1);
+	bitSetList.add(0);
+	bitSetList.add(0);
+
+	assertEquals(1,bitSetList.get(0));
+	assertEquals(1,bitSetList.get(1));
+	assertEquals(0,bitSetList.get(2));
+	assertEquals(0,bitSetList.get(3));
+	try {
+	    bitSetList.get(-1);
+	    fail();
+	} catch (IndexOutOfBoundsException  e) {
+	    // ok
+	}
+	try {
+	    bitSetList.get(4);
+	    fail();
+	} catch (IndexOutOfBoundsException  e) {
+	    // ok
+	}
+
+    }
+
     /* -------------------------------------------------------------------- *
      * framework.                                                           *
      * -------------------------------------------------------------------- */
@@ -221,9 +351,7 @@ public class BitSetListTest {
      */
     public static void main(String args[]) {
 
-	JUnitCore core = new JUnitCore();
-	core.addListener(new GUIRunListener());
-	core.run(BitSetListTest.class);
+	Actions.run(BitSetListTest.class);
     }
 
 }

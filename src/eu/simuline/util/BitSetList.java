@@ -3,6 +3,10 @@ package eu.simuline.util;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.BitSet;
+import java.util.ArrayList;
+
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Describe class BitSetList here. 
@@ -25,6 +29,7 @@ public class BitSetList<E extends Integer>// & E super Integer>
 
     public BitSet wrapped;
     private int size;
+    //private List<Integer> test;
     //private int ones;// equals wrapped.cardinality() ****
 
     /* -------------------------------------------------------------------- *
@@ -36,7 +41,7 @@ public class BitSetList<E extends Integer>// & E super Integer>
      *
      */
     public BitSetList() {
-	this(0,0);
+	this(0);
     }
 
     /**
@@ -51,13 +56,16 @@ public class BitSetList<E extends Integer>// & E super Integer>
      *     other than <code>0</code> or <code>1</code>. 
      */
     public BitSetList(Collection<? extends Integer> coll) {
-	this(coll.size()/2,0);
+	this(coll.size()/2);
 	this.addAll(coll);
+	//assert this.test.equals(this);
     }
 
-    public BitSetList(int initialCapacity,int size) {
+    public BitSetList(int initialCapacity) {
 	this.wrapped = new BitSet(initialCapacity);
-	this.size = size;
+	this.size = 0;
+	//this.test = new ArrayList<Integer>(initialCapacity);
+	//assert this.test.equals(this);
     }
 
 
@@ -84,7 +92,7 @@ public class BitSetList<E extends Integer>// & E super Integer>
      * @see #int2bool
      */
     private static Integer bool2int(boolean bool) {
-	return Integer.valueOf(bool ? 1 : 0);
+	return bool ? 1 : 0;
     }
 
     /**
@@ -97,19 +105,12 @@ public class BitSetList<E extends Integer>// & E super Integer>
      *    <li> <code>false</code> if <code>num == 0</code>. 
      *    </ul>
      * @throws IllegalArgumentException
-     *    if <code>num</code> is neither <code>0</code> nor <code>0</code>. 
+     *    if <code>num</code> is neither <code>0</code> nor <code>1</code>. 
      * @see #bool2int
      */
     private static boolean int2bool(int num) {
-	switch (num) {// NOPMD
-	    case 0:
-		return false;
-	    case 1:
-		return true;
-	    default:
-		throw new IllegalArgumentException
-		    ("Expected 0 or 1 but found " + num + ". ");
-	}
+	assert num == 0 || num == 1;
+	return num == 0 ? false : true;
     }
 
     /* -------------------------------------------------------------------- *
@@ -140,25 +141,19 @@ public class BitSetList<E extends Integer>// & E super Integer>
 	this.wrapped.set(index);
     }
 
+/*
     public Integer set(int index) {
 	Integer ret = getW(index);
 	this.wrapped.set(index);
 	return ret;
     }
+*/
 
+/*
     public final void setW(final int index, final Integer integer) {
-	switch (integer.intValue()) {
-	    case 0:
-		this.wrapped.clear(index);
-		break;
-	    case 1:
-		this.wrapped.set(index);
-		break;
-	    default:
-		throw new IllegalArgumentException();
-	}
+	this.wrapped.set(index,int2bool(integer));
     }
-
+*/
 /*
     public final Integer setW(final int index, final Integer integer) {
 	Integer ret = getW(index);
@@ -177,10 +172,12 @@ public class BitSetList<E extends Integer>// & E super Integer>
     }
 */
 
+/*
+
     public Integer getW(int index) {
 	return bool2int(this.wrapped.get(index));
     }
-
+*/
     /**
      * Describe <code>hashCode</code> method here.
      *
@@ -194,9 +191,31 @@ public class BitSetList<E extends Integer>// & E super Integer>
 	return hashCode;
     }
 
+/*
     public boolean equals(Object other) {// NOPMD
 	return super.equals(other);
     }
+*/
+
+/*
+    public boolean equals(Object o) {
+	if (o == this)
+	    return true;
+	if (!(o instanceof List))
+	    return false;
+
+	ListIterator<Integer> e1 = listIterator();
+	ListIterator e2 = ((List) o).listIterator();
+	while(e1.hasNext() && e2.hasNext()) {
+	    Integer o1 = e1.next();
+	    Object o2 = e2.next();
+	    if (!(o1==null ? o2==null : o1.equals(o2)))
+		return false;
+	}
+	return !(e1.hasNext() || e2.hasNext());
+    }
+*/
+
 
     /* -------------------------------------------------------------------- *
      * methods: implementations of List                                     *
@@ -208,22 +227,40 @@ public class BitSetList<E extends Integer>// & E super Integer>
      * @param integer an <code>Integer</code> value
      * @return a <code>boolean</code> value
      */
+/*
     public final boolean add(final Integer integer) {
 	// throws a NullPointerException for integer == null as specified. 
-	switch (integer.intValue()) {
-	    case 0:
-		// nothing to to
-		break;
-	    case 1:
-		this.wrapped.set(size()) ;
-		break;
-	    default:
-		throw new IllegalArgumentException();
-	}
+// System.out.println("1this.test"+this.test);
+// System.out.println("1this.wrapped"+this.wrapped);
+// System.out.println("1this.test.size()"+this.test.size());
+// System.out.println("1this.size()"+this.size());
+// System.out.println("integer"+integer);
+	assert this.test.equals(this);
+
+
+// 	this.wrapped.set(size(),int2bool(integer));
+
+// 	switch (integer.intValue()) {
+// 	    case 0:
+// 		// nothing to to
+// 		break;
+// 	    case 1:
+// 		this.wrapped.set(size()) ;
+// 		break;
+// 	    default:
+// 		throw new IllegalArgumentException();
+// 	}
+
 	this.size++;
 
+	assert this.test.add(integer);
+	assert this.test.size() == this.size;
+// System.out.println("2this.test"+this.test);
+// System.out.println("2this.wrapped"+this.wrapped);
+	assert this.test.equals(this);
 	return true;
     }
+*/
 
     /**
      * Describe <code>add</code> method here.
@@ -232,6 +269,8 @@ public class BitSetList<E extends Integer>// & E super Integer>
      * @param integer an <code>Integer</code> value
      */
     public final void add(final int index, final Integer integer) {
+//	assert this.test.size() == this.size;
+
 	if (index <  0 || index > size()) {
 	    throw new IndexOutOfBoundsException();
 	}
@@ -247,13 +286,16 @@ public class BitSetList<E extends Integer>// & E super Integer>
 	}
 	this.size++;
 
+//  	this.test.add(index,integer);
+
 	// **** not quite optimal ****
-	for (int i = this.wrapped.length(); i > index; i--) {
+	for (int i = size(); i > index; i--) {
 	    this.wrapped.set(i,this.wrapped.get(i-1));
 	}
 
-	this.wrapped.set(index,int2bool(integer)) ;
+	this.wrapped.set(index,int2bool(integer));
 
+// 	assert this.test.equals(this);
     }
 
     /**
@@ -263,6 +305,9 @@ public class BitSetList<E extends Integer>// & E super Integer>
     public final void clear() {
 	this.wrapped.clear();
 	this.size = 0;
+
+// 	this.test.clear();
+// 	assert this.test.equals(this);
     }
 
     /**
@@ -357,10 +402,22 @@ public class BitSetList<E extends Integer>// & E super Integer>
      * @return an <code>Object</code> value
      */
     public final Integer get(final int index) {
+// 	assert this.test.size() == this.size;
 	if (index < 0 || index >= size()) {
 	    throw new IndexOutOfBoundsException();
 	}
-	return bool2int(this.wrapped.get(index));
+
+	int ret = bool2int(this.wrapped.get(index));
+/*
+System.out.println("this.test"+this.test);
+System.out.println("this"+this.wrapped);
+System.out.println("index"+index);
+System.out.println("this.test.get(index)"+this.test.get(index));
+System.out.println("ret"+ret);
+*/
+//assert ret == this.test.get(index);
+	//assert this.test.equals(this);
+	return ret;
     }
 
     /**
@@ -380,6 +437,7 @@ public class BitSetList<E extends Integer>// & E super Integer>
      * @return an <code>int</code> value
      */
     public final int size() {
+// 	assert this.size == this.test.size();
 	return this.size;
     }
 
@@ -409,12 +467,19 @@ public class BitSetList<E extends Integer>// & E super Integer>
     /**
      * Describe <code>remove</code> method here.
      *
-     * @param object an <code>Object</code> value
-     * @return a <code>boolean</code> value
+     * @param object 
+     *    the <code>Object</code> to be removed, if present. 
+     * @return 
+     *    the <code>boolean</code> value <code>true</code> 
+     *    if this list contained the specified element. 
      */
     public final boolean remove(final Object object) {
 	// intended to throw ClassCastException 
 	// intended to throw NullPointerException
+	if (0 != System.currentTimeMillis()) {
+	    throw new NullPointerException();
+	}
+
 	int cand = ((Integer)object).intValue();
 
 	switch (cand) {
@@ -430,6 +495,7 @@ public class BitSetList<E extends Integer>// & E super Integer>
 			remove(i);
 		    }
 		}
+// 	assert this.test.equals(this);
 		return true;
 	    case 1:
 		if (this.wrapped.length() == 0) {
@@ -437,9 +503,11 @@ public class BitSetList<E extends Integer>// & E super Integer>
 		    return false;
 		}
 		this.wrapped.clear(this.wrapped.length()-1);
+// 	assert this.test.equals(this);
 		return true;
 	    default:
 		// this may only contain 0 or 1 and thus not object. 
+// 	assert this.test.equals(this);
 		return false;
 	}
     }
@@ -456,11 +524,16 @@ public class BitSetList<E extends Integer>// & E super Integer>
 	}
 	Integer ret = bool2int(this.wrapped.get(index));
 	// **** not quite optimal ****
-	for (int i = index; i < this.wrapped.length()-1; i++) {
+	for (int i = index; i < size()-1; i++) {
 	    this.wrapped.set(i,this.wrapped.get(i+1));
 	}
 
-	this.wrapped.clear(this.wrapped.length()-1) ;
+//	this.wrapped.clear(this.wrapped.length()-1);
+	this.size--;
+
+// 	this.test.remove(index);
+// 	assert this.test.equals(this);
+
 	return ret;
     }
 
@@ -477,16 +550,26 @@ public class BitSetList<E extends Integer>// & E super Integer>
 */
 
     /**
-     * Describe <code>set</code> method here.
+     * Describe <code>set</code> method here. 
      *
      * @param index an <code>int</code> value
      * @param integer an <code>Object</code> value
      * @return an <code>Object</code> value
      */
     public final Integer set(final int index, final Integer integer) {
+/*
+	if (0 != System.currentTimeMillis()) {
+	    throw new NullPointerException();
+	}
+*/
 	// may throw IndexOutOfBoundsException 
 	Integer ret = get(index);
+	this.wrapped.set(index,int2bool(integer));
 
+
+// 	assert ret == this.test.set(index,integer);
+// 	assert this.test.equals(this);
+/*
 	switch (integer.intValue()) {
 	    case 0:
 		this.wrapped.clear(index) ;
@@ -497,6 +580,7 @@ public class BitSetList<E extends Integer>// & E super Integer>
 	    default:
 		throw new IllegalArgumentException();
 	}
+*/
 	return ret;
     }
 
@@ -576,6 +660,9 @@ public class BitSetList<E extends Integer>// & E super Integer>
     protected Object clone() throws CloneNotSupportedException {
 	BitSetList res = (BitSetList)super.clone();
 	res.wrapped    = (BitSet    )this .clone();
+
+// 	res.test = (List<Integer>)((ArrayList<Integer>)this.test).clone();
+ 	assert res.size == this.size;
 	return res;
     }
 

@@ -27,6 +27,14 @@ public interface NumberWrapper {
 	public void shiftLeft() {
 	    this.num *= 2;
 	}
+	public int shiftLeft2() {
+	    this.num *= 2;
+	    if (this.num >= 1) {
+		this.num -= 1;
+		return 1;
+	    }
+	    return 0;
+	}
 	public void subtractOne() {
 	    this.num -= 1;
 	}
@@ -47,6 +55,46 @@ public interface NumberWrapper {
 	}
     } //  class Dbl 
 
+    // **** for performance reasons: divide double 
+    // into mantissa and into exponent. 
+    public static class PseudoDbl implements NumberWrapper {
+	double num;
+	public PseudoDbl(double num) {
+	    this.num = num;
+	}
+	public void shiftLeft() {
+	    this.num *= 2;
+	}
+	public int shiftLeft2() {
+	    this.num *= 2;
+	    if (this.num >= 1) {
+		this.num -= 1;
+		return 1;
+	    }
+	    return 0;
+	}
+	public void subtractOne() {
+	    this.num -= 1;
+	}
+	public boolean isZero() {
+	    return this.num == 0;
+	}
+	public boolean isGEOne() {
+	    return this.num >= 1;
+	}
+	public boolean isLEZero() {
+	    return this.num <= 0;
+	}
+	public NumberWrapper copy() {
+	    return new Dbl(this.num);
+	}
+	public String toString() {
+	    return Double.toString(this.num);
+	}
+    } //  class PseudoDbl 
+
+
+
     public static class BigD implements NumberWrapper {
 	BigDecimal num;
 	public BigD(BigDecimal num) {
@@ -54,6 +102,14 @@ public interface NumberWrapper {
 	}
 	public void shiftLeft() {
 	    this.num = this.num.multiply(TWO);
+	}
+	public int shiftLeft2() {
+	    this.num = this.num.multiply(TWO);
+	    if (this.num.compareTo(BigDecimal.ONE) >= 0) {
+		this.num = this.num.subtract(BigDecimal.ONE);
+		return 1;
+	    }
+	    return 0;
 	}
 	public void subtractOne() {
 	    this.num = this.num.subtract(BigDecimal.ONE);
@@ -75,9 +131,11 @@ public interface NumberWrapper {
 	}
     } // class BigD 
 
-    void shiftLeft();
-    void subtractOne();
+    //void shiftLeft();
+    int  shiftLeft2();
+    //void subtractOne();
     boolean isZero();
+    // for a check in constructor of MChunk only 
     boolean isGEOne();
     boolean isLEZero();
     NumberWrapper copy();

@@ -2,7 +2,6 @@
 package eu.simuline.util;
 
 import eu.simuline.testhelpers.Actions;
-//import eu.simuline.testhelpers.GUIRunListener;
 import eu.simuline.testhelpers.Accessor;
 import static eu.simuline.testhelpers.Assert.assertEquals;
 import static eu.simuline.testhelpers.Assert.assertArraysEquals;
@@ -641,11 +640,11 @@ public class AddArraysTest {
 	core.addListener(new GUIRunListener());
 	core.run(AddArraysTest.class);
 */
-	//Actions.run(AddArraysTest.class);
+	Actions.run(AddArraysTest.class);
 
 
 
-junit.swingui.TestRunner.main(new String[] {AddArraysTest.class.getName()});
+//junit.swingui.TestRunner.main(new String[] {AddArraysTest.class.getName()});
     }
 
 }

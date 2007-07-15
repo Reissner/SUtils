@@ -7,7 +7,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Describe class WeakHashSet here.
+ * A <code>HashSet</code> using <code>WeakReference</code>s. 
+ * The implementation is based on <code>WeakHashMap</code>. 
  *
  *
  * Created: Sun Apr 15 00:09:53 2007

@@ -10,6 +10,12 @@ package eu.simuline.util;
 public final class MathExt {
 
     /* -------------------------------------------------------------------- *
+     * constants.                                                           *
+     * -------------------------------------------------------------------- */
+
+    private final static double LN2 = Math.log(2);
+
+    /* -------------------------------------------------------------------- *
      * constructors.                                                        *
      * -------------------------------------------------------------------- */
 
@@ -82,5 +88,94 @@ public final class MathExt {
      */
     public static double log(double base,double num) {
 	return Math.log(num)/Math.log(base);
+    }
+
+    /**
+     * The logarithm function for base <code>2</code>. 
+     *
+     * @param base
+     *    the base of this logarithm. 
+     * @param num
+     *    the argument of this logarithm. 
+     * @return 
+     *    the logarithm of the given number with the base specified. 
+     */
+    public static double ld(double num) {
+	return Math.log(num)/LN2;
+    }
+
+    /**
+     * Returns the unsigned mantissa of the given floating point number. 
+     * Contract: 
+     * <code>num==sgn(num)*mantissaL(num)*Math.pow(2,expL(num))</code>. 
+     *
+     * @param num 
+     *    a <code>double</code> value
+     * @return 
+     *    the unsigned mantissa of the given number 
+     *    as a <code>long</code> value. 
+     *    Note that 
+     *    <code>$2\cdot\frac{\\absV(d)}{\\ulp(d)}=m\cdot2^p$</code>
+     *    where <code>p</code> is the length of the mantissa 
+     *    is the mantissa written as an integer. 
+     *    This fits into the least <code>53</code> bits 
+     *    of a <code>long</code> value. 
+     */
+    public static long mantissaL(double num) {
+	// correction by multiplying with 2 is eliminated 
+	// in method expL by subtraction of 1. 
+	// This correction is necessary, to avoid cut off of the last digit. 
+	// no rounding: used only to convert into a <code>long</code> value. 
+	return Math.round(2*Math.abs(num)/Math.ulp(num));
+    }
+
+    /**
+     * Returns the unsigned mantissa of the given floating point number. 
+     *
+     * @param num 
+     *    a <code>double</code> value
+     * @return 
+     *    the unsigned mantissa of the given number 
+     *    as an <code>int</code> value. 
+     * @see #mantissaL(double)
+     */
+    public static int mantissaL(float num) {
+	// correction by multiplying with 2 is eliminated 
+	// in method expL by subtraction of 1. 
+	// This correction is necessary, to avoid cut off of the last digit. 
+	// no rounding: used only to convert into a <code>long</code> value. 
+	return Math.round(2*Math.abs(num)/Math.ulp(num));
+    }
+
+    /**
+     * Returns the exponent of the given floating point number. 
+     * Contract: 
+     * <code>num==sgn(num)*mantissaL(num)*Math.pow(2,expL(num))</code>. 
+     * Note that since {@link #mantissaL(double)} is an integer 
+     * the result is <code>e-p</code>, 
+     * where <code>e</code> is the exponent of <code>num</code> 
+     * and <code>p</code> is the length of the mantissa. 
+     * In particular, the return value is at most <code>-p</code>. 
+     * @param num 
+     *    a <code>double</code> value
+     * @return 
+     *    the exponent of the given number 
+     *    as an <code>int</code> value. 
+     * @see #mantissaL(double)
+     */
+    public static int expL(double num) {
+	// no rounding and no loss of precision by casting. 
+	return (int)Math.round(ld(Math.ulp(num)))-1;
+    }
+
+    /**
+     * Returns the exponent of the given floating point number. 
+     *
+     * @param num a <code>float</code> value
+     * @return an <code>int</code> value
+     */
+    public static int expL(float num) {
+	// no rounding and no loss of precision by casting. 
+	return (int)Math.round(ld(Math.ulp(num)))-1;
     }
 }

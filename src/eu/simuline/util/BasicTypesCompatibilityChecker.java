@@ -137,7 +137,7 @@ public class BasicTypesCompatibilityChecker {
      *    Note that {@link Void#TYPE} wraps itself. 
      */
     public static Class getWrappedCls(Class cls) {
-	return (Class)MAP_WRAPPER2BASIC_TYPE.get(cls);
+	return MAP_WRAPPER2BASIC_TYPE.get(cls);
     }
 
     /**
@@ -153,6 +153,6 @@ public class BasicTypesCompatibilityChecker {
      *    Note that {@link Void#TYPE} is wrapped by itself. 
      */
     public static Class getWrapperCls(Class cls) {
-	return (Class)MAP_BASIC_TYPE2WRAPPER.get(cls);
+	return MAP_BASIC_TYPE2WRAPPER.get(cls);
     }
 }// NOPMD

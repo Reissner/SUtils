@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.HashSet;
 
 /**
  * A <code>HashSet</code> using <code>WeakReference</code>s. 
@@ -348,6 +349,28 @@ public class WeakHashSet<E> implements Set<E> {
      */
     public int hashCode() {
 	return this.map.hashCode();
+    }
+
+    public String toString() {
+	StringBuilder buf = new StringBuilder();
+	buf.append("[");
+	Iterator iter = this.iterator();
+	if (iter.hasNext()) {
+	    buf.append(iter.next());
+	    while (iter.hasNext()) {
+		buf.append(", "+iter.next());
+	    }
+	}
+
+	buf.append("]");
+	return buf.toString();
+    }
+
+    public static void main(String[] args) {
+	Set<Integer> set = new HashSet<Integer>();
+	set.add(1);
+	System.out.println("set"+ set);
+	
     }
 
 }

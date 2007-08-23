@@ -75,7 +75,8 @@ public class NumberWrapperTest {
 	double num;
 	NumberWrapper cand, cand2;
 
-	repetition = 100;
+	repetition = 10000;
+	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
 	    num = Math.random();
 	    cand = Accessor.create(cls,num);
@@ -83,11 +84,14 @@ public class NumberWrapperTest {
 	    cand2 = cand.copy();
 	    assertEquals(cand,cand2);
 	}
+	System.err.println("cls "+cls+" elapsed: "+
+			   (System.currentTimeMillis()-step));
+	
 
     } // testConstructor 
 
     public void testShiftLeft2() throws Exception {
-//	testShiftLeft2(NumberWrapper.Dbl   .class);
+	testShiftLeft2(NumberWrapper.Dbl   .class);
 	testShiftLeft2(NumberWrapper.Long53.class);
     }
 
@@ -108,7 +112,8 @@ public class NumberWrapperTest {
 	assertEquals(num,num2);
 
 
-	repetition = 100;
+	repetition = 1000;
+	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
 	    num = Math.random();
 	    cand = Accessor.create(cls,num);
@@ -122,6 +127,8 @@ public class NumberWrapperTest {
 	    assertEquals(num,num2);
 	}
 
+	System.err.println("cls "+cls+" elapsed: "+
+			   (System.currentTimeMillis()-step));
     } // testShiftLeft2 
 
 

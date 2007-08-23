@@ -8,9 +8,46 @@ import java.util.Iterator;
 import java.util.HashSet;
 
 /**
- * A <code>HashSet</code> using <code>WeakReference</code>s. 
- * The implementation is based on <code>WeakHashMap</code>. 
- *
+ * This class implements the Set interface, 
+ * backed by a hash table (actually an instance of WeakHashMap). 
+ * Like <code>HashSet</code> this class permits the <code>null</code> element, 
+ * it has the same performance characteristics 
+ * its implementation is not synchronized and 
+ * makes no guarantees as to the iteration order of the set. 
+ * As usually for the Java Collections Framework, iterators are fail-fast. 
+ * <p>
+ * This class is intended primarily for use with objects 
+ * whose equals methods test for object identity using the == operator. 
+ * Once such an object is discarded it can never be recreated, 
+ * so it is impossible to ask whether this object is still 
+ * in the <code>WeakHashSet</code> at some later time 
+ * and be surprised that it has been removed. 
+ * This class will work perfectly well with objects 
+ * whose equals methods are not based upon object identity, 
+ * such as String instances. 
+ * With such recreatable objects, however, 
+ * the automatic removal of elements of <code>WeakHashSet</code> 
+ * which have been discarded may prove to be confusing. 
+ * <p>
+ * The behavior of the <code>WeakHashSet</code> class 
+ * depends in part upon the actions of the garbage collector, 
+ * so several familiar (though not required) Set invariants 
+ * do not hold for this class. 
+ * Because the garbage collector may discard elements at any time, 
+ * a <code>WeakHashSet</code> may behave 
+ * as though an unknown thread is silently removing elements. 
+ * In particular, 
+ * even if you synchronize on a <code>WeakHashSet</code> instance 
+ * and invoke none of its mutator methods, it is possible 
+ * for the <code>size</code> method to return smaller values over time, 
+ * for the <code>isEmpty</code> method 
+ * to return <code>false</code> and then <code>true</code>, 
+ * for the methods <code>contains</code> and <code>containsAll</code> 
+ * to return <code>true</code> and later <code>false</code> and 
+ * the <code>remove</code> method to return <code>false</code> for an object 
+ * that previously appeared to be in the set. 
+ * Also the methods <code>equals</code> and <code>hashCode</code> 
+ * may behave strange. 
  *
  * Created: Sun Apr 15 00:09:53 2007
  *
@@ -21,7 +58,25 @@ public class WeakHashSet<E> implements Set<E> {
 
     static final long serialVersionUID = -5024744406713321676L;
 
-    private final Map<E,E> map;
+    /**
+     * Object which serves as value in the map {@link #map}. 
+     */
+    private final static Object VALUE = new Object();
+
+    /* -------------------------------------------------------------------- *
+     * attributes.                                                          *
+     * -------------------------------------------------------------------- */
+
+    /**
+     * Instance of <code>WeakHashMap</code> 
+     * the key map of which is a mirror of this weak hash set. 
+     * Note that the only value that occurs is {@link #VALUE}. 
+     */
+    private final Map<E,Object> map;
+
+    /* -------------------------------------------------------------------- *
+     * constructors.                                                        *
+     * -------------------------------------------------------------------- */
 
     /**
      * Creates a new empty <code>WeakHashSet</code> 
@@ -31,7 +86,7 @@ public class WeakHashSet<E> implements Set<E> {
      * @see WeakHashSet(int initialCapacity, float loadFactor)
      */
     public WeakHashSet() {
-	this.map = new WeakHashMap<E,E>();
+	this.map = new WeakHashMap<E,Object>();
     }
 
     /**
@@ -46,7 +101,7 @@ public class WeakHashSet<E> implements Set<E> {
      *    If the initial capacity is negative.
      */
     public WeakHashSet(int initialCapacity) {
-	this.map = new WeakHashMap<E,E>(initialCapacity);
+	this.map = new WeakHashMap<E,Object>(initialCapacity);
     }
 
     /**
@@ -62,7 +117,7 @@ public class WeakHashSet<E> implements Set<E> {
      *    or if the load factor is nonpositive.
      */
     public WeakHashSet(int initialCapacity, float loadFactor) {
-	this.map = new WeakHashMap<E,E>(initialCapacity, loadFactor);
+	this.map = new WeakHashMap<E,Object>(initialCapacity, loadFactor);
     }
 
     /**
@@ -78,7 +133,7 @@ public class WeakHashSet<E> implements Set<E> {
      *    if the specified <tt>WeakHashSet</tt> is null.
      */
     public WeakHashSet(WeakHashSet<? extends E> other) {
-	this.map = new WeakHashMap<E,E>(other.map);
+	this.map = new WeakHashMap<E,Object>(other.map);
     }
 
     /**
@@ -95,11 +150,15 @@ public class WeakHashSet<E> implements Set<E> {
      *    if the specified <tt>Collection</tt> is null.
      */
     public WeakHashSet(Collection<? extends E> other) {
-	this.map = new WeakHashMap<E,E>();
+	this.map = new WeakHashMap<E,Object>();
 	for (E cand : other) {
 	    this.add(cand);
 	}
     }
+
+    /* -------------------------------------------------------------------- *
+     * methods.                                                             *
+     * -------------------------------------------------------------------- */
 
 
 
@@ -178,11 +237,7 @@ public class WeakHashSet<E> implements Set<E> {
      * element.
      */
     public boolean add(E obj) {
-	if (obj == null) {
-	    throw new NullPointerException();
-	}
-
-	return this.map.put(obj,obj) == null;
+	return this.map.put(obj,VALUE) == null;
     }
 
     /**

@@ -751,7 +751,7 @@ public class RealRepresentation {
      */
     public static String fill(char chr0,int len) {
 	Character chr = new Character(chr0);
-	String cutString = (String)FILL_STRINGS.get(chr);
+	String cutString = FILL_STRINGS.get(chr);
 	// by contract, cutString is either null or 
 	// its length is 2^n for some natural number n. 
 	boolean copyBack = false;

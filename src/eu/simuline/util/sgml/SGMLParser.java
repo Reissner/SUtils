@@ -578,7 +578,7 @@ public class SGMLParser {
 	 *    the <code>char[]</code> {@link #bufferArray}. 
 	 */
 	char[] getChars() {
-	    return (char[]) this.bufferArray;
+	    return this.bufferArray;
 	}
 
 	/**

@@ -562,7 +562,7 @@ public class AddArrays<E> {
      * based on the ordering of the components 
      * defined by <code>atomic</code>. 
      */
-    static class ArrayComparator<Object> implements Comparator<Object> {
+    static class ArrayComparator<Object> implements Comparator<Object[]> {
 
 	/**
 	 * A <code>Comparator</code> for components of an array. 
@@ -588,12 +588,12 @@ public class AddArrays<E> {
 	/**
 	 * Describe <code>compare</code> method here.
 	 *
-	 * @param obj1 
+	 * @param arr1 
 	 *    an <code>Object[]</code> object. 
 	 *    The components <code>o1[i]</code> and <code>o2[i]</code> 
 	 *    must be pairwise comparable with respect to {@link #atomic} 
 	 *    provided both <code>o1[i]</code> and <code>o2[i]</code> exist. 
-	 * @param obj2 
+	 * @param arr2 
 	 *    an <code>Object[]</code> object. 
 	 *    The components <code>o1[i]</code> and <code>o2[i]</code> 
 	 *    must be pairwise comparable with respect to {@link #atomic} 
@@ -622,13 +622,11 @@ public class AddArrays<E> {
 	 *    if one of the arguments is no <code>Object[]</code>. 
 	 *    in particular for type <code>int[]</code>. 
 	 */
-	public int compare(Object obj1,Object obj2) {
-	    if (obj1 == null || obj2 == null) {
+	public int compare(Object[] arr1,Object[] arr2) {
+	    if (arr1 == null || arr2 == null) {
 		throw new NullPointerException();
 	    }
 		    
-	    Object[] arr1 = (Object[])obj1;
-	    Object[] arr2 = (Object[])obj2;
 	    int minLen = Math.min(arr1.length,arr2.length);
 	    int result;
 	    for (int i = 0; i < minLen; i++) {
@@ -653,7 +651,7 @@ public class AddArrays<E> {
      * @return 
      *    a <code>Comparator</code> for arrays. 
      */
-    public static Comparator<Object> getComparator(Comparator<Object> atomic) {
+    public static Comparator<Object[]> getComparator(Comparator<Object> atomic) {
 	return new ArrayComparator<Object>(atomic);
     }
 }

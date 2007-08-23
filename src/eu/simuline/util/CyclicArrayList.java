@@ -942,7 +942,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      *    of every element in this list. 
      */
     public <E> E[] toArray(int index, E[] ret) {
-	return ((CyclicArrayList<E>)cycle(index)).list.toArray(ret);
+	return cycle(index).list.toArray(ret);
 /*
 	// if ret.length is not sufficient to store the result... 
 	if (ret.length < this.list.size()) {
@@ -996,7 +996,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      *    It satisfies <code>p.size() == this.size()</code> and 
      *    <code>p.get(i) == this.get(i+num)</code>. 
      */
-    public CyclicList<E> cycle(int index) {
+    public CyclicArrayList<E> cycle(int index) {
 	if (size() == 0) {
 	    return new CyclicArrayList<E>(this);
 	}
@@ -1543,7 +1543,7 @@ System.out.println("index: "+index);
      *
      * @return 
      *     a clone of this <code>CyclicArrayList</code>. 
-     *     This includes copying<code>vertices</code>. 
+     *     This includes copying <code>vertices</code>. 
      */
     public Object clone() /* NOPMD */ {
 	    return new CyclicArrayList<E>

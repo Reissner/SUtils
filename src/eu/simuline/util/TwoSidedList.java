@@ -94,16 +94,21 @@ public class TwoSidedList<E> implements List<E> {
      * -------------------------------------------------------------------- */
 
 
-    int firstIndex() {
+    public int firstIndex() {
 	return this.firstIndex;
     }
 
-    void firstIndex(int firstIndex) {
+    public void firstIndex(int firstIndex) {
 	this.firstIndex = firstIndex;
     }
 
+    // caution for empty list. 
+    public int minFreeIndex() {
+	return this.list.size() + this.firstIndex;
+    }
+
     // num may also be a negativeNumber
-    int shiftRight(int num) {
+    public int shiftRight(int num) {
 	return this.firstIndex += num;
     }
 

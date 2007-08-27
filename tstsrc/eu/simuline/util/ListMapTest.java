@@ -1,7 +1,7 @@
 
 package eu.simuline.util;
 
-import eu.simuline.testhelpers.GUIRunListener;
+import eu.simuline.testhelpers.Actions;
 //import eu.simuline.testhelpers.Accessor;
 import eu.simuline.testhelpers.Assert;
 
@@ -18,14 +18,11 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import junit.framework.JUnit4TestAdapter;
 
-
-
-
 @RunWith(Suite.class)
 @SuiteClasses({ListMapTest.TestAll.class})
 public class ListMapTest {
 
-    ListMap listMap;
+    ListMap<Integer,Integer> listMap;
 
     /* -------------------------------------------------------------------- *
      * framework.                                                           *
@@ -45,14 +42,12 @@ public class ListMapTest {
      * -------------------------------------------------------------------- */
 
     public void testPut() {
-	this.listMap = new ListMap();
-	this.listMap.put(new Integer(3),new Integer(1));
-	this.listMap.put(new Integer(2),new Integer(2));
-	this.listMap.put(new Integer(1),new Integer(3));
-	Assert.assertArraysEquals(new Object[] {
-	    new Integer(3), new Integer(2), new Integer(1)
-	},
-			    this.listMap.keySet().toArray());
+	this.listMap = new ListMap<Integer,Integer>();
+	this.listMap.put(3,1);
+	this.listMap.put(2,2);
+	this.listMap.put(1,3);
+	Assert.assertArraysEquals(new Object[] {3, 2, 1},
+				  this.listMap.keySet().toArray());
     } // testPut 
 
     /* -------------------------------------------------------------------- *
@@ -71,9 +66,7 @@ public class ListMapTest {
      */
     public static void main(String args[]) {
 
-	JUnitCore core = new JUnitCore();
-	core.addListener(new GUIRunListener());
-	core.run(ListMapTest.class);
+	Actions.run(ListMapTest.class);
 
     }
 }

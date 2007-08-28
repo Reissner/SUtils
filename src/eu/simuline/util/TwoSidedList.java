@@ -26,7 +26,7 @@ public class TwoSidedList<E> implements List<E> {
      * from this list 
      * to determine in which direction this list has to shrink or grow. 
      */
-    static enum Direction {
+    public static enum Direction {
 	Left2Right, Right2Left;
     } // enum Direction 
 
@@ -46,18 +46,29 @@ public class TwoSidedList<E> implements List<E> {
     private int firstIndex;
 
     /* -------------------------------------------------------------------- *
-     * constructors.                                                        *
+     * constructors and static factory methods.                             *
      * -------------------------------------------------------------------- */
 
     /**
      * Creates a new <code>TwoSidedList</code> 
      * containing the elements of <code>list</code> in proper sequence 
      * with first index given by <code>firstIndex</code>. 
+     * <p>
+     * Note the difference to reference implementations such as 
+     * <code>java.util.ArrayList</code> where the type of the list argument 
+     * is <code> List<? extends E></code>. 
+     * We deviate from this solution for performance reason 
+     * and provide as an alternative 
+     * the factory method {@link create(List<? extends E>,int)}. 
+     * <p>
+     * CAUTION: 
+     * Changes to <code>list</code> influence this twosided list 
+     * and may cause malfunction. 
      *
-     * @param firstIndex
-     *    the index where this list starts growing. 
      * @param list 
      *    the list wrapped by this twosided list. 
+     * @param firstIndex
+     *    the index where this list starts growing. 
      */
     public TwoSidedList(List<E> list, int firstIndex) {
 	this.list = list;
@@ -66,10 +77,37 @@ public class TwoSidedList<E> implements List<E> {
 
     /**
      * Creates a new <code>TwoSidedList</code> 
+     * containing the elements of <code>list</code> in proper sequence 
+     * with first index given by <code>firstIndex</code>. 
+     *
+     * @param list 
+     *    the list wrapped by this twosided list. 
+     *    Changes to <code>list</code> do not influence this twosided list. 
+     * @param firstIndex
+     *    the index where this list starts growing. 
+     */
+    public static <E> TwoSidedList<E> create(List<? extends E> list, 
+					     int firstIndex) {
+	return new TwoSidedList<E>(new ArrayList<E>(list), firstIndex);
+    }
+
+    /**
+     * Creates a new <code>TwoSidedList</code> 
      * from a <code>List</code> with  <code>firstIndex == 0</code>. 
      * This is the canonical generalization of lists 
      * as mentioned in the documentation 
      * of {@link #indexOf(Object)} and of {@link #lastIndexOf(Object)}. 
+     * <p>
+     * Note the difference to reference implementations such as 
+     * <code>java.util.ArrayList</code> where the type of the list argument 
+     * is <code> List<? extends E></code>. 
+     * We deviate from this solution for performance reason 
+     * and provide as an alternative 
+     * the factory method {@link create(List<? extends E>,int)}. 
+     * <p>
+     * CAUTION: 
+     * Changes to <code>list</code> influence this twosided list 
+     * and may cause malfunction. 
      *
      * @param list 
      *    the list wrapped by this twosided list. 
@@ -78,6 +116,30 @@ public class TwoSidedList<E> implements List<E> {
 	this(list,0);
     }
 
+    /**
+     * Creates a new <code>TwoSidedList</code> 
+     * containing the elements of <code>list</code> in proper sequence. 
+     *
+     * @param list 
+     *    the list wrapped by this twosided list. 
+     *    Changes to <code>list</code> do not influence this twosided list. 
+     */
+    public static <E> TwoSidedList<E> create(List<? extends E> list) {
+	return new TwoSidedList<E>(new ArrayList<E>(list));
+    }
+
+    /**
+     * Copy constructor with deep copy of the wrapped list {@link #list}. 
+     * As a consequence, the list created and the original one 
+     * act independently. 
+     *
+     * @param other
+     *    another <code>TwoSidedList</code>. 
+     */
+    public TwoSidedList(TwoSidedList<? extends E> other) {
+	this(new ArrayList<E>(other.list),other.firstIndex);
+
+    }
     /**
      * Creates a new empty <code>TwoSidedList</code> which starts growing 
      * with index <code>firstIndex</code>. 
@@ -107,12 +169,16 @@ public class TwoSidedList<E> implements List<E> {
 	return this.list.size() + this.firstIndex;
     }
 
-    // num may also be a negativeNumber
+    // num may also be a negative number. 
+    // this yields a shift to the left. 
     public int shiftRight(int num) {
 	return this.firstIndex += num;
     }
 
-
+    // caution: not wrapped. 
+    public List<E> list() {
+	return this.list;
+    }
 
 // Implementation of java.util.List
 
@@ -756,7 +822,7 @@ public class TwoSidedList<E> implements List<E> {
      *    and {@link #list} is incompatible with <code>null</code> elements 
      *    or if <code>coll == null</code>. 
      */
-    public final boolean containsAll(final Collection coll) {
+    public final boolean containsAll(final Collection<?> coll) {
 	return this.list.containsAll(coll);
     }
 
@@ -829,7 +895,7 @@ public class TwoSidedList<E> implements List<E> {
      * @throws UnsupportedOperationException
      *    use {@link #retainAll(Collection,Direction)} instead. 
      */
-    public final boolean retainAll(final Collection coll) {
+    public final boolean retainAll(final Collection<?> coll) {
 	throw new UnsupportedOperationException
 	    ("Use retainAll(Collection,Direction) instead. ");
     }
@@ -874,7 +940,7 @@ public class TwoSidedList<E> implements List<E> {
      *    and {@link #list} does not permit <code>null</code> elements 
      *    or if <code>coll == null</code>. 
      */
-    public final boolean retainAll(final Collection coll, Direction dir) {
+    public final boolean retainAll(final Collection<?> coll, Direction dir) {
 	switch (dir) {
 	    case Left2Right:
 		return this.list.retainAll(coll);

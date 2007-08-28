@@ -171,8 +171,11 @@ public final class MathExt {
     /**
      * Returns the exponent of the given floating point number. 
      *
-     * @param num a <code>float</code> value
-     * @return an <code>int</code> value
+     * @param num 
+     *    a <code>float</code> value
+     * @return 
+     *    the exponent of the given number 
+     *    as an <code>int</code> value. 
      */
     public static int expL(float num) {
 	// no rounding and no loss of precision by casting. 

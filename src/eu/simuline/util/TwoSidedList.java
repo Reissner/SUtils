@@ -129,17 +129,33 @@ public class TwoSidedList<E> implements List<E> {
     }
 
     /**
-     * Copy constructor with deep copy of the wrapped list {@link #list}. 
+     * Copy constructor with shallow copy of the wrapped list {@link #list}. 
+     * As a consequence, modifications of the list created 
+     * may affect the original one and the other way round. 
+     *
+     * @param other
+     *    another <code>TwoSidedList</code>. 
+     */
+    public TwoSidedList(TwoSidedList<E> other) {
+	this(other.list,other.firstIndex);
+
+    }
+
+    /**
+     * Creates a new <code>TwoSidedList</code> 
+     * as a copy of <code>other</code> 
+     * copying also the wrapped list {@link #list}. 
      * As a consequence, the list created and the original one 
      * act independently. 
      *
      * @param other
      *    another <code>TwoSidedList</code>. 
      */
-    public TwoSidedList(TwoSidedList<? extends E> other) {
-	this(new ArrayList<E>(other.list),other.firstIndex);
-
+    public static <E> TwoSidedList<E> create(TwoSidedList<? extends E> other) {
+	return new TwoSidedList<E>(new ArrayList<E>(other.list),
+				   other.firstIndex);
     }
+
     /**
      * Creates a new empty <code>TwoSidedList</code> which starts growing 
      * with index <code>firstIndex</code>. 
@@ -155,6 +171,83 @@ public class TwoSidedList<E> implements List<E> {
      * methods.                                                             *
      * -------------------------------------------------------------------- */
 
+    /**
+     * Checks whether index <code>ind</code> is in range 
+     * and throws appropriate exception if not. 
+     *
+     * @param ind
+     *    the index to be checked. 
+     * @throws IndexOutOfBoundsException
+     *    if not <code>firstIndex() <= ind &lt; minFreeIndex()</code> 
+     *    with message 
+     *    <code>
+     * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
+     *    </code>. 
+     */
+    private void checkRange(int ind) {
+	checkRange("",ind,this.firstIndex,minFreeIndex());
+    }
+
+    /**
+     * Checks whether index <code>ind</code> is in range 
+     * and throws appropriate exception if not. 
+     *
+     * @param ind
+     *    the index to be checked. 
+     * @param dir
+     *    the direction in which this twosided list may grow. 
+     * @throws IndexOutOfBoundsException
+     *    <ul>
+     *    <li> for <code>dir == Left2Right</code>
+     *    if not <code>firstIndex() <= ind &lt; minFreeIndex()+1</code>. 
+     *    <li> for <code>dir == Right2Left</code>
+     *    if not <code>firstIndex()-1 <= ind &lt; minFreeIndex()</code>. 
+     *    </ul>
+     *    The message is always the same: 
+     *    <code>
+     * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
+     *    </code>. 
+     */
+    private void checkRange(int ind, Direction dir) {
+	switch (dir) {
+	    case Left2Right:
+		checkRange("",ind,this.firstIndex,minFreeIndex()+1);
+		break;
+	    case Right2Left:
+		checkRange("",ind,this.firstIndex-1,minFreeIndex());
+		break;
+	    default:
+		throw new IllegalStateException();
+	}
+    }
+
+    /**
+     * Checks whether index <code>ind</code> is in range 
+     * and throws appropriate exception if not. 
+     *
+     * @param fromToNothing
+     *    either <code>""</code>, <code>"first"</code> or <code>"last"</code>. 
+     * @param ind
+     *    the index to be checked. 
+     * @param min
+     *    the minimal value for <code>ind</code> accepted. 
+     * @param maxP
+     *    <em>one plus</em> the maximal value for <code>ind</code> accepted. 
+     * @throws IndexOutOfBoundsException
+     *    if not <code>min <= ind &lt; maxP</code>. 
+     *    The message is 
+     *    <code>
+     * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
+     *    </code> preceeded by <code>fromToNothing</code>. 
+     */
+    private void checkRange(String fromToNothing, int ind, int min, int maxP) {
+	if (ind < min || ind >= maxP) {
+	    throw new IndexOutOfBoundsException
+		(fromToNothing + "Index: " + ind + 
+		 " Range: " + this.firstIndex + 
+		 " - " + minFreeIndex() + " exclusively. ");
+	}
+    }
 
     public int firstIndex() {
 	return this.firstIndex;
@@ -331,9 +424,10 @@ public class TwoSidedList<E> implements List<E> {
      * @return 
      *    the element at the specified position in this list. 
      * @throws IndexOutOfBoundsException
-     *    **** wrong indices. range check for all methods in next step 
+     *    as described for {@link #checkRange(int)}
      */
     public final E get(final int ind) {
+	checkRange(ind);
 	return this.list.get(ind-this.firstIndex);
     }
 
@@ -360,9 +454,10 @@ public class TwoSidedList<E> implements List<E> {
      *    if some property of <code>obj</code> 
      *    prevents it from being added to {@link #list}. 
      * @throws IndexOutOfBoundsException
-     *    **** wrong indices. range check for all methods in next step 
+     *    as described for {@link #checkRange(int)}
      */
     public final E set(final int ind, final E obj) {
+	checkRange(ind);
 	return this.list.set(ind-this.firstIndex,obj);
     }
 
@@ -480,9 +575,10 @@ public class TwoSidedList<E> implements List<E> {
      *    if some property of <code>obj</code> 
      *    prevents it from being added to {@link #list}. 
      * @throws IndexOutOfBoundsException
-     *    **** wrong indices. range check for all methods in next step 
+     *    as described for {@link #checkRange(int,Direction)}
      */
     public final void add(final int ind, final E obj, Direction dir) {
+	checkRange(ind,dir);
 	if (dir == Direction.Right2Left) {
 	    this.firstIndex--;
 	}
@@ -517,9 +613,10 @@ public class TwoSidedList<E> implements List<E> {
      *    if the <code>remove(int)</code> operation 
      *    is not supported by {@link #list}. 
      * @throws IndexOutOfBoundsException
-     *    **** wrong indices. range check for all methods in next step 
+     *    as described for {@link #checkRange(int)}
      */
     public final E remove(final int ind, Direction dir) {
+	checkRange(ind);
 	E res = this.list.remove(ind-this.firstIndex);
 	if (dir == Direction.Right2Left) {
 	    this.firstIndex++;
@@ -556,8 +653,6 @@ public class TwoSidedList<E> implements List<E> {
      * @throws UnsupportedOperationException 
      *    if the <code>remove(Object)</code> operation is not supported 
      *    by {@link #list}. 
-     * @throws IndexOutOfBoundsException
-     *    **** wrong indices. range check for all methods in next step 
      */
     public final boolean removeFirst(final Object obj) {
 	return this.list.remove(obj);
@@ -583,8 +678,6 @@ public class TwoSidedList<E> implements List<E> {
      *    if the <code>remove(int)</code> **** not remove(Object) 
      *    operation is not supported 
      *    by {@link #list}. 
-     * @throws IndexOutOfBoundsException
-     *    **** wrong indices. range check for all methods in next step 
      */
     public final boolean removeLast(final Object obj) {
 	int ind = this.list.lastIndexOf(obj);
@@ -758,11 +851,12 @@ public class TwoSidedList<E> implements List<E> {
      *    if some property of an element of the specified collection 
      *    prevents it from being added to {@link #list}. 
      * @throws IndexOutOfBoundsException
-     *    **** wrong indices. range check for all methods in next step 
+     *    as described for {@link #checkRange(int,Direction)}
      */
     public final boolean addAll(final int ind, 
 				final Collection<? extends E> coll, 
 				final Direction dir) {
+	checkRange(ind,dir);
 	if (dir == Direction.Right2Left) {
 	    this.firstIndex -= coll.size();
 	}
@@ -793,16 +887,21 @@ public class TwoSidedList<E> implements List<E> {
     }
 
     /**
-     * ****
+     * ****maybe to be endowed with a direction. 
      *
      * @param ind 
      *    an <code>int</code> value
      * @return 
      *    a <code>ListIterator</code> value
      * @throws IndexOutOfBoundsException
-     *    **** wrong indices. range check for all methods in next step 
+     *    if not <code>firstIndex() &lt;= ind &lt;= minFreeIndex()</code> 
+     *    with message 
+     *    <code>
+     * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
+     *    </code>. 
      */
     public final ListIterator<E> listIterator(final int ind) {
+	checkRange("",ind,this.firstIndex,minFreeIndex()+1);
 	return this.list.listIterator(ind-this.firstIndex);
     }
 
@@ -960,15 +1059,25 @@ public class TwoSidedList<E> implements List<E> {
      * and <code>toIndex</code>, exclusive. 
      *
      * @param indStart 
-     *    low endpoint (inclusive) of the subList. 
+     *    low endpoint (inclusive) of the subList to be returned. 
      * @param indEnd 
-     *    high endpoint (exclusive) of the subList. 
+     *    high endpoint (exclusive) of the subList to be returned. 
      * @return 
-     *    view of the specified range within this list 
+     *    view of the specified range within this list. 
+     *    The returned list is backed by this list, 
+     *    so non-structural changes in the returned list 
+     *    are reflected in this list, and vice-versa. 
      * @throws IndexOutOfBoundsException
-     *    **** wrong indices. range check for all methods in next step 
+     *    if not 
+     *    <code>firstIndex() <= indStart <= indEnd <= minFreeIndex()</code>
      */
     public final List<E> subList(final int indStart, final int indEnd) {
+	if (indStart > indEnd) {
+	    throw new IndexOutOfBoundsException
+		("fromIndex(" + indStart + ") > toIndex(" + indEnd + ")");
+	}
+	checkRange("from",indStart,this.firstIndex,minFreeIndex()+1);
+	checkRange("to",  indEnd,  this.firstIndex,minFreeIndex()+1);
 	return this.list.subList(indStart-this.firstIndex, 
 				 indEnd  -this.firstIndex);
     }
@@ -978,13 +1087,16 @@ public class TwoSidedList<E> implements List<E> {
      * and <code>toIndex</code>, exclusive. 
      *
      * @param indStart 
-     *    low endpoint (inclusive) of the subList. 
+     *    low endpoint (inclusive) of the subList to be returned. 
      * @param indEnd 
-     *    high endpoint (exclusive) of the subList. 
+     *    high endpoint (exclusive) of the subList to be returned. 
      * @return 
-     *    view of the specified range within this list 
+     *    view of the specified range within this list. 
+     *    The returned list is backed by this list, 
+     *    so non-structural changes in the returned list 
+     *    are reflected in this list, and vice-versa. 
      * @throws IndexOutOfBoundsException
-     *    **** wrong indices. range check for all methods in next step 
+     *    see {@link #subList(int,int)} 
      */
     public final TwoSidedList<E> subList2(final int indStart, 
 					  final int indEnd) {
@@ -1035,5 +1147,8 @@ public class TwoSidedList<E> implements List<E> {
 	res.append(this.list);
 	res.append("</TwoSidedList>");
 	return res.toString();
+    }
+
+    public static void main(String[] args) {
     }
 }

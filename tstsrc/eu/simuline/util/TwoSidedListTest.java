@@ -43,6 +43,10 @@ public class TwoSidedListTest {
 	    TEST.testEquals();
 	}
 
+	@Test public void testConstructors() {
+	    TEST.testConstructors();
+	}
+
 	@Test public void testAdd() {
 	    TEST.testAdd();
 	}
@@ -87,6 +91,27 @@ public class TwoSidedListTest {
 	tsList1 = new TwoSidedList<Integer>(0);
 	tsList2 = new TwoSidedList<Integer>(1);
 	assertTrue(!tsList1.equals(tsList2));
+    }
+
+    // contains tests for constructors and for factory methods 
+    void testConstructors() {
+	List<         Integer> list;
+	List<? extends Number> list2;
+	TwoSidedList<Integer> tsList, tsListCmp;
+	TwoSidedList<Number>  tsList2, tsListCmp2;
+	    
+	// create a TSList 
+	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {3,4,5}));
+	tsList = new TwoSidedList<Integer>(list,3);
+	// Here, integer n is at the nth place 
+
+	// create a deep copy and modify the original 
+	list2 = list;
+	tsList2 = TwoSidedList.create(list2,3);
+	tsList.remove(3,TwoSidedList.Direction.Right2Left);
+
+	// test that the copy is not affected 
+	assertEquals(Arrays.asList(new Integer[] {3,4,5}),tsList2.list());
     }
 
     void testAdd() {
@@ -370,6 +395,8 @@ public class TwoSidedListTest {
 // **** missing: testcases remove which leave this list unchanged. 
 // **** missing: testcases add    which leave this list unchanged. 
 // **** missing: testcases retain which leave this list unchanged. 
+// **** missing: testcases for exceptions 
+//	in particular IndexOutOfBoundsException. 
 
     } // void testRemoveAll 
 

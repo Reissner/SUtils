@@ -7,8 +7,43 @@ import java.util.Iterator;
 import java.util.ArrayList;
 
 /**
- * Describe class TwoSidedList here.
- *
+ * Compared to a classical list, 
+ * a twosided list allows negative indices as well. 
+ * As a consequence, one can add elements not only at the end 
+ * but also at the beginning of the list. 
+ * For details consider {@link #add(E)}, {@link #addFirst(E)} 
+ * and {@link #addLast(E)}. 
+ * Method {@link #add(int ind, E obj)} is not supported 
+ * because inserting an element 
+ * requires either shift of subsequent elements to the right 
+ * or preceeding elements to the left. 
+ * To determine the direction of the shift 
+ * use {@link #add(int ind, E obj, Direction dir)} instead. 
+ * Similar considerations apply to methods removing elements. 
+ * Also affected are the corresponding collections operations 
+ * like <code>addAll</code>. 
+ * <p>
+ * Methods {@link #toArray()} and {@link #toArray(E[])} 
+ * satisfy a generalized contract 
+ * based on the additional method {@link #firstIndex()}. 
+ * <p>
+ * Essentially this two sided list wrapps a classical list. 
+ * Various constructors allow to pass that list. 
+ * This allows to determine the performance behavior. 
+ * The signatures of the constructors 
+ * generalize the constructors known 
+ * from implementations of classical <code>List</code>s. 
+ * The observant reader observes 
+ * that the generics are slightly more restrictive than for classical lists. 
+ * This is for performance reasons. 
+ * Note that the constructors do not create a copy of the wrapped list 
+ * which may cause hidden dependencies. 
+ * If full generality is needed 
+ * the user is asked to use the corresponding factory methods. 
+ * <p>
+ * Additionally methods concerning indices are provided 
+ * like {@link #firstIndex()}, {@link #minFreeIndex()} 
+ * and it is possible to shift a list using {@link #shiftRight(int)}. 
  *
  * Created: Sun Aug 26 23:25:26 2007
  *
@@ -392,19 +427,27 @@ public class TwoSidedList<E> implements List<E> {
 	return this.list.lastIndexOf(obj)+this.firstIndex;
     }
 
-    /*
-     * Describe <code>toArray</code> method here. 
+    /**
+     * Note that this generalizes the contract of the underlying interface: 
+     * Instead of <code>this.toArray[i] == this.get(i)</code> 
+     * now only <code>this.toArray[i] == this.get(i-firstIndex())</code>. 
+     * Equality includes that the left hand side throws an exception 
+     * if and only if so does te right hand side. 
      *
      * @return 
-     *    an <code>Object[]</code> value
+     *    an <code>Object[]</code> containing all elements in proper sequence. 
      */
     // api-docs provided by javadoc. 
     public final Object[] toArray() {
 	return this.list.toArray();
     }
 
-    /*
-     * Describe <code>toArray</code> method here. 
+    /**
+     * Note that this generalizes the contract of the underlying interface: 
+     * Instead of <code>this.toArray[i] == this.get(i)</code> 
+     * now only <code>this.toArray[i] == this.get(i-firstIndex())</code>. 
+     * Equality includes that the left hand side throws an exception 
+     * if and only if so does te right hand side. 
      *
      * @param objArr 
      *    an <code>Object[]</code> value
@@ -463,7 +506,7 @@ public class TwoSidedList<E> implements List<E> {
 
 
     /**
-     * Not supported by this implementation. 
+     * Not supported by this implementation. **** breaks contract 
      *
      * @throws UnsupportedOperationException
      *    use {@link #addFirst} and {@link #addLast} instead. 
@@ -527,7 +570,7 @@ public class TwoSidedList<E> implements List<E> {
     }
 
     /**
-     * Not supported by this implementation. 
+     * Not supported by this implementation. **** breaks contract 
      *
      * @throws UnsupportedOperationException
      *    use {@link #add(int,E,Direction)} instead. 
@@ -577,7 +620,7 @@ public class TwoSidedList<E> implements List<E> {
      * @throws IndexOutOfBoundsException
      *    as described for {@link #checkRange(int,Direction)}
      */
-    public final void add(final int ind, final E obj, Direction dir) {
+    public final void add(final int ind, final E obj, final Direction dir) {
 	checkRange(ind,dir);
 	if (dir == Direction.Right2Left) {
 	    this.firstIndex--;
@@ -586,7 +629,7 @@ public class TwoSidedList<E> implements List<E> {
     }
 
     /**
-     * Not supported by this implementation. 
+     * Not supported by this implementation. **** breaks contract 
      *
      * @throws UnsupportedOperationException
      *    use {@link #remove(int,Direction)} instead. 
@@ -625,7 +668,7 @@ public class TwoSidedList<E> implements List<E> {
     }
 
     /**
-     * Not supported by this implementation. 
+     * Not supported by this implementation. **** breaks contract 
      *
      * @throws UnsupportedOperationException
      *    use {@link removeFirst#(E)} and {@link removeLast#(E)} instead. 

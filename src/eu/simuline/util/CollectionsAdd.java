@@ -268,7 +268,8 @@ public class CollectionsAdd<E> {
      *    <p>
      *    In the former case, 
      *    an array <code>array</code> of objects is returned 
-     *    satisfying <code>array.length == ((Collection)source).size()</code> and 
+     *    satisfying <code>array.length == ((Collection)source).size()</code> 
+     *    and 
      *    <code>array[i] == recToArray(list.get(i), ... , caster)</code> 
      *    for all valid indices <code>i</code>. 
      *    The <code>cls2</code> argument for the recursive invocation 
@@ -364,4 +365,28 @@ public class CollectionsAdd<E> {
 	return (Object[][])replaced.toArray(new Object[][] {});
     }
 */
+
+    /**
+     * Returns the unique element of the collection <code>coll</code>. 
+     *
+     * @param coll
+     *    a collection of <code>T</code>'s. 
+     * @return
+     *    the unique element of the collection <code>coll</code>. 
+     * @throws IllegalStateException
+     *    if <code>coll</code> does not contain a unique element. 
+     */
+    public static <T> T getUnique(Collection<? extends T> coll) {
+	if (coll.size() != 1) {
+	    throw new IllegalStateException
+		("Expected a single element; found collection " + coll + ". ");
+	}
+	assert !coll.isEmpty();
+
+	for (T res : coll) {
+	    return res;
+	}
+	// This place is never reached, because coll is not empty 
+	throw new IllegalStateException();
+    }
 }

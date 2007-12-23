@@ -69,6 +69,58 @@ public interface NumberWrapper {
  	}
     } //  class Dbl 
 
+
+    public static class Flt implements NumberWrapper {
+
+	/* ---------------------------------------------------------------- *
+	 * attributes.                                                      *
+	 * ---------------------------------------------------------------- */
+
+	float num;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
+
+	public Flt(float num) {
+	    this.num = num;
+	}
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
+
+	public int shiftLeft2() {
+	    this.num *= 2;
+	    if (this.num >= 1) {
+		this.num -= 1;
+		return 1;
+	    }
+	    return 0;
+	}
+	public boolean isZero() {
+	    return this.num == 0;
+	}
+	public boolean isGEOne() {
+	    return this.num >= 1;
+	}
+	public boolean isLEZero() {
+	    return this.num <= 0;
+	}
+	public NumberWrapper copy() {
+	    return new Flt(this.num);
+	}
+	public String toString() {
+	    return Double.toString(this.num);
+	}
+ 	public boolean equals(Object obj) {
+	    Flt other = (Flt)obj;
+	    return this.num == other.num;
+ 	}
+    } //  class Flt 
+
+
+
     // **** intended to be faster than Dbl 
     // to be analyzed why this is not the case. 
     public static class Long53 implements NumberWrapper {

@@ -7,10 +7,12 @@ import java.util.Iterator;
 import java.util.ArrayList;
 
 /**
- * Compared to a classical list, 
- * a twosided list allows negative indices as well. 
- * As a consequence, one can add elements not only at the end 
- * but also at the beginning of the list. 
+ * Compared to a classical list,  
+ * the first index of this list may well be positive 
+ * and negative indices are allowed as well. 
+ * <p>
+ * As a consequence, one can add elements not only at the end of this list 
+ * but also at its beginning. 
  * For details consider {@link #add(E)}, {@link #addFirst(E)} 
  * and {@link #addLast(E)}. 
  * Method {@link #add(int ind, E obj)} is not supported 
@@ -62,7 +64,37 @@ public class TwoSidedList<E> implements List<E> {
      * to determine in which direction this list has to shrink or grow. 
      */
     public static enum Direction {
-	Left2Right, Right2Left;
+	Left2Right {
+	    void checkRange(int ind, TwoSidedList list) {
+		list.checkRange("",
+				ind,
+				list.firstIndex(),
+				list.minFreeIndex()+1);
+	    }
+	    void checkAdd1(TwoSidedList list) {
+		list.checkIncMinFreeIndex();
+	    }
+	    void checkAddAll(int size, TwoSidedList list) {
+		list.checkMinFreeIndex(size);
+	    }
+	}, Right2Left {
+	    void checkRange(int ind, TwoSidedList list) {
+		list.checkRange("",
+				ind,
+				list.firstIndex()-1,
+				list.minFreeIndex());
+	    }
+	    void checkAdd1(TwoSidedList list) {
+		list.decFirstIndex();
+	    }
+	    void checkAddAll(int size, TwoSidedList list) {
+		list.subFirstIndex(size);
+	    }
+	};
+	abstract void checkRange(int ind, TwoSidedList list);
+	abstract void checkAdd1(TwoSidedList list);
+	abstract void checkAddAll(int size, TwoSidedList list);
+
     } // enum Direction 
 
     /* -------------------------------------------------------------------- *
@@ -70,13 +102,20 @@ public class TwoSidedList<E> implements List<E> {
      * -------------------------------------------------------------------- */
 
     /**
-     * The list wrapped by this two-sided list. 
+     * The list backed by this two-sided list. 
      */
     private List<E> list;
 
     /**
-     * the first index in this <code>TwoSidedList</code>. 
+     * The first index in this <code>TwoSidedList</code>. 
      * Note that this integer may well be negative. 
+     * The inequality 
+     * <code>{@link #firstFreeIndex()} >= {@link #firstIndex}</code> 
+     * is guaranteed. 
+     * Casually, methods adding objects have to reject them 
+     * in order not to hurt this 
+     * alhough the backed list {@link #list} 
+     * would allow adding further elements. 
      */
     private int firstIndex;
 
@@ -86,8 +125,8 @@ public class TwoSidedList<E> implements List<E> {
 
     /**
      * Creates a new <code>TwoSidedList</code> 
-     * containing the elements of <code>list</code> in proper sequence 
-     * with first index given by <code>firstIndex</code>. 
+     * containing the elements of {@link #list} in proper sequence 
+     * with first index given by {@link #firstIndex}. 
      * <p>
      * Note the difference to reference implementations such as 
      * <code>java.util.ArrayList</code> where the type of the list argument 
@@ -97,17 +136,22 @@ public class TwoSidedList<E> implements List<E> {
      * the factory method {@link create(List<? extends E>,int)}. 
      * <p>
      * CAUTION: 
-     * Changes to <code>list</code> influence this twosided list 
-     * and may cause malfunction. 
+     * This list backs {@link #list} and so changes to one of the list 
+     * affect the other list. 
      *
      * @param list 
      *    the list wrapped by this twosided list. 
      * @param firstIndex
      *    the index where this list starts growing. 
+     * @throws IllegalStateException
+     *    if <code>list</code> is so long 
+     *    and <code>firstIndex</code> is so large 
+     *    that {@link #minFreeIndex()} would overrun. 
      */
     public TwoSidedList(List<E> list, int firstIndex) {
 	this.list = list;
 	this.firstIndex = firstIndex;
+	checkMinFreeIndex(list.size());
     }
 
     /**
@@ -120,6 +164,10 @@ public class TwoSidedList<E> implements List<E> {
      *    Changes to <code>list</code> do not influence this twosided list. 
      * @param firstIndex
      *    the index where this list starts growing. 
+     * @throws IllegalStateException
+     *    if <code>list</code> is so long 
+     *    and <code>firstIndex</code> is so large 
+     *    that {@link #minFreeIndex()} would overrun. 
      */
     public static <E> TwoSidedList<E> create(List<? extends E> list, 
 					     int firstIndex) {
@@ -143,6 +191,8 @@ public class TwoSidedList<E> implements List<E> {
      * CAUTION: 
      * Changes to <code>list</code> influence this twosided list 
      * and may cause malfunction. 
+     * Note that unlike {@link #TwoSidedList(List<E>, int)} 
+     * this constructor cannot throw an <code>IllegalStateException</code>. 
      *
      * @param list 
      *    the list wrapped by this twosided list. 
@@ -167,6 +217,8 @@ public class TwoSidedList<E> implements List<E> {
      * Copy constructor with shallow copy of the wrapped list {@link #list}. 
      * As a consequence, modifications of the list created 
      * may affect the original one and the other way round. 
+     * Note that unlike {@link #TwoSidedList(List<E>, int)} 
+     * this constructor cannot throw an <code>IllegalStateException</code>. 
      *
      * @param other
      *    another <code>TwoSidedList</code>. 
@@ -182,6 +234,8 @@ public class TwoSidedList<E> implements List<E> {
      * copying also the wrapped list {@link #list}. 
      * As a consequence, the list created and the original one 
      * act independently. 
+     * Note that unlike {@link #TwoSidedList(List<E>, int)} 
+     * this constructor cannot throw an <code>IllegalStateException</code>. 
      *
      * @param other
      *    another <code>TwoSidedList</code>. 
@@ -194,6 +248,8 @@ public class TwoSidedList<E> implements List<E> {
     /**
      * Creates a new empty <code>TwoSidedList</code> which starts growing 
      * with index <code>firstIndex</code>. 
+     * Note that unlike {@link #TwoSidedList(List<E>, int)} 
+     * this constructor cannot throw an <code>IllegalStateException</code>. 
      *
      * @param firstIndex 
      *    the index where this list starts growing. 
@@ -208,7 +264,7 @@ public class TwoSidedList<E> implements List<E> {
 
     /**
      * Checks whether index <code>ind</code> is in range 
-     * and throws appropriate exception if not. 
+     * and throws an appropriate exception if not. 
      *
      * @param ind
      *    the index to be checked. 
@@ -225,7 +281,7 @@ public class TwoSidedList<E> implements List<E> {
 
     /**
      * Checks whether index <code>ind</code> is in range 
-     * and throws appropriate exception if not. 
+     * and throws an appropriate exception if not. 
      *
      * @param ind
      *    the index to be checked. 
@@ -242,23 +298,16 @@ public class TwoSidedList<E> implements List<E> {
      *    <code>
      * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
      *    </code>. 
+     * @see #add(int, E, Direction)
+     * @see #addAll(int, Collection<? extends E>, Direction)-->
      */
     private void checkRange(int ind, Direction dir) {
-	switch (dir) {
-	    case Left2Right:
-		checkRange("",ind,this.firstIndex,minFreeIndex()+1);
-		break;
-	    case Right2Left:
-		checkRange("",ind,this.firstIndex-1,minFreeIndex());
-		break;
-	    default:
-		throw new IllegalStateException();
-	}
+	dir.checkRange(ind,this);
     }
 
     /**
      * Checks whether index <code>ind</code> is in range 
-     * and throws appropriate exception if not. 
+     * and throws an appropriate exception if not. 
      *
      * @param fromToNothing
      *    either <code>""</code>, <code>"first"</code> or <code>"last"</code>. 
@@ -284,6 +333,100 @@ public class TwoSidedList<E> implements List<E> {
 	}
     }
 
+    /**
+     * Decrements {@link #firstIndex} if possible; 
+     * otherwise throws an exception. 
+     * This method is used by methods adding objects at the head of this list. 
+     * The error message is tailored to this usage. 
+     *
+     * @throws IllegalStateException
+     *    if <code>{@link #firstIndex} == Integer.MIN_VALUE</code> 
+     *    adding an element would cause index underrun. 
+     */
+    private void decFirstIndex() {
+	if (this.firstIndex == Integer.MIN_VALUE) {
+	    throw new IllegalStateException
+		("Adding an object at top of this list " + 
+		 "would cause index underrun. ");
+	}
+	this.firstIndex--;
+    }
+
+    /**
+     * Increments {@link #firstIndex} if possible; 
+     * otherwise throws an exception. 
+     * This method is used by methods removing objects 
+     * from the head of this list. 
+     * The error message is tailored to this usage. 
+     *
+     * @throws IllegalStateException
+     *    if <code>{@link #firstIndex} == Integer.MAX_VALUE</code> 
+     *    removing an element would cause index overrun. 
+     */
+    private void incFirstIndex() {
+	if (this.firstIndex == Integer.MAX_VALUE) {
+	    throw new IllegalStateException
+		("Removing an object at top of this list " + 
+		 "would cause index overrun. ");
+	}
+	this.firstIndex++;
+    }
+
+    /**
+     * Checks whether incrementing {@link #minFreeIndex()} 
+     * would cause overrun of {@link #minFreeIndex()}. 
+     *
+     * @throws IllegalStateException
+     *    if incrementing {@link #minFreeIndex()} 
+     *    would cause overrun of {@link #minFreeIndex()}. 
+     */
+    private void checkIncMinFreeIndex() {
+	if (minFreeIndex() == Integer.MAX_VALUE) {
+	    throw new IllegalStateException
+		("Adding an object at the tail of this list " + 
+		 "would cause index overrun. ");
+	}
+    }
+
+    /**
+     * Subtracts <code>numAdded</code> from {@link #firstIndex} if possible; 
+     * otherwise throws an exception. 
+     * This method is used by methods adding objects at the head of this list. 
+     * The error message is tailored to this usage. 
+     *
+     * @throws IllegalStateException
+     *    if adding <code>numAdded</code> objects 
+     *    at the head of this list 
+     *    would cause underrun of {@link #firstIndex}. 
+     */
+     private void subFirstIndex(int numAdded) {
+	if (this.firstIndex < this.firstIndex-numAdded) {
+	    throw new IllegalStateException
+		("Adding " + numAdded + " objects at top of this list " + 
+		 "would cause index underrun. ");
+	}
+	this.firstIndex -= numAdded;
+    }
+
+    /**
+     * Checks whether adding <code>numAdded</code> objects 
+     * to this list **** or at the tail of this list 
+     * would cause overrun of {@link #minFreeIndex()}. 
+     *
+     * @throws IllegalStateException
+     *    if adding <code>numAdded</code> objects 
+     *    to this list **** or at the tail of this list 
+     *    would cause overrun of {@link #minFreeIndex()}. 
+     */
+    private void checkMinFreeIndex(int numAdded) {
+	assert  numAdded >= 0;
+	if (minFreeIndex() > minFreeIndex()+numAdded) {
+	    throw new IllegalStateException
+		("Adding " + numAdded + " objects at the tail of this list " + 
+		 "would cause index overrun. ");
+	}
+    }
+
     public int firstIndex() {
 	return this.firstIndex;
     }
@@ -292,14 +435,40 @@ public class TwoSidedList<E> implements List<E> {
 	this.firstIndex = firstIndex;
     }
 
-    // caution for empty list. 
+    // 
     public int minFreeIndex() {
 	return this.list.size() + this.firstIndex;
     }
 
-    // num may also be a negative number. 
-    // this yields a shift to the left. 
+    /**
+     * Shifts this list <code>num</code> indices to the right. 
+     *
+     * @param num 
+     *    the number of shifts to the right 
+     *    to be performed on this list. 
+     *    A negative sign signifies a shift to the left. 
+     * @throws IllegalStateException
+     *    if shifting would cause overrun of {@link #minFreeIndex()} 
+     *    (occuring for proper shift to the right)
+     *    or underrun of {@link #firstIndex()}
+     *    (occuring for proper shift to the left). 
+     */
     public int shiftRight(int num) {
+	if (num > 0) {
+	    if (minFreeIndex() > minFreeIndex()+num) {
+		throw new IllegalStateException
+		    ("Shifting this list by " + num + 
+		     " would cause index overrun. ");
+	    }
+	} else {
+	    assert num <= 0;
+	    if (this.firstIndex < this.firstIndex+num) {
+		throw new IllegalStateException
+		    ("Shifting this list by " + num + 
+		     " would cause index underrun. ");
+	    }
+	}
+
 	return this.firstIndex += num;
     }
 
@@ -308,8 +477,9 @@ public class TwoSidedList<E> implements List<E> {
 	return this.list;
     }
 
-// Implementation of java.util.List
-
+    /* -------------------------------------------------------------------- *
+     * methods implementing List.                                           *
+     * -------------------------------------------------------------------- */
 
     /**
      * Returns the number of elements in this list. 
@@ -377,14 +547,22 @@ public class TwoSidedList<E> implements List<E> {
      * is by specifying <code>firstIndex() == 0</code> 
      * (see {@link #TwoSidedList(List<E> list)}). 
      * <li>
-     * Collision occurs 
-     * for <code>firstIndex() == {@link Integer#MIN_VALUE}</code>. 
+     * Note that for <code>firstIndex() == {@link Integer#MIN_VALUE}</code> 
+     * <code>firstIndex()-1 > firstIndex()</code>. 
      * </ul>
      *
      * @param obj 
      *    an <code>Object</code> value
      * @return 
-     *    an <code>int</code> value
+     *    <ul>
+     *    <li>
+     *    the index of the first occurrence of <code>obj</code> 
+     *    if this object is in this list. 
+     *    In this case, the return value is within the range 
+     *    <code>firstIndex()..firstFreeIndex()-1</code>. 
+     *    <li>
+     *    <code>firstIndex()-1</code> if <code>obj</code> is not in this list. 
+     *    </ul>
      */
     public final int indexOf(final Object obj) {
 	return this.list.indexOf(obj)+this.firstIndex;
@@ -410,8 +588,8 @@ public class TwoSidedList<E> implements List<E> {
      * is by specifying <code>firstIndex() == 0</code> 
      * (see {@link #TwoSidedList(List<E> list)}). 
      * <li>
-     * Collision occurs 
-     * for <code>firstIndex() == {@link Integer#MIN_VALUE}</code>. 
+     * Note that for <code>firstIndex() == {@link Integer#MIN_VALUE}</code> 
+     * <code>firstIndex()-1 > firstIndex()</code>. 
      * </ul>
      * **** one may expect 
      * that in case the specified object in not in the list 
@@ -421,7 +599,15 @@ public class TwoSidedList<E> implements List<E> {
      * @param obj 
      *    an <code>Object</code> value
      * @return 
-     *    an <code>int</code> value
+     *    <ul>
+     *    <li>
+     *    the index of the last occurrence of <code>obj</code> 
+     *    if this object is in this list. 
+     *    In this case, the return value is within the range 
+     *    <code>firstIndex()..firstFreeIndex()-1</code>. 
+     *    <li>
+     *    <code>firstIndex()-1</code> if <code>obj</code> is not in this list. 
+     *    </ul>
      */
     public final int lastIndexOf(final Object obj) {
 	return this.list.lastIndexOf(obj)+this.firstIndex;
@@ -537,9 +723,13 @@ public class TwoSidedList<E> implements List<E> {
      * @throws IllegalArgumentException 
      *    if some property of <code>obj</code> 
      *    prevents it from being added to {@link #list}. 
+     * @throws IllegalStateException
+     *    if <code>{@link #firstIndex} == Integer.MIN_VALUE</code> 
+     *    adding an element would cause index underrun. 
      */
     public final boolean addFirst(final E obj) {
-	this.firstIndex--;
+	// may throw an IllegalStateException 
+	decFirstIndex();
 	this.list.add(0,obj);
 	return true;
     }
@@ -564,8 +754,12 @@ public class TwoSidedList<E> implements List<E> {
      * @throws IllegalArgumentException 
      *    if some property of <code>obj</code> 
      *    prevents it from being added to {@link #list}. 
+     * @throws IllegalStateException
+     *    if adding objects to this list 
+     *    would cause overrun of {@link #minFreeIndex()}. 
      */
     public final boolean addLast(final E obj) {
+	checkIncMinFreeIndex();
 	return this.list.add(obj);
     }
 
@@ -622,9 +816,7 @@ public class TwoSidedList<E> implements List<E> {
      */
     public final void add(final int ind, final E obj, final Direction dir) {
 	checkRange(ind,dir);
-	if (dir == Direction.Right2Left) {
-	    this.firstIndex--;
-	}
+	dir.checkAdd1(this);
 	this.list.add(ind-this.firstIndex, obj);
     }
 
@@ -662,8 +854,10 @@ public class TwoSidedList<E> implements List<E> {
 	checkRange(ind);
 	E res = this.list.remove(ind-this.firstIndex);
 	if (dir == Direction.Right2Left) {
-	    this.firstIndex++;
+	    // Note that this may not throw any exception in this case. 
+	    incFirstIndex();
 	}
+
 	return res;
     }
 
@@ -711,7 +905,8 @@ public class TwoSidedList<E> implements List<E> {
      * (if such an element exists). 
      * Returns <code>true</code> if this list contained the specified element 
      * (or equivalently, if this list changed as a result of the call). 
-     * The first index returned by {@link #firstIndex()} is decremented. 
+     * The first index returned by {@link #firstIndex()} is incremented 
+     * if really an object was removed. 
      *
      * @param obj
      *    the element to be removed from this list, if present. 
@@ -729,7 +924,8 @@ public class TwoSidedList<E> implements List<E> {
 	    return false;
 	} else {
 	    // obj \in this 
-	    this.firstIndex++;
+	    // Note that this may not throw any exception in this case. 
+	    incFirstIndex();
 	    this.list.remove(ind);
 	    return true;
 	}
@@ -775,7 +971,7 @@ public class TwoSidedList<E> implements List<E> {
      * @return 
      *    whether this list changed as a result of the call 
      *    as a <code>boolean</code> value. 
-     * @throws     UnsupportedOperationException 
+     * @throws    UnsupportedOperationException 
      *    if the addAll operation is not supported by this {@link #list}.  
      * @throws    ClassCastException 
      *    if the class of an element of the specified collection 
@@ -788,9 +984,13 @@ public class TwoSidedList<E> implements List<E> {
      * @throws    IllegalArgumentException 
      *    if some property of an element of the specified collection 
      *    prevents it from being added to {@link #list}. 
+     * @throws IllegalStateException
+     *    if adding <code>numAdded</code> objects 
+     *    at the head of this list 
+     *    would cause underrun of {@link #firstIndex}. 
      */
     public final boolean addAllFirst(final Collection<? extends E> coll) {
-	this.firstIndex -= coll.size();
+	subFirstIndex(coll.size());
 	return this.list.addAll(0,coll);
     }
 
@@ -824,8 +1024,13 @@ public class TwoSidedList<E> implements List<E> {
      * @throws    IllegalArgumentException 
      *    if some property of an element of the specified collection 
      *    prevents it from being added to {@link #list}. 
+     * @throws IllegalStateException
+     *    if adding <code>numAdded</code> objects 
+     *    to this list **** or at the tail of this list 
+     *    would cause overrun of {@link #minFreeIndex()}. 
      */
     public final boolean addAllLast(final Collection<? extends E> coll) {
+	checkMinFreeIndex(coll.size());
 	return this.list.addAll(coll);
     }
 
@@ -895,14 +1100,16 @@ public class TwoSidedList<E> implements List<E> {
      *    prevents it from being added to {@link #list}. 
      * @throws IndexOutOfBoundsException
      *    as described for {@link #checkRange(int,Direction)}
+     * @throws IllegalStateException
+     *    if adding <code>coll</code> to this list 
+     *    would cause underrun of {@link #firstIndex} 
+     *    or overrun of {@link #minFreeIndex}. 
      */
     public final boolean addAll(final int ind, 
 				final Collection<? extends E> coll, 
 				final Direction dir) {
 	checkRange(ind,dir);
-	if (dir == Direction.Right2Left) {
-	    this.firstIndex -= coll.size();
-	}
+	dir.checkAddAll(coll.size(),this);
 	return this.list.addAll(ind-this.firstIndex, coll);
     }
 
@@ -1024,6 +1231,8 @@ public class TwoSidedList<E> implements List<E> {
 	    case Right2Left:
 		int oldSize = this.list.size();
 		boolean ret = this.list.removeAll(coll);
+		// This retains the inequality 
+		// firstIndex() <= firstFreeIndex() 
 		this.firstIndex += oldSize - this.list.size();
 		return ret;
 	    default:
@@ -1089,6 +1298,8 @@ public class TwoSidedList<E> implements List<E> {
 	    case Right2Left:
 		int oldSize = this.list.size();
 		boolean ret = this.list.retainAll(coll);
+		// This retains the inequality 
+		// firstIndex() <= firstFreeIndex() 
 		this.firstIndex += oldSize - this.list.size();
 		return ret;
 	    default:
@@ -1154,7 +1365,8 @@ public class TwoSidedList<E> implements List<E> {
      * CAUTION: 
      * Note that two empty lists with different first index are not equal. 
      * This is justified by the fact, 
-     * that these two become different when the firsts element is added. 
+     * that these two become different when the same first element is added 
+     * to both lists. 
      *
      * @param obj 
      *    an <code>Object</code> value

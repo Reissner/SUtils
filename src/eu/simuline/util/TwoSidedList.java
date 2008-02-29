@@ -65,12 +65,14 @@ public class TwoSidedList<E> implements List<E> {
      */
     public static enum Direction {
 	Left2Right {
+	    // api-docs provided by javadoc 
 	    void checkRange(int ind, TwoSidedList list) {
 		list.checkRange("",
 				ind,
 				list.firstIndex(),
 				list.minFreeIndex()+1);
 	    }
+	    // api-docs provided by javadoc 
 	    void checkAdd1(TwoSidedList list) {
 		list.checkIncMinFreeIndex();
 	    }
@@ -78,12 +80,14 @@ public class TwoSidedList<E> implements List<E> {
 		list.checkMinFreeIndex(size);
 	    }
 	}, Right2Left {
+	    // api-docs provided by javadoc 
 	    void checkRange(int ind, TwoSidedList list) {
 		list.checkRange("",
 				ind,
 				list.firstIndex()-1,
 				list.minFreeIndex());
 	    }
+	    // api-docs provided by javadoc 
 	    void checkAdd1(TwoSidedList list) {
 		list.decFirstIndex();
 	    }
@@ -91,8 +95,72 @@ public class TwoSidedList<E> implements List<E> {
 		list.subFirstIndex(size);
 	    }
 	};
+
+	/**
+	 * Checks whether index <code>ind</code> 
+	 * is in the range of <code>list</code> 
+	 * and throws an appropriate exception if not. 
+	 *
+	 * @param ind
+	 *    the index to be checked. 
+	 * @param list
+	 *    the twosided list under consideration. 
+ 	 * @throws IndexOutOfBoundsException
+	 *    <ul>
+	 *    <li> for <code>this == Left2Right</code>if not 
+	 *    <code>list.firstIndex()   <= ind&lt;list.minFreeIndex()+1</code>.
+	 *    <li> for <code>this == Right2Left</code>if not 
+	 *    <code>list.firstIndex()-1 <= ind&lt;list.minFreeIndex()  </code>.
+	 *    </ul>
+	 *    The message is always the same: 
+	 *    <code>
+	 * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
+	 *    </code>. 
+	 * @see #add   (int,                      E,  Direction)
+	 * @see #addAll(int, Collection<? extends E>, Direction)
+	 *
+	 * <!--used by 
+	 * add   (int, E obj,                   Direction)
+	 * addAll(int, Collection<? extends E>, Direction) 
+	 * -->
+	 */
 	abstract void checkRange(int ind, TwoSidedList list);
+
+	/**
+	 * Checks in {@link TwoSidedList#add(int, E, Direction)} 
+	 * whether by adding elements 
+	 * causes underrun in {@link TwoSidedList#  firstIndex()} 
+	 * or      overrun in {@link TwoSidedList#minFreeIndex()}. 
+	 * 
+	 * @param list
+	 *    the twosided list under consideration. 
+	 * @throws IllegalStateException
+	 *    if adding an object to this list would 
+	 *    cause underrun in {@link TwoSidedList#  firstIndex()} 
+	 *    or     overrun in {@link TwoSidedList#minFreeIndex()} 
+	 *    depending on this direction. 
+	 * @see TwoSidedList#decFirstIndex()
+	 * @see TwoSidedList#checkIncMinFreeIndex() 
+	 * <!-- used only in add(int, E, Direction)  -->
+	 */
 	abstract void checkAdd1(TwoSidedList list);
+
+	/**
+	 * Checks in {@link TwoSidedList#addAll(int, E, Direction)} 
+	 * whether by adding elements 
+	 * causes underrun in {@link TwoSidedList#  firstIndex()} 
+	 * or      overrun in {@link TwoSidedList#minFreeIndex()}. 
+	 * 
+	 * @param ind
+	 *    the number of elements to be added. 
+	 * @param list
+	 *    the twosided list under consideration. 
+	 * @throws IllegalStateException
+	 *    if adding <code>size</code> objects to this list would 
+	 *    cause underrun in {@link TwoSidedList#  firstIndex()} 
+	 *    or     overrun in {@link TwoSidedList#minFreeIndex()} 
+	 *    depending on this direction. 
+	 */
 	abstract void checkAddAll(int size, TwoSidedList list);
 
     } // enum Direction 
@@ -274,6 +342,11 @@ public class TwoSidedList<E> implements List<E> {
      *    <code>
      * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
      *    </code>. 
+     * <!-- used by 
+     * get(int), 
+     * set(int, obj), 
+     * remove(int ind, Direction) **** is this correct? 
+     * -->
      */
     private void checkRange(int ind) {
 	checkRange("",ind,this.firstIndex,minFreeIndex());
@@ -299,7 +372,12 @@ public class TwoSidedList<E> implements List<E> {
      * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
      *    </code>. 
      * @see #add(int, E, Direction)
-     * @see #addAll(int, Collection<? extends E>, Direction)-->
+     * @see #addAll(int, Collection<? extends E>, Direction)
+     *
+     * <!--used by 
+     * add   (int, E obj,                   Direction)
+     * addAll(int, Collection<? extends E>, Direction) 
+     * -->
      */
     private void checkRange(int ind, Direction dir) {
 	dir.checkRange(ind,this);
@@ -310,7 +388,10 @@ public class TwoSidedList<E> implements List<E> {
      * and throws an appropriate exception if not. 
      *
      * @param fromToNothing
-     *    either <code>""</code>, <code>"first"</code> or <code>"last"</code>. 
+     *    either <code>""</code>, <code>"from"</code> or <code>"to"</code>. 
+     *    The latter two cases are used only in {@link #sublist(int,int)} 
+     *    to check the range of the start index and of the end index 
+     *    of the sublist to be created. 
      * @param ind
      *    the index to be checked. 
      * @param min
@@ -323,8 +404,18 @@ public class TwoSidedList<E> implements List<E> {
      *    <code>
      * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
      *    </code> preceeded by <code>fromToNothing</code>. 
+     *
+     * <!--used by 
+     * Direction.checkRange(int, TwoSidedList) 
+     * checkRange(int)
+     * listIterator(int)
+     * subList(int, int)
+     * -->
      */
-    private void checkRange(String fromToNothing, int ind, int min, int maxP) {
+    private void checkRange(String fromToNothing, 
+			    int ind, 
+			    int min, 
+			    int maxP) {
 	if (ind < min || ind >= maxP) {
 	    throw new IndexOutOfBoundsException
 		(fromToNothing + "Index: " + ind + 
@@ -427,10 +518,16 @@ public class TwoSidedList<E> implements List<E> {
 	}
     }
 
+    /**
+     * Returns {@link #firstIndex}. 
+     */
     public int firstIndex() {
 	return this.firstIndex;
     }
 
+    /**
+     * Sets {@link #firstIndex} according to the parameter. 
+     */
     public void firstIndex(int firstIndex) {
 	this.firstIndex = firstIndex;
     }
@@ -1330,6 +1427,7 @@ public class TwoSidedList<E> implements List<E> {
 	    throw new IndexOutOfBoundsException
 		("fromIndex(" + indStart + ") > toIndex(" + indEnd + ")");
 	}
+	// only one invocation can throw an exception. 
 	checkRange("from",indStart,this.firstIndex,minFreeIndex()+1);
 	checkRange("to",  indEnd,  this.firstIndex,minFreeIndex()+1);
 	return this.list.subList(indStart-this.firstIndex, 

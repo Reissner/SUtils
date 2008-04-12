@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Comparator;
+import java.util.ArrayList;
 
 /**
  * An add on of the core class {@link java.util.Collections}. 
@@ -389,4 +390,17 @@ public class CollectionsAdd<E> {
 	// This place is never reached, because coll is not empty 
 	throw new IllegalStateException();
     }
+
+    /**
+     * Returns the reverse of the given list. 
+     * In fact the list returned is an {@link java.util.ArrayList}. 
+     */
+    public static <T> List<T> reverse(List<T> list) {
+	List<T> res = new ArrayList<T>(list.size());
+	for (int i = 0; i < list.size(); i++) {
+	    res.add(list.get(list.size()-1-i));
+	}
+	return res;
+    }
+
 }

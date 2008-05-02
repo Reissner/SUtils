@@ -2,6 +2,7 @@ package eu.simuline.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import eu.simuline.arithmetics.left2right.BuiltInTypes;
 
 /**
  * Separates the aspects of a non-zero, finite floating point number: 
@@ -42,8 +43,19 @@ public class FPSeparator {
     /**
      * The mantissa as a <code>double</code> value in <code>[1/2,1)</code>. 
      * In particular, this mantissa is normalized. 
+     *
+     * @see #mantissaL
      */
     private BigDecimal mantissa;
+
+    /**
+     * The mantissa as a <code>long</code> value. 
+     * In particular, this mantissa is normalized. 
+     * This can be computed from {@link #mantissa} 
+     * by a left shift with {@link #doubleMantLen()} digits. 
+     * Note that 
+     */
+    private long       mantissaL;
 
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
@@ -59,10 +71,30 @@ public class FPSeparator {
      *    infinite or <code>NaN</code>. 
      */
     public FPSeparator(double num) {
-	this(double2BigDecimal(num));
+	if (Double.isNaN(num)) {
+	    throw new IllegalArgumentException
+		("No NaN allowed but found " + num + ". ");
+	}
+	if (Double.isInfinite(num)) {
+	    throw new IllegalArgumentException
+		("Only finite values allowed but found " + num + ". ");
+	}
+	if (num == 0.0) {
+	    throw new IllegalArgumentException
+		("Only nonzero values allowed but found " + num + ". ");
+	}
+
+	long lRep = Double.doubleToRawLongBits(num);
+	this.sign = (((lRep >> 63) == 0) ? 1 : -1);
+	this.exp  = (int) ((lRep >> 52) & 0x7ffL) -1075+53;
+	this.mantissaL = ((lRep & 0x7ff0000000000000L) == 0) ?
+	    (lRep & 0xfffffffffffffL) << 1 :
+	    (lRep & 0xfffffffffffffL) | 0x10000000000000L;
+	this.mantissa = new BigDecimal
+	    (Math.floor(this.mantissaL)*Math.pow(2,-doubleMantLen()));
     }
 
-    /**
+    /** **** maybe useful: with BigDual 
      * Creates a new <code>FPSeparator</code> instance. 
      *
      * @param num 
@@ -80,24 +112,24 @@ public class FPSeparator {
 		break;
 	    case 0:
 		throw new IllegalArgumentException
-		    ("Only nonzero values allowed but found " + num + ". ");
+		    ("Only nonzero values allowed but found " 
+		     + num.doubleValue() + ". ");
 	    default:
 		throw new IllegalStateException();
 	}
 	assert this.mantissa.compareTo(BigDecimal.ZERO) > 0;
 	
-	this.exp = (int)Math.ceil(Math.log10(this.mantissa.doubleValue())
-				  /Math.log10(2.0));
+	this.exp = (int)Math.ceil(MathExt.ld(this.mantissa.doubleValue()));
 	// mantissa := mantissa/2^exp
-BigDecimal pow;
-if (this.exp < 0) {
-    pow = TWO.pow(-this.exp);
-    this.mantissa = this.mantissa.multiply(pow);
-} else {
-    pow = FIVE.pow(this.exp);
-    this.mantissa = this.mantissa.movePointLeft(this.exp);
-    this.mantissa = this.mantissa.multiply(pow);
-}
+	BigDecimal pow;
+	if (this.exp < 0) {
+	    pow = TWO.pow(-this.exp);
+	    this.mantissa = this.mantissa.multiply(pow);
+	} else {
+	    pow = FIVE.pow(this.exp);
+	    this.mantissa = this.mantissa.movePointLeft(this.exp);
+	    this.mantissa = this.mantissa.multiply(pow);
+	}
 
 	if (this.mantissa.compareTo(BigDecimal.ONE) == 0) {
 	    this.mantissa = HALF;
@@ -108,6 +140,16 @@ if (this.exp < 0) {
 	    this.mantissa.compareTo(BigDecimal.ONE ) < 0;	
 	assert num.compareTo(this.bigDecimalValue()) == 0;
 	//assert num.doubleValue() == this.doubleValue();
+
+
+	long lRep = Double.doubleToRawLongBits(num.doubleValue());
+	assert this.sign == (((lRep >> 63) == 0) ? 1 : -1);
+ 
+	assert this.exp == (int) ((lRep >> 52) & 0x7ffL) -1075+53;
+
+	this.mantissaL = ((lRep & 0x7ff0000000000000L) == 0) ?
+	    (lRep & 0xfffffffffffffL) << 1 :
+	    (lRep & 0xfffffffffffffL) | 0x10000000000000L;
     } // FPSeparator constructor 
 
     
@@ -115,25 +157,8 @@ if (this.exp < 0) {
      * methods.                                                             *
      * -------------------------------------------------------------------- */
 
-    /**
-     * Converts a <code>double</code> value 
-     * into a <code>BigDecimal</code> value. 
-     *
-     * @param num 
-     *    a finite, nonzero <code>double</code> value. 
-     * @throws IllegalArgumentException
-     *    if <code>num</code> is either infinite or <code>NaN</code>. 
-     */
-    private static BigDecimal double2BigDecimal(double num) {
-	if (Double.isNaN(num)) {
-	    throw new IllegalArgumentException
-		("No NaN allowed but found " + num + ". ");
-	}
-	if (Double.isInfinite(num)) {
-	    throw new IllegalArgumentException
-		("Only finite values allowed but found " + num + ". ");
-	}
-	return new BigDecimal(Double.toString(num));
+    private int doubleMantLen() {
+	return BuiltInTypes.DOUBLE.mantissaLen();
     }
 
     // either -1 or 1 
@@ -141,6 +166,10 @@ if (this.exp < 0) {
 	return this.sign;
     }
 
+    // the value of the number separated is 
+    //            sign()*mantissaBig()*2^ exp()
+    // together with mantissaL we have      
+    //            sign()*mantissaL    *2^{exp()-doubleMantLen()}
     public int exp() {
 	return this.exp;
     }
@@ -148,6 +177,10 @@ if (this.exp < 0) {
     // is normalized. 
     public double mantissa() {
 	return this.mantissa.doubleValue();
+    }
+
+    public long mantissaL() {
+	return this.mantissaL;
     }
 
     // is normalized. 
@@ -160,14 +193,13 @@ if (this.exp < 0) {
     }
 
     public final BigDecimal bigDecimalValue() {
-
+	
 	BigDecimal result = this.mantissa;
 	if (this.sign == -1) {
 	    result = this.mantissa.negate();
 	}
-	result = result.multiply(new BigDecimal(Math.pow(2,this.exp)));
-	
-	
+	result = result.stripTrailingZeros();
+	result = result.multiply(new BigDecimal(Math.pow(2,this.exp)));	
 	return result.stripTrailingZeros();
     }
 

@@ -1,6 +1,7 @@
 package eu.simuline.util;
 
 import eu.simuline.testhelpers.GUIRunListener;
+import eu.simuline.testhelpers.Actions;
 //import eu.simuline.testhelpers.Accessor;
 //import static eu.simuline.testhelpers.Assert;
 
@@ -18,9 +19,6 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import junit.framework.JUnit4TestAdapter;
-
-
-
 
 import java.math.BigDecimal;
 
@@ -104,13 +102,8 @@ public class FPSeparatorTest {
 	    num *= MathExt.sgn(Math.random()-0.5);
 	    sep = new FPSeparator(num);
 	    assertEquals(num,
-			 sep.sign()*sep.mantissa()*Math.pow(2,sep.exp()),
-			 0.0);
+			 sep.sign()*sep.mantissa()*Math.pow(2,sep.exp()));
 	}
-	
-
-	
-	
     } // testConstr 
 
 
@@ -129,11 +122,7 @@ public class FPSeparatorTest {
      * Uncomment either the textual UI, Swing UI, or AWT UI.
      */
     public static void main(String args[]) {
-
-	JUnitCore core = new JUnitCore();
-	core.addListener(new GUIRunListener());
-	core.run(FPSeparatorTest.class);
+	Actions.run(FPSeparatorTest.class);
     }
-
 
 } // FPSeparatorTest

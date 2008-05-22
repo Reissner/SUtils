@@ -1,6 +1,7 @@
 package eu.simuline.util;
 
 import eu.simuline.arithmetics.left2right.BuiltInTypes;
+import eu.simuline.arithmetics.dual.BigDual;
 
 import java.math.BigDecimal;
 
@@ -67,6 +68,9 @@ public interface NumberWrapper {
 	    Dbl other = (Dbl)obj;
 	    return this.num == other.num;
  	}
+	public double doubleValue() {
+	    return this.num;
+	}
     } //  class Dbl 
 
 
@@ -117,6 +121,9 @@ public interface NumberWrapper {
 	    Flt other = (Flt)obj;
 	    return this.num == other.num;
  	}
+	public double doubleValue() {
+	    return this.num;
+	}
     } //  class Flt 
 
 
@@ -218,9 +225,13 @@ public interface NumberWrapper {
 		this.exponent == other.exponent && 
 		this.mantissa == other.mantissa;
 	}
+	public double doubleValue() {
+	    // **** possible loss of precision 
+	    return 1.0*this.mantissa * Math.pow(2,this.exponent);
+	}
     } //  class Long53
 
-    public static class BigD implements NumberWrapper {
+    public static class BigDec implements NumberWrapper {
 	/**
 	 * Constant with value <code>2</code> 
 	 * needed by {@link NumberWrapper.BigD#shiftLeft()}. 
@@ -237,7 +248,7 @@ public interface NumberWrapper {
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-  	public BigD(BigDecimal num) {
+  	public BigDec(BigDecimal num) {
 	    this.num = num;
 	}
 
@@ -263,12 +274,73 @@ public interface NumberWrapper {
 	    return this.num.compareTo(BigDecimal.ZERO) <= 0;
 	}
 	public NumberWrapper copy() {
-	    return new BigD(this.num);
+	    return new BigDec(this.num);
 	}
 	public String toString() {
 	    return this.num.toString();
 	}
-    } // class BigD 
+	public double doubleValue() {
+	    return this.num.doubleValue();
+	}
+    } // class BigDec 
+
+    public static class BigDu implements NumberWrapper {
+	/**
+	 * Constant with value <code>2</code> 
+	 * needed by {@link NumberWrapper.BigD#shiftLeft()}. 
+	 */
+	//final static BigDecimal TWO = new BigDecimal(2.0);//NOPMD
+
+	/* ---------------------------------------------------------------- *
+	 * attributes.                                                      *
+	 * ---------------------------------------------------------------- */
+
+	BigDual num;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
+
+  	public BigDu(BigDual num) {
+	    this.num = num;
+	}
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
+
+	public int shiftLeft2() {
+//System.out.println("BigDual.TWO: "+BigDual.TWO);
+	    
+	    this.num = this.num.multiply(BigDual.TWO);
+//	    this.num = this.num.pow2(1);
+	    if (this.num.compareTo(BigDual.ONE) >= 0) {
+		this.num = this.num.subtract(BigDual.ONE);
+		return 1;
+	    }
+	    return 0;
+	}
+	public boolean isZero() {
+	    return this.num.compareTo(BigDual.ZERO) == 0;
+	}
+	public boolean isGEOne() {
+	    return this.num.compareTo(BigDual.ONE) >= 0;
+	}
+	public boolean isLEZero() {
+	    return this.num.compareTo(BigDual.ZERO) <= 0;
+	}
+	public NumberWrapper copy() {
+	    return new BigDu(this.num);
+	}
+	public String toString() {
+	    return this.num.toString();
+	}
+	public double doubleValue() {
+	    return this.num.doubleValue();
+	}
+
+    } // class BigDu
+
 
     /* --------------------------------------------------------------------- *
      * methods.                                                              *
@@ -281,5 +353,6 @@ public interface NumberWrapper {
     //for a check in constructor of MChunk only 
     boolean isLEZero();
     NumberWrapper copy();
+    double doubleValue();
 
 }

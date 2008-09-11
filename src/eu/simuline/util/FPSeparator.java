@@ -117,7 +117,7 @@ public class FPSeparator {
 	    default:
 		throw new IllegalStateException();
 	}
-	assert this.mantissa.compareTo(BigDecimal.ZERO) > 0;
+	assert this.mantissa.compareTo(BigDecimal.ZERO) >= 0;
 	
 	this.exp = (int)Math.ceil(MathExt.ld(this.mantissa.doubleValue()));
 	// mantissa := mantissa/2^exp
@@ -204,11 +204,41 @@ public class FPSeparator {
     }
 
     public static void main(String[] args) {
-	BigDecimal one = BigDecimal.ONE;
-	one = one.setScale(8);
-	System.out.println(": "+one.divide(new BigDecimal(32),
-					   RoundingMode.UP));
+	long time;
+	double num;
+
+	time = System.currentTimeMillis();
+	for (int i = 0; i < 10000000; i++) {
+	    num = Math.random();
+	    for (int j = 0; j < 100; j++) {
+		num *= 2;
+	    }
+	}
+	System.out.println("time: "+(System.currentTimeMillis()-time));
+
+	time = System.currentTimeMillis();
+	int exp;
+	long lRep;
+	for (int i = 0; i < 10000000; i++) {
+	    num = Math.random();
+	    lRep = Double.doubleToRawLongBits(num);
+	    exp = (int) ((lRep >> 52) & 0x7ffL) -1075+53;
+	    for (int j = 0; j < 100; j++) {
+		exp++;
+	    }
+	}
+	System.out.println("time: "+(System.currentTimeMillis()-time));
+
+
+
+
+	
+// 	BigDecimal one = BigDecimal.ONE;
+// 	one = one.setScale(8);
+// 	System.out.println(": "+one.divide(new BigDecimal(32),
+// 					   RoundingMode.UP));
 	
     }
+
 
 } // FPSeparator

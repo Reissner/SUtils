@@ -544,6 +544,8 @@ public class TwoSidedList<E> implements List<E> {
      *    the number of shifts to the right 
      *    to be performed on this list. 
      *    A negative sign signifies a shift to the left. 
+     * @return
+     *    The new first index. 
      * @throws IllegalStateException
      *    if shifting would cause overrun of {@link #minFreeIndex()} 
      *    (occuring for proper shift to the right)

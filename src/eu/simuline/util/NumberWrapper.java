@@ -231,6 +231,34 @@ public interface NumberWrapper {
 	}
     } //  class Long53
 
+    public static class BigDec10 extends BigDec {
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
+
+  	public BigDec10(BigDecimal num) {
+	    super(num);
+	}
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
+
+	public int shiftLeft2() {
+	    this.num = this.num.multiply(BigDecimal.TEN);
+	    if (this.num.compareTo(BigDecimal.ONE) >= 0) {
+		BigDecimal res = this.num.divideToIntegralValue(BigDecimal.ONE);
+		this.num = this.num.subtract(res);
+		return res.intValue();
+	    }
+	    return 0;
+	}
+	public NumberWrapper copy() {
+	    return new BigDec10(this.num);
+	}
+    } //  class BigDec10 
+
     public static class BigDec implements NumberWrapper {
 	/**
 	 * Constant with value <code>2</code> 

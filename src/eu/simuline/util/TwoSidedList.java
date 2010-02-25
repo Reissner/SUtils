@@ -723,7 +723,7 @@ public class TwoSidedList<E> implements List<E> {
      *    an <code>Object[]</code> containing all elements in proper sequence. 
      */
     // api-docs provided by javadoc. 
-    public final Object[] toArray() {
+    public final Object[] toArray(){
 	return this.list.toArray();
     }
 

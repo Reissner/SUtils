@@ -11,6 +11,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Comparator;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * An add on of the core class {@link java.util.Collections}. 
@@ -24,49 +26,60 @@ public class CollectionsAdd<E> {
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
-    /**
-     * A class of immutable <code>SortedSet</code>s 
+    /*
+     * A class of <code>Set</code>s 
      * throwing an <code>UnsupportedOperationException</code> 
      * when trying to modify it. 
-     * Note that they still have a <code>Comparator</code>. 
+     * Using {@link #allowModification(Modification)}, 
+     * a posteriory modifications can be allowed. 
+     * **** gap: may add or remove elements via the iterator? **** 
      */
-    private final static class ImmutableSortedSet<E> extends TreeSet<E> {
+    public final static class ImmutableSet<E> extends HashSet<E> {
+
 	private static final long serialVersionUID = -2479143000061671589L;
+
+	public enum Modification {
+	    AddObj, RemoveObj, Clear, AddAll, RetainAll, RemoveAll;
+	} // enum Modification 
+
+	/* ---------------------------------------------------------------- *
+	 * fields.                                                          *
+	 * ---------------------------------------------------------------- */
+
+	Set<Modification> mods;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
 	/**
-	 * Creates a new empty <code>ImmutableSortedSet</code> 
+	 * Creates a new empty <code>ImmutableSet</code> 
 	 * instance <code>s</code> 
 	 * satisfying <code>s.comparator() == null</code>. 
 	 */
-	ImmutableSortedSet() {
+	public ImmutableSet() {
 	    super();
-	}
-
-	/**
-	 * Creates a new <code>ImmutableSortedSet</code> 
-	 * instance <code>s</code> 
-	 * satisfying <code>s.comparator() == c</code>. 
-	 *
-	 * @param cmp 
-	 *    a <code>Comparator</code> value 
-	 *    which may well be <code>null</code>. 
-	 */
-	ImmutableSortedSet(Comparator<? super E> cmp) {
-	    super(cmp);
+	    this.mods = new HashSet<Modification>();
 	}
 
 	/* ---------------------------------------------------------------- *
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */
 
+
+	public ImmutableSet<E> allowModification(Modification mod) {
+	    this.mods.add(mod);
+	    return this;
+	}
+
 	/**
 	 * @throws UnsupportedOperationException
 	 */
 	public boolean add(E obj) {
+	    if (this.mods.contains(Modification.AddObj)) {
+		return super.add(obj);
+	    }
+
 	    throw new UnsupportedOperationException();
 	}
 
@@ -74,6 +87,9 @@ public class CollectionsAdd<E> {
 	 * @throws UnsupportedOperationException
 	 */
 	public boolean remove(Object obj) {
+	    if (this.mods.contains(Modification.RemoveObj)) {
+		return super.remove(obj);
+	    }
 	    throw new UnsupportedOperationException();
 	}
 
@@ -81,6 +97,9 @@ public class CollectionsAdd<E> {
 	 * @throws UnsupportedOperationException
 	 */
 	public void clear() {
+	    if (this.mods.contains(Modification.Clear)) {
+		super.clear();
+	    }
 	    throw new UnsupportedOperationException();
 	}
 
@@ -88,6 +107,9 @@ public class CollectionsAdd<E> {
 	 * @throws UnsupportedOperationException
 	 */
 	public boolean addAll(Collection<? extends E> cmp) {
+	    if (this.mods.contains(Modification.AddAll)) {
+		return super.addAll(cmp);
+	    }
 	    throw new UnsupportedOperationException();
 	}
 
@@ -95,6 +117,9 @@ public class CollectionsAdd<E> {
 	 * @throws UnsupportedOperationException
 	 */
 	public boolean retainAll(Collection<?> cmp) {
+	    if (this.mods.contains(Modification.RetainAll)) {
+		return super.retainAll(cmp);
+	    }
 	    throw new UnsupportedOperationException();
 	}
 
@@ -102,9 +127,12 @@ public class CollectionsAdd<E> {
 	 * @throws UnsupportedOperationException
 	 */
 	public boolean removeAll(Collection<?> cmp) {
+	    if (this.mods.contains(Modification.RemoveAll)) {
+		return super.removeAll(cmp);
+	    }
 	    throw new UnsupportedOperationException();
 	}
-    } // class ImmutableSortedSet 
+    } // class ImmutableSet 
 
     /* -------------------------------------------------------------------- *
      * class fields.                                                        *
@@ -115,7 +143,7 @@ public class CollectionsAdd<E> {
      * class methods.                                                       *
      * -------------------------------------------------------------------- */
 
-    /**
+    /*
      * Returns an immutable <code>SortedSet</code> with the specified comparator
      *
      * @param cmp 
@@ -127,10 +155,10 @@ public class CollectionsAdd<E> {
      *    By contract, <code>s.isEmpty() == true</code> and 
      *    <code>s.comparator() == c</code>. 
      */
-    public static <E> SortedSet 
-    getImmutableSortedSet(Comparator<? super E> cmp) {
-	return new ImmutableSortedSet<E>(cmp);
-    }
+//     public static <E> SortedSet 
+//     getImmutableSortedSet(Comparator<? super E> cmp) {
+// 	return new ImmutableSortedSet<E>(cmp);
+//     }
 
     /**
      * Converts the list given recursively into an array. 

@@ -4,7 +4,7 @@ package eu.simuline.util;
 import java.lang.reflect.Array;
 
 import java.util.List;
-//import java.util.Iterator;
+import java.util.Iterator;
 import java.util.Collections;// NOPMD for javadoc only. 
 import java.util.Collection;
 import java.util.SortedSet;
@@ -39,7 +39,9 @@ public class CollectionsAdd<E> {
 	private static final long serialVersionUID = -2479143000061671589L;
 
 	public enum Modification {
-	    AddObj, RemoveObj, Clear, AddAll, RetainAll, RemoveAll;
+	    AddObj, RemoveObj, 
+		Clear, AddAll, RetainAll, RemoveAll, 
+		Iterator, RemoveIter;
 	} // enum Modification 
 
 	/* ---------------------------------------------------------------- *
@@ -129,6 +131,33 @@ public class CollectionsAdd<E> {
 	public boolean removeAll(Collection<?> cmp) {
 	    if (this.mods.contains(Modification.RemoveAll)) {
 		return super.removeAll(cmp);
+	    }
+	    throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * @throws UnsupportedOperationException
+	 */
+	public Iterator<E> iterator() {
+	    if (this.mods.contains(Modification.Iterator)) {
+		return new Iterator<E>() {
+		    Iterator<E> wrapped = ImmutableSet.super.iterator();
+		    public boolean hasNext() {
+			return this.wrapped.hasNext();
+		    }
+
+		    public E next() {
+			return this.wrapped.next();
+		    }
+
+		    public void remove() {
+			if (ImmutableSet.this.mods
+			    .contains(Modification.RemoveIter)) {
+			    this.wrapped.remove();
+			}
+			throw new UnsupportedOperationException();
+		    }
+		};
 	    }
 	    throw new UnsupportedOperationException();
 	}

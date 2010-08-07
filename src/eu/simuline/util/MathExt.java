@@ -36,6 +36,38 @@ public final class MathExt {
      * -------------------------------------------------------------------- */
 
     /**
+     * Returns the quotient of the given arguments rounded away from zero, 
+     * i.e. rounded up in absolute value. 
+     * For rounding downwards, i.e. towards zero, 
+     * just compute <code>dividend / divisor</code>. 
+     * This works for positive numbers only. 
+     *
+     * @param dividend 
+     *    a non-negative number 
+     * @param divisor 
+     *    a positive number 
+     * @return
+     *    The least integer above <code>dividend / divisor</code> 
+     *    computed by <code>(a+b-1)/b=a/b+1-1/b</code>. 
+     *    To prove that this formula is correct, we distinguish: 
+     *    <ul>
+     *    <li>
+     *    i.e. if <code>a/b</code> goes without rounding, 
+     *    rounding <code>a/b</code> upwards is <code>a/b</code> itself and 
+     *    rounding <code>(a+b-1)/b=a/b+(1-1/b)</code> towards zero yields 
+     *    <code>a/b</code> as well. 
+     *    <li>
+     *    If <code>b</code> does not divide <code>a</code>, 
+     *    then rounding <code>(a+b-1)/b=(a-1)/b+1</code> towards zero 
+     *    is the same as rounding down <code>a/b+1</code> 
+     *    which is rounding upwards <code>a/b</code>. 
+     *    </ul>
+     */
+    public static int divRoundUp(int dividend, int divisor) {
+	return (dividend+divisor-1)/divisor;
+    }
+
+    /**
      * The sgn function. 
      *
      * @param dNum 
@@ -180,5 +212,10 @@ public final class MathExt {
     public static int expL(float num) {
 	// no rounding and no loss of precision by casting. 
 	return (int)Math.round(ld(Math.ulp(num)))-1;
+    }
+
+    public static void main(String[] args) {
+	System.out.println(": "+((-1)/2));
+	
     }
 }

@@ -36,7 +36,10 @@ public class FIFOList<E> extends Vector<E> implements Queue<E> {
     /**
      * Creates an empty FIFOList.
      */
-    protected FIFOList() {
+    public FIFOList() {
+	// is empty. 
+    } // FIFOList constructor
+    public FIFOList(Double d) {
 	// is empty. 
     } // FIFOList constructor
 

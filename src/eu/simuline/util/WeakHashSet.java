@@ -61,7 +61,9 @@ public class WeakHashSet<E> implements Set<E> {
     /**
      * Object which serves as value in the map {@link #map}. 
      */
-    private final static Object VALUE = new Object();
+    // **** this is a bug making weak references effectively strict ones. 
+    // fixing this bug is not advisable at the moment. 
+    private final static Object VALUE = new Object();//null;//new WeakReference();
 
     /* -------------------------------------------------------------------- *
      * attributes.                                                          *

@@ -1,8 +1,11 @@
 package eu.simuline.util;
 
+import eu.simuline.arithmetics.left2right.BuiltInTypes;
+
+import eu.simuline.arithmetics.dual.BigFloat;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import eu.simuline.arithmetics.left2right.BuiltInTypes;
 
 /**
  * Separates the aspects of a non-zero, finite floating point number: 
@@ -36,7 +39,7 @@ public class FPSeparator {
     private int sign;
 
     /**
-     * The exponent as an integer value. 
+     * The exponent in 2adic representation as an integer value. 
      */
     private int exp;
 
@@ -87,18 +90,23 @@ public class FPSeparator {
 	long lRep = Double.doubleToRawLongBits(num);
 	this.sign = (((lRep >> 63) == 0) ? 1 : -1);
 	this.exp  = (int) ((lRep >> 52) & 0x7ffL) -1075+53;
-	this.mantissaL = ((lRep & 0x7ff0000000000000L) == 0) ?
-	    (lRep & 0xfffffffffffffL) << 1 :
-	    (lRep & 0xfffffffffffffL) | 0x10000000000000L;
+	this.mantissaL = 
+	    ( (lRep & 0x7ff0000000000000L) == 0) // exp=-1075? 
+	    ? (lRep &    0xfffffffffffffL) << 1  // denormalized number 
+	    : (lRep &    0xfffffffffffffL) | 
+	    /*       */0x10000000000000L;
 	this.mantissa = new BigDecimal
 	    (Math.floor(this.mantissaL)*Math.pow(2,-doubleMantLen()));
+	assert num == this.sign*Math.scalb((double)this.mantissaL, this.exp-53);
     }
 
-    /** **** maybe useful: with BigDual 
+    /**
      * Creates a new <code>FPSeparator</code> instance. 
      *
      * @param num 
      *    a nonzero <code>BigDecimal</code> value. 
+     * @throws IllegalArgumentException
+     *    if <code>num</code> is <code>0</code>. 
      */
     public FPSeparator(BigDecimal num) {
 	this.mantissa = num;
@@ -152,6 +160,17 @@ public class FPSeparator {
 	    (lRep & 0xfffffffffffffL) | 0x10000000000000L;
     } // FPSeparator constructor 
 
+    /**
+     * Creates a new <code>FPSeparator</code> instance. 
+     *
+     * @param num 
+     *    a nonzero <code>BigDual</code> value. 
+     * @throws IllegalArgumentException
+     *    if <code>num</code> is <code>0</code>. 
+     */
+    public FPSeparator(BigFloat num) {
+	this(num.bigDecimal());
+    }
     
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
@@ -201,6 +220,14 @@ public class FPSeparator {
 	result = result.stripTrailingZeros();
 	result = result.multiply(new BigDecimal(Math.pow(2,this.exp)));	
 	return result.stripTrailingZeros();
+    }
+
+    public String toString() {
+	StringBuilder res = new StringBuilder();
+	res.append(sign());
+	res.append(mantissaL());
+	res.append(" e"+exp());
+	return res.toString();
     }
 
     public static void main(String[] args) {

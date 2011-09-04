@@ -1,6 +1,16 @@
 
 package eu.simuline.util;
 
+import eu.simuline.arithmetics.left2right.BuiltInTypes;
+
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.math.BigInteger;
+import java.math.BigDecimal;
+
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * Provides basic mathematical operations missing in {@link Math}. 
  *
@@ -214,8 +224,246 @@ public final class MathExt {
 	return (int)Math.round(ld(Math.ulp(num)))-1;
     }
 
-    public static void main(String[] args) {
-	System.out.println(": "+((-1)/2));
-	
+    /**
+     * Returns <code>num</code> rounded according to <code>mContext</code>. 
+     * If <code>num</code> is not finite, 
+     * i.e. if it is infinite or not a number, 
+     * <code>num</code> itself is returned. 
+     * The same is true for the numbers <code>\pm0</code>. 
+     * <p>
+     * **** better design would be if the MathContexts provided 
+     * their own rounding facilities. 
+     * **** a lot of code ist never tested. 
+     * according branches are endowed with <code>assert false</code>. 
+     *
+     * @param num 
+     *    a <code>double</code> number to be rounded. 
+     * @param mContext 
+     *    precision and rounding mode to round <code>num</code> 
+     * @return 
+     *    <code>num</code> rounded according to <code>mContext</code>. 
+     */
+    public static double round(double num, MathContext mContext) {
+	if (Double.isInfinite(num) || Double.isNaN(num) || num == 0.0) {
+	    return num;
+	}
+	assert !Double.isInfinite(num) && !Double.isNaN(num) && num != 0.0;
+	// this condition allows to create an FPSeparator below 
+
+	if (mContext.getPrecision() == 0 || 
+	    mContext.getPrecision() >= BuiltInTypes.DOUBLE.mantissaLen()) {
+	    // **** a problem for denormalized numbers 
+	    return num;
+	}
+	int numDigsToNullify = 
+	    BuiltInTypes.DOUBLE.mantissaLen()-mContext.getPrecision();
+	assert numDigsToNullify > 0;
+	// Here, rounding must be effected 
+
+	// decompose num into sign, mantissa and exponent 
+	FPSeparator sep = new FPSeparator(num);
+	long mant = sep.mantissaL();
+	assert num == sep.sign() * Math.scalb((double)mant, sep.exp()-53);
+
+	// modify mant according to rounding mode and numDigsToNullify 
+	switch (mContext.getRoundingMode()) {
+	case UNNECESSARY:// round only cutting off trailing zero digits 
+	    mant = mantRoundAwayFrom0(mant, numDigsToNullify, false);
+	    break;
+	case DOWN:
+	    mant = mantRoundTowards0 (mant, numDigsToNullify);
+	    break;
+	case UP:
+	    mant = mantRoundAwayFrom0(mant, numDigsToNullify, true);
+	    break;
+	case CEILING:
+	    mant = (sep.sign() == +1)
+		? mantRoundAwayFrom0(mant, numDigsToNullify, true)
+		: mantRoundTowards0 (mant, numDigsToNullify);
+	    break;
+	case FLOOR:
+	    mant = (sep.sign() == -1)
+		? mantRoundAwayFrom0(mant, numDigsToNullify, true)
+		: mantRoundTowards0 (mant, numDigsToNullify);
+	    break;
+	case HALF_UP:
+	case HALF_DOWN:
+	case HALF_EVEN:
+	    mant = mantRoundHalf(mant, 
+				 numDigsToNullify, 
+				 mContext.getRoundingMode());
+	    break;
+	default:
+	    throw new IllegalStateException("****");
+	}// Here, sign, mantissa and exponent of the result are determined 
+
+	if (       (mant & 0x7fe0000000000000L) != 0L) {
+	    // Here, the mantissa was incremented and this caused a carry 
+
+	    // The carry yields one additional high digit ... 
+	    assert (mant & 0x7fe0000000000000L) == 0x0020000000000000L;
+	    // ... but looses two low digits: 
+	    // - the 0th bit is zero by shift 
+	    // - the 1st bit is zero because otherwise thhere were no carry 
+	    assert (mant & 3L) == 0L;
+	}
+	// The following formula holds whether there is an overflow or not 
+
+	return sep.sign() * Math.scalb((double)mant, sep.exp()-53);
     }
+
+    /**
+     * Contributes to rounding a floating number to zero 
+     * by rounding a mantissa <code>mant</code> to zero 
+     * nullifying the last <code>numDigsToNullify</code> digits 
+     * of the mantissa. 
+     *
+     * @param mant 
+     *    the mantissa to be rounded 
+     * @param numDigsToNullify
+     *    the number of trailing digits to be nullified 
+     * @return
+     *    <code>mant</code> modified as described above. 
+     */
+    private static long mantRoundTowards0(long mant, int numDigsToNullify) {
+	mant >>= numDigsToNullify;
+	mant <<= numDigsToNullify;
+	return mant;
+    }
+
+    /**
+     * Contributes to rounding a floating number away from zero 
+     * by rounding a mantissa <code>mant</code> away from zero 
+     * by rounding up the mantissa 
+     * eliminating  the last <code>numDigsToNullify</code> digits 
+     * of the mantissa. 
+     * <p>
+     * If the last <code>numDigsToNullify</code> digits 
+     * of the mantissa are zero, <code>mant</code> is returned. 
+     * Otherwise, if no modification is allowed 
+     * according to <code>chgIsAllowed</code>, an exception is thrown. 
+     * Otherwise, neglecting the last <code>numDigsToNullify</code> digits, 
+     * <code>mant</code> is incremented. 
+     * **** note that desired precision is exceeded 
+     * if increasing the mantissa yields a longer mantissa. 
+     * ****
+     *
+     * @param mant 
+     *    the mantissa to be rounded 
+     * @param numDigsToNullify
+     *    the number of trailing digits to be nullified 
+     * @param chgIsAllowed
+     *    whether a trial to change in <code>mant</code> causes an exception. 
+     * @return
+     *    <code>mant</code> modified or not as described above. 
+     * @throws ArithmeticException
+     *    if rounding is necessary according to the rounding mode 
+     *    but not allowed according to <code>chgIsAllowed</code>. 
+     * @see #round(double num, MathContext mContext) 
+     */
+    private static long mantRoundAwayFrom0(long mant, 
+					   int numDigsToNullify, 
+					   boolean chgIsAllowed) {
+	long mantOrig = mant;
+	mant >>= numDigsToNullify;
+	mant <<= numDigsToNullify;
+	if (mantOrig != mant) {
+	    // Here, rounding caused an error
+	    if (!chgIsAllowed) {
+		throw new ArithmeticException("Rounding necessary");
+	    }
+	    mant >>= numDigsToNullify;
+	    mant++;
+	    mant <<= numDigsToNullify;
+	    // round(double num, MathContext mContext) 
+	    // handles cases where this increases number of digits 
+	    // and problems with overflow of the mantissa 
+	}
+	return mant;
+    }
+    /**
+     * Contributes to rounding a floating number away from zero 
+     * by rounding a mantissa away from zero 
+     * by rounding the mantissa <code>mant</code> to even 
+     * eliminating  the last <code>numDigsToNullify</code> digits 
+     * of the mantissa. 
+     * The particular rounding mode is given by  <code>rdMd</code>. 
+     * 
+     * @param mant 
+     *    the mantissa to be rounded 
+     * @param numDigsToNullify
+     *    the number of trailing digits to be nullified 
+     * @param rdMd
+     *    the rounding mode to be applied. 
+     *    This is one of 
+     *    {@link RoundingMode.HALF_UP}, {@link RoundingMode.HALF_DOWN} and 
+     *    {@link RoundingMode.HALF_EVEN}. 
+     * @see #round(double num, MathContext mContext) 
+     */
+    private static long mantRoundHalf(long mant,
+				      int numDigsToNullify, 
+				      RoundingMode rdMd) {
+	long mantOrig = mant;
+	mant >>= (numDigsToNullify-1);
+	mant <<= (numDigsToNullify-1);
+	if (mant != mantOrig) {
+	    // Here, the failure of rounding up and for rounding down differ 
+	    mant >>= (numDigsToNullify-1);
+	    boolean roundUp = ((mant & 1) == 1);
+	    // rounding up in absolute value. 
+	    
+	    mant >>= 1;
+	    if (roundUp) {
+		mant++;
+	    // round(double num, MathContext mContext) 
+	    // handles cases where this increases number of digits 
+	    // and problems with overflow of the mantissa 
+		assert mant >= 0;
+	    }
+	    mant <<= numDigsToNullify;
+	    assert mant >= 0;
+	    return mant;
+	} // if 
+
+
+	// Here, rounding depends on the rounding mode 
+	mant >>= numDigsToNullify;
+	mant <<= numDigsToNullify;
+	switch (rdMd) {
+	case HALF_DOWN:
+	    break;
+	case HALF_UP:
+	    mant++;
+	    // round(double num, MathContext mContext) 
+	    // handles cases where this increases number of digits 
+	    // and problems with overflow of the mantissa 
+	    break;
+	case HALF_EVEN:
+	    if ((mant & 1) == 1) {
+		mant++;
+	    // round(double num, MathContext mContext) 
+	    // handles cases where this increases number of digits 
+	    // and problems with overflow of the mantissa 
+	    }
+	    break;
+	default:
+	    throw new IllegalArgumentException("****");
+	} // switch (rdMd) 
+
+	return mant;
+    }
+
+    // public static List<Integer> long2listDigs(long num) {
+    // 	assert num >= 0;
+    // 	List<Integer> res = new ArrayList<Integer>(64);
+    // 	while (num != 0) {
+    // 	    res.add(0, (int)num & 1);
+    // 	    num >>= 1;
+    // 	}
+
+    // 	return res;
+    // }
+
+    public static void main(String[] args) {
+    } // main 
 }

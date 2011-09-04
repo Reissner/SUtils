@@ -94,7 +94,8 @@ public class FPSeparator {
 	    ( (lRep & 0x7ff0000000000000L) == 0) // exp=-1075? 
 	    ? (lRep &    0xfffffffffffffL) << 1  // denormalized number 
 	    : (lRep &    0xfffffffffffffL) | 
-	    /*       */0x10000000000000L;
+	    /*        */0x10000000000000L;
+
 	this.mantissa = new BigDecimal
 	    (Math.floor(this.mantissaL)*Math.pow(2,-doubleMantLen()));
 	assert num == this.sign*Math.scalb((double)this.mantissaL, this.exp-53);
@@ -233,7 +234,6 @@ public class FPSeparator {
     public static void main(String[] args) {
 	long time;
 	double num;
-
 	time = System.currentTimeMillis();
 	for (int i = 0; i < 10000000; i++) {
 	    num = Math.random();

@@ -25,6 +25,27 @@ public final class MathExt {
 
     private final static double LN2 = Math.log(2);
 
+    // **** both, MathExt and BuiltInTypes shall be in package arithmetics 
+
+    /**
+     * Precision and rounding mode of a <code>double</code> value. 
+     *
+     * @see #round(double, MathContext)
+     */
+    public static final MathContext CONTEXT_DUAL_DOUBLE = 
+	    new MathContext(BuiltInTypes.DOUBLE.mantissaLen(), 
+			    RoundingMode.HALF_EVEN);
+
+    /**
+     * Precision and rounding mode of a <code>float</code> value. 
+     *
+     * @see #round(double, MathContext)
+     */
+    public static final MathContext CONTEXT_DUAL_FLOAT = 
+	    new MathContext(BuiltInTypes.FLOAT.mantissaLen(), 
+			    RoundingMode.HALF_EVEN);
+
+
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
      * -------------------------------------------------------------------- */
@@ -242,6 +263,9 @@ public final class MathExt {
      *    precision and rounding mode to round <code>num</code> 
      * @return 
      *    <code>num</code> rounded according to <code>mContext</code>. 
+     * @throws ArithmeticException
+     *    if rounding is necessary but not allowed 
+     *    according to <code>mContext</code>. 
      */
     public static double round(double num, MathContext mContext) {
 	if (Double.isInfinite(num) || Double.isNaN(num) || num == 0.0) {
@@ -351,7 +375,7 @@ public final class MathExt {
      * @param mant 
      *    the mantissa to be rounded 
      * @param numDigsToNullify
-     *    the number of trailing digits to be nullified 
+     *    the number of trailing digits of the mantissa to be nullified 
      * @param chgIsAllowed
      *    whether a trial to change in <code>mant</code> causes an exception. 
      * @return

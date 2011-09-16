@@ -247,7 +247,10 @@ public class FPSeparator {
 	int exp;
 	long lRep;
 	for (int i = 0; i < 10000000; i++) {
-	    num = Math.random();
+	    num  = Math.random();
+	    num *= Math.pow(2.0,100*Math.random()-50);
+	    num *= MathExt.sgn(Math.random()-0.5);
+
 	    lRep = Double.doubleToRawLongBits(num);
 	    exp = (int) ((lRep >> 52) & 0x7ffL) -1075+53;
 	    for (int j = 0; j < 100; j++) {

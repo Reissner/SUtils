@@ -1,10 +1,18 @@
 
 package eu.simuline.util;
 
+import eu.simuline.arithmetics.dual.MathContextAbsRel;
+import eu.simuline.arithmetics.left2right.BuiltInTypes;
+
 import eu.simuline.testhelpers.Actions;
 import eu.simuline.testhelpers.Accessor;
+
 import static eu.simuline.testhelpers.Assert.assertEquals;
 import static eu.simuline.testhelpers.Assert.assertArraysEquals;
+
+import java.lang.reflect.InvocationTargetException;
+
+import java.math.RoundingMode;
 
 //import static org.junit.Assert.assertEquals;
 //import static org.junit.Assert.assertTrue;
@@ -21,10 +29,6 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import junit.framework.JUnit4TestAdapter;
 
-import java.lang.reflect.InvocationTargetException;
-import eu.simuline.arithmetics.dual.MathContextAbsRel;
-import java.math.RoundingMode;
-import eu.simuline.arithmetics.left2right.BuiltInTypes;
 
 @RunWith(Suite.class)
 @SuiteClasses({MathExtTest.TestAll.class})
@@ -84,13 +88,24 @@ public class MathExtTest {
 
 
     public void testRoundAbsRel() {
+	testRoundAbsRel(RoundingMode.DOWN);
+//	testRoundAbsRel(RoundingMode.UP);
+//	testRoundAbsRel(RoundingMode.FLOOR);
+//	testRoundAbsRel(RoundingMode.CEILING);
+//	testRoundAbsRel(RoundingMode.HALF_DOWN);
+//	testRoundAbsRel(RoundingMode.HALF_UP);
+//	testRoundAbsRel(RoundingMode.HALF_EVEN);
+    }
+
+    private void testRoundAbsRel(RoundingMode rndMode) {
 	double num1, num2, num;
 	MathContextAbsRel mcF1, mcF2;
-
+	System.out.println("  RoundingMode   : "+rndMode);
 	for (int numRed = -41; numRed < 52; numRed++) {
 	mcF2 =  MathContextAbsRel.createRel(BuiltInTypes.DOUBLE.mantissaLen()
 					    -numRed, 
-					    RoundingMode.DOWN);//
+					    rndMode);//
+	    System.out.println(" numRed    : "+numRed);
 	for (int i = 0; i < 1000; i++) {
 	    System.out.println("  i   : "+i);
 	    num1  = Math.random();
@@ -105,7 +120,7 @@ public class MathExtTest {
 	} // for numRed
 
 
-    } // testRoundAbsRel()
+    } // testRoundAbsRel(RoundingMode)
 
     /* -------------------------------------------------------------------- *
      * framework.                                                           *

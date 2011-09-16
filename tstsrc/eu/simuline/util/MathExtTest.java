@@ -22,6 +22,9 @@ import org.junit.runners.Suite.SuiteClasses;
 import junit.framework.JUnit4TestAdapter;
 
 import java.lang.reflect.InvocationTargetException;
+import eu.simuline.arithmetics.dual.MathContextAbsRel;
+import java.math.RoundingMode;
+import eu.simuline.arithmetics.left2right.BuiltInTypes;
 
 @RunWith(Suite.class)
 @SuiteClasses({MathExtTest.TestAll.class})
@@ -41,8 +44,11 @@ public class MathExtTest {
 	    testcase = 1;
 	    repetition = 1;
 	}
-	@Test public void test() throws Exception {
-	    MathExtTest.TEST.testSME();	    
+	@Test public void testSME() throws Exception {
+	    MathExtTest.TEST.testSME();
+	}
+	@Test public void testRoundAbsRel() throws Exception {
+	    MathExtTest.TEST.testRoundAbsRel();
 	}
     } // class TestAll
 
@@ -74,9 +80,32 @@ public class MathExtTest {
 							 MathExt.expL(num)));
 	}
 
+    } // testSME()
 
-    }
 
+    public void testRoundAbsRel() {
+	double num1, num2, num;
+	MathContextAbsRel mcF1, mcF2;
+
+	for (int numRed = -41; numRed < 52; numRed++) {
+	mcF2 =  MathContextAbsRel.createRel(BuiltInTypes.DOUBLE.mantissaLen()
+					    -numRed, 
+					    RoundingMode.DOWN);//
+	for (int i = 0; i < 1000; i++) {
+	    System.out.println("  i   : "+i);
+	    num1  = Math.random();
+	    num1 *= Math.pow(2.0,100*Math.random()-50);
+	    num1 *= MathExt.sgn(Math.random()-0.5);
+
+	    mcF1 =  MathContextAbsRel.createAbs(MathExt.expL2(num1)-53+numRed, 
+					       RoundingMode.DOWN);//
+	    assertEquals(MathExt.round(num1, mcF2), //num1, //
+			 MathExt.round(num1, mcF1));
+	} // for i
+	} // for numRed
+
+
+    } // testRoundAbsRel()
 
     /* -------------------------------------------------------------------- *
      * framework.                                                           *

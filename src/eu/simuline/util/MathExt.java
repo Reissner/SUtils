@@ -821,7 +821,20 @@ assert !isDenormalized(num);
 
     public static void main(String[] args) {
 
-	double num;
+	double num1, num2, num;
+	num1 = 0.625;
+	num2 = 1;
+	System.out.println("num:   "+num1/num2);
+	num = round(num1/num2, 
+		    MathContextAbsRel.createAbs(-3, RoundingMode.FLOOR));
+	BigDual bdNum = BigDual.valueOf(num1)
+	    .divide(BigDual.valueOf(num2), 
+		    MathContextAbsRel.createAbs(-3, RoundingMode.FLOOR));
+	System.out.println("  num: "+num);
+	System.out.println("bdBum: "+bdNum.doubleValueExact());
+	System.exit(0);
+
+
 	for (int i = 0; i < 1000; i++) {
 	    System.out.println("i: "+i);
 	    num  = Math.random();

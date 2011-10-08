@@ -191,31 +191,43 @@ public final class MathExt {
      * i.e. rounded up in absolute value. 
      * For rounding downwards, i.e. towards zero, 
      * just compute <code>dividend / divisor</code>. 
-     * This works for positive numbers only. 
+     * This implementation works for non-negative <code>dividend</code> 
+     * combined with positive <code>divisor</code> only. 
+     * <p>
+     * The implementation ensures that no overflow occurs, 
+     * i.e. that the result is non-negative again. 
      *
      * @param dividend 
      *    a non-negative number 
      * @param divisor 
      *    a positive number 
      * @return
-     *    The least integer above <code>dividend / divisor</code> 
-     *    computed by <code>(a+b-1)/b=a/b+1-1/b</code>. 
-     *    To prove that this formula is correct, we distinguish: 
-     *    <ul>
-     *    <li>
-     *    i.e. if <code>a/b</code> goes without rounding, 
-     *    rounding <code>a/b</code> upwards is <code>a/b</code> itself and 
-     *    rounding <code>(a+b-1)/b=a/b+(1-1/b)</code> towards zero yields 
-     *    <code>a/b</code> as well. 
-     *    <li>
-     *    If <code>b</code> does not divide <code>a</code>, 
-     *    then rounding <code>(a+b-1)/b=(a-1)/b+1</code> towards zero 
-     *    is the same as rounding down <code>a/b+1</code> 
-     *    which is rounding upwards <code>a/b</code>. 
-     *    </ul>
+     *    The least integer above <code>dividend / divisor</code>. 
+     *    For <code>dividend%divisor=0</code>, 
+     *    the result coincides with <code>dividend / divisor</code>. 
+     *    An overflow cannot occur, 
+     *    because the result is at most <code>dividend</code>. 
+     *    For <code>dividend%divisor!=0</code>, 
+     *    obviously <code>divisor>1</code> holds and so, 
+     *    the result is at most <code>(dividend/2)+1<=(dividend>>1)+1</code>. 
      */
     public static int divRoundUp(int dividend, int divisor) {
-	return (dividend+divisor-1)/divisor;
+	// this implementation is sensitive to overflow
+	//return (dividend+divisor-1)/divisor;
+	assert dividend >= 0 && divisor > 0;
+
+	int res = (dividend % divisor == 0) 
+	    ? dividend / divisor 
+	    : dividend / divisor + 1;
+	assert res >= 0;
+	return res;
+    }
+
+    /**
+     * Returns the <code>deg</code>th root of <code>dNum</code>. 
+     */
+    public static double root(double dNum, int deg) {
+	return Math.pow(dNum, 1.0/deg);
     }
 
     /**

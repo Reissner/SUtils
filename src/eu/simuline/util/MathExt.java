@@ -187,6 +187,78 @@ public final class MathExt {
     }
 
     /**
+     * Returns the minimum of the given list of numbers. 
+     * Since integer values are finite, the empty argument list is not allowed. 
+     *
+     * @param nums
+     *    the list of numbers to compute the minimum for. 
+     * @return
+     *    the minimum of the numbers in <code>nums</code>. 
+     */
+    public static int min(List<Integer> nums) {
+	assert !nums.isEmpty();
+	int res = Integer.MAX_VALUE;
+	for (int num : nums) {
+	    res = Math.min(res, num);
+	}
+	return res;
+    }
+
+    /**
+     * Returns the maxmum of the given list of numbers. 
+     * Since integer values are finite, the empty argument list is not allowed. 
+     *
+     * @param nums
+     *    the list of numbers to compute the maximum for. 
+     * @return
+     *    the maximum of the numbers in <code>nums</code>. 
+     */
+    public static int max(List<Integer> nums) {
+	assert !nums.isEmpty();
+	int res = Integer.MIN_VALUE;
+	for (int num : nums) {
+	    res = Math.max(res, num);
+	}
+	return res;
+    }
+
+    /**
+     * Returns the minimum of the given list of numbers. 
+     * If the list of numbers is empty, the result is plus infinity. 
+     *
+     * @param nums
+     *    the list of numbers to compute the minimum for. 
+     * @return
+     *    the minimum of the numbers in <code>nums</code>. 
+     */
+    public static double min(double... nums) {
+	double res = Double.POSITIVE_INFINITY;
+	for (double num : nums) {
+	    res = Math.min(res, num);
+	}
+
+	return res;
+    }
+
+    /**
+     * Returns the maximum of the given list of numbers. 
+     * If the list of numbers is empty, the result is minus infinity. 
+     *
+     * @param nums
+     *    the list of numbers to compute the minimum for. 
+     * @return
+     *    the maximum of the numbers in <code>nums</code>. 
+     */
+    public static double max(double... nums) {
+	double res = Double.NEGATIVE_INFINITY;
+	for (double num : nums) {
+	    res = Math.max(res, num);
+	}
+
+	return res;
+    }
+
+    /**
      * Returns the quotient of the given arguments rounded away from zero, 
      * i.e. rounded up in absolute value. 
      * For rounding downwards, i.e. towards zero, 
@@ -217,6 +289,19 @@ public final class MathExt {
 	assert dividend >= 0 && divisor > 0;
 
 	int res = (dividend % divisor == 0) 
+	    ? dividend / divisor 
+	    : dividend / divisor + 1;
+	assert res >= 0;
+	return res;
+    }
+
+    // see divRoundUp(int dividend, int divisor)
+    public static long divRoundUp(long dividend, long divisor) {
+	// this implementation is sensitive to overflow
+	//return (dividend+divisor-1)/divisor;
+	assert dividend >= 0 && divisor > 0;
+
+	long res = (dividend % divisor == 0) 
 	    ? dividend / divisor 
 	    : dividend / divisor + 1;
 	assert res >= 0;

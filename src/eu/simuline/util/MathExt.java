@@ -94,6 +94,17 @@ public final class MathExt {
 	MathContextAbsRel.createRel(BuiltInTypes.FLOAT.mantissaLen(), 
 				    RoundingMode.HALF_EVEN);
 
+    /**
+     * Relative precision and rounding mode of a <code>float</code> value 
+     * equivalent with {@link #CONTEXT_DUAL_FLOAT}. 
+     *
+     * @see #round(float, MathContext)
+     * @see #REL_CONTEXT_DUAL_FLOAT
+     */
+    public static final MathContextAbsRel ABS_CONTEXT_INTEGER = 
+	MathContextAbsRel.createAbs(0, 
+				    RoundingMode.HALF_EVEN);
+
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
      * -------------------------------------------------------------------- */
@@ -732,6 +743,23 @@ assert !isDenormalized(num);
 	// The following formula holds whether there is an overflow or not 
 
 	return sep.sign() * Math.scalb((double)mant, sep.exp()-53);
+    }
+
+    /**
+     * Rounds <code>num</code> to an adjacent integer 
+     * using the rounding mode <code>rndMode</code>. 
+     */
+    public static double round2integer(double num, 
+				       RoundingMode rndMode) {
+	return round(num, MathContextAbsRel.createAbs(0, rndMode));
+    }
+
+    /**
+     * Rounds <code>num</code> to an adjacent integer 
+     * using the rounding mode <code>HALF_EVEN</code>. 
+     */
+    public static double round2integer(double num) {
+	return round(num, ABS_CONTEXT_INTEGER);
     }
 
     /**

@@ -270,6 +270,20 @@ public final class MathExt {
     }
 
     /**
+     * Returns the Euclidean modulus when dividing the arguments. 
+     * In contrast to Java's built in mod operator, 
+     * the result is non-negative. 
+     */
+    public static int modEuclid(int dividend, int divisor) {
+	int res = dividend % divisor;
+	if (res < 0) {
+	    res += divisor;
+	}
+	assert res >= 0;
+	return res;
+    }
+
+    /**
      * Returns the quotient of the given arguments rounded away from zero, 
      * i.e. rounded up in absolute value. 
      * For rounding downwards, i.e. towards zero, 
@@ -749,17 +763,17 @@ assert !isDenormalized(num);
      * Rounds <code>num</code> to an adjacent integer 
      * using the rounding mode <code>rndMode</code>. 
      */
-    public static double round2integer(double num, 
-				       RoundingMode rndMode) {
-	return round(num, MathContextAbsRel.createAbs(0, rndMode));
+    public static int round2integer(double num, 
+				    RoundingMode rndMode) {
+	return (int)round(num, MathContextAbsRel.createAbs(0, rndMode));
     }
 
     /**
      * Rounds <code>num</code> to an adjacent integer 
      * using the rounding mode <code>HALF_EVEN</code>. 
      */
-    public static double round2integer(double num) {
-	return round(num, ABS_CONTEXT_INTEGER);
+    public static int round2integer(double num) {
+	return (int)round(num, ABS_CONTEXT_INTEGER);
     }
 
     /**

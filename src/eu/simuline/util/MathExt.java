@@ -1,7 +1,7 @@
 
 package eu.simuline.util;
 
-import eu.simuline.arithmetics.left2right.BuiltInTypes;
+import eu.simuline.arithmetics.BuiltInTypes;
 
 import eu.simuline.arithmetics.dual.MathContextAbsRel;
 import eu.simuline.arithmetics.dual.BigDual;

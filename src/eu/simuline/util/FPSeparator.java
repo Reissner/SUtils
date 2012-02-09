@@ -1,6 +1,7 @@
 package eu.simuline.util;
 
 import eu.simuline.arithmetics.BuiltInTypes;
+import eu.simuline.arithmetics.MathExt;
 
 import eu.simuline.arithmetics.dual.BigFloat;
 

@@ -1,5 +1,7 @@
 package eu.simuline.util;
 
+import eu.simuline.arithmetics.MathExt;
+
 import eu.simuline.testhelpers.GUIRunListener;
 import eu.simuline.testhelpers.Actions;
 //import eu.simuline.testhelpers.Accessor;

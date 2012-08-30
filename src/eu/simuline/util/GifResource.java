@@ -1,6 +1,5 @@
 package eu.simuline.util;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import java.net.URL;

@@ -3,10 +3,6 @@ package eu.simuline.util;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.BitSet;
-import java.util.ArrayList;
-
-import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Describe class BitSetList here. 

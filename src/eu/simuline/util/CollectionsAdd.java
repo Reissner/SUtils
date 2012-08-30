@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.Collections;// NOPMD for javadoc only. 
 import java.util.Collection;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;

@@ -45,15 +45,31 @@ public abstract class Finder {
 
     // **** ordering deviates from original find 
     static class Primary extends Finder {
-	Stack<File> files;
+
+	/* ---------------------------------------------------------------- *
+	 * fields.                                                          *
+	 * ---------------------------------------------------------------- */
+
+	private Stack<File> files;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
+
 	Primary(File file) {
 	    this.files = new Stack<File>();
 	    this.files.push(file);
 	}
-	boolean hasNext() {
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
+
+	public boolean hasNext() {
 	    return !this.files.isEmpty();
 	}
-	File next() {
+
+	public File next() {
 	    assert hasNext();
 	    File file = this.files.pop();
 	    if (file.isDirectory()) {
@@ -73,12 +89,26 @@ public abstract class Finder {
      * Filters by name. See {@link Finder#name(String)}. 
      */
     class NameFilter extends Finder {
-	Pattern pattern;
-	File next;
+
+	/* ---------------------------------------------------------------- *
+	 * fields.                                                          *
+	 * ---------------------------------------------------------------- */
+
+	private Pattern pattern;
+	private File next;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
+
 	NameFilter(String pattern) {
 	    this.pattern = Pattern.compile(pattern);
 	    updateNext();
 	}
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
 
 	private void updateNext() {
 	    boolean matches;
@@ -93,10 +123,11 @@ public abstract class Finder {
 	    this.next = null;
 	}
 
-	boolean hasNext() {
+	public boolean hasNext() {
 	    return this.next != null;
 	}
-	File next() {
+
+	public File next() {
 	    assert hasNext();
 	    File res = this.next;
 	    assert res != null;
@@ -107,14 +138,30 @@ public abstract class Finder {
     } // class NameFilter 
 
     class PrintFilter extends Finder {
-	PrintStream str;
+
+	/* ---------------------------------------------------------------- *
+	 * fields.                                                          *
+	 * ---------------------------------------------------------------- */
+
+	private PrintStream str;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
+
 	PrintFilter(PrintStream str) {
 	    this.str = str;
 	}
-	boolean hasNext() {
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
+
+	public boolean hasNext() {
 	    return Finder.this.hasNext();
 	}
-	File next() {
+
+	public File next() {
 	    assert hasNext();
 	    File res = Finder.this.next();
 	    this.str.println(res.toString());
@@ -130,7 +177,6 @@ public abstract class Finder {
      * To prevent instantiation.
      */
     private Finder() {
-
     }
 
     /**
@@ -169,13 +215,13 @@ public abstract class Finder {
      *
      * @see #next()
      */
-    abstract boolean hasNext();
+    public abstract boolean hasNext();
 
     /**
      * Returns the next file this finder can emit. 
      * This does not throw an exception iff {@link #hasNext()} returns true. 
      */
-    abstract File next();
+    public abstract File next();
 
     public static void main(String[] args) {
 	File file = new File(args[0]);
@@ -184,9 +230,8 @@ public abstract class Finder {
 	    .print(System.out);
 	while (finder.hasNext()) {
 	    System.out.println(""+finder.next());
-	    
-	}
 
+	}
     }
 
 }

@@ -43,7 +43,7 @@ public abstract class Finder {
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
-    // **** ordering deviates from original find 
+    // ordering is the same as in original find 
     static class Primary extends Finder {
 
 	/* ---------------------------------------------------------------- *
@@ -77,13 +77,17 @@ public abstract class Finder {
 		if (list == null) {
 		    System.out.println("cannot read "+file);
 		} else {
-		    this.files.addAll(Arrays.asList(list));
+		    // push in inverse order 
+		    for (int i = list.length-1; i>=0; i--) {
+			this.files.push(list[i]);
+		    }
+		    
+		    //this.files.addAll(Arrays.asList(list));
 		}
 	    }
 	    return file;
 	}
     } // class Primary 
-    //<code></code>
 
     /**
      * Filters by name. See {@link Finder#name(String)}. 
@@ -226,7 +230,7 @@ public abstract class Finder {
     public static void main(String[] args) {
 	File file = new File(args[0]);
 	Finder finder = Finder.path(file)
-	    .name(".*\\.java")
+	    //.name(".*\\.java")
 	    .print(System.out);
 	while (finder.hasNext()) {
 	    System.out.println(""+finder.next());

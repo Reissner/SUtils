@@ -109,72 +109,6 @@ public abstract class Finder {
 	    }
 	};
 
-    class Multiplexer {
-
-	/* ---------------------------------------------------------------- *
-	 * inner classes.                                                   *
-	 * ---------------------------------------------------------------- */
-
-	class Slave extends Finder {
-	    public boolean hasNext() {
-		if (Multiplexer.this.read.contains(Slave.this)) {
-		    return Finder.this.hasNext();
-		}
-		return Multiplexer.this.file != null;
-	    }
-
-	    public File next() {
-		if (Multiplexer.this.read.contains(Slave.this)) {
-		    assert read.size() == slaves.size();// **** 
-		    Multiplexer.this.read.clear();
-		    Multiplexer.this.file = Finder.this.next();
-		}
-		Multiplexer.this.read.add(Slave.this);
-
-		return Multiplexer.this.file;
-	    }
-
-	    public boolean pass(File file) {
-		throw new UnsupportedOperationException();
-	    }
-
-	} // class Slave 
-
-	/* ---------------------------------------------------------------- *
-	 * fields.                                                          *
-	 * ---------------------------------------------------------------- */
-
-	private final Set<Finder> slaves;
-	private final Set<Finder> read;
-	private File file;
-
-	/* ---------------------------------------------------------------- *
-	 * constructors.                                                    *
-	 * ---------------------------------------------------------------- */
-
-	Multiplexer() {
-	    this.slaves = new HashSet<Finder>();
-	    this.read   = new HashSet<Finder>();
-	    if (Finder.this.hasNext()) {
-		this.file = Finder.this.next();
-	    } else {
-		this.file = null;
-	    }
-	}
-
-	/* ---------------------------------------------------------------- *
-	 * methods.                                                         *
-	 * ---------------------------------------------------------------- */
-
-	Finder finder() {
-	    Finder res = new Slave();
-	    this.slaves.add(res);
-	    return res;
-	}
-
-
-    } // class Multiplexer 
-
     /**
      * Filters files by name. See {@link Finder#name(String)}. 
      */
@@ -229,6 +163,7 @@ public abstract class Finder {
 	 * ---------------------------------------------------------------- */
 
 	Secondary(Finder encl, Filter filter) {
+	    super();
 	    this.encl = encl;
 	    this.filter = filter;
 	    updateNext();
@@ -380,6 +315,78 @@ public abstract class Finder {
 
     } // class NegFilter 
 
+    // this is a lazy and-filter 
+    // maybe lazy and-filters are not so useful, because, 
+    // unlike non-lazy and-filters and or-filters, 
+    // they could be realized as a sequence of filters 
+    static class AndFilter implements Filter {
+
+	/* ---------------------------------------------------------------- *
+	 * fields.                                                          *
+	 * ---------------------------------------------------------------- */
+
+	private final Filter[] filters;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
+
+	AndFilter(Filter[] filters) {
+	    this.filters = filters;
+	}
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
+
+
+	public boolean pass(File file) {
+	    for (int i = 0; i < filters.length; i++) {
+		if (!this.filters[i].pass(file)) {
+		    return false;
+		}
+	    } // for 
+
+	    return true;
+	}
+
+    } // class AndFilter 
+
+    // this is a lazy or-filter 
+    static class OrFilter implements Filter {
+
+	/* ---------------------------------------------------------------- *
+	 * fields.                                                          *
+	 * ---------------------------------------------------------------- */
+
+	private final Filter[] filters;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
+
+	OrFilter(Filter[] filters) {
+	    this.filters = filters;
+	}
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
+
+
+	public boolean pass(File file) {
+	    for (int i = 0; i < filters.length; i++) {
+		if (this.filters[i].pass(file)) {
+		    return true;
+		}
+	    } // for 
+
+	    return false;
+	}
+
+    } // class OrFilter 
+
+
     /* -------------------------------------------------------------------- *
      * Class constants.                                                     *
      * -------------------------------------------------------------------- */
@@ -403,10 +410,6 @@ public abstract class Finder {
      */
     public static Finder path(File file) {
 	return new Finder.Primary(file);
-    }
-
-    Multiplexer multiplexer() {
-	return new Multiplexer();
     }
 
     /**
@@ -435,6 +438,14 @@ public abstract class Finder {
 	return new Secondary(Finder.this, new NegFilter(filter));
     }
 
+    public Finder and(Filter[] filters) {
+	return new Secondary(Finder.this, new AndFilter(filters));
+    }
+
+    public Finder or (Filter[] filters) {
+	return new Secondary(Finder.this, new  OrFilter(filters));
+    }
+
 
     /* -------------------------------------------------------------------- *
      * abstract methods.                                                    *
@@ -461,6 +472,11 @@ public abstract class Finder {
 	    .name(".*\\.java")
 //	    .exec(new String[] {"grep", "matlab", EXEC_ARG})
 	    .neg(new ExecFilter(new String[] {"grep", "class", EXEC_ARG}))
+	    .or(new Filter[] {
+		    new ExecFilter(new String[] {"grep", "enum", EXEC_ARG}),
+		    new ExecFilter(new String[] {"grep", "interface", EXEC_ARG})
+		}
+		    )
 	    .print(System.out);
 
 	// Finder finder = Finder.path(file);

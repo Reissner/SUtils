@@ -280,7 +280,6 @@ public abstract class Finder {
 	PrintFilter(Finder encl, PrintStream str) {
 	    super(encl, TRUE);
 	    this.str = str;
-	    updateNext();
 	}
 
 	/* ---------------------------------------------------------------- *

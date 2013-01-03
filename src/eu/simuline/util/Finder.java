@@ -238,17 +238,64 @@ public abstract class Finder {
     /**
      * Represents a file filter. 
      */
-    static interface Filter {
+    static abstract class Filter {
+
 	/**
 	 * Returns for the given file whether this file passes this filter. 
 	 */
-	boolean pass(File file);
+	abstract boolean pass(File file);
+
+	/**
+	 * Returns a filter which passes a file 
+	 * iff <code>filter</code> does not. 
+	 * This corresponds the tests <code>\! expr1</code> 
+	 * in the original find command. 
+	 */
+	Filter not() {
+	    return new NegFilter(this);
+	}
+
+	/**
+	 * Returns a filter which passes a file 
+	 * iff so do all filters in <code>filters</code>. 
+	 * This corresponds the tests <code>expr1 -a .... exprn</code> 
+	 * and <code>expr1 -and .... exprn</code> 
+	 * in the original find command. 
+	 *
+	 * @param filters 
+	 *    a sequence of filters which may be empty. 
+	 *    If empty, this filter passes all files like {@link #TRUE}. 
+	 * @return 
+	 *    a lazy and-filter of type {@link Finder.AndFilter}. 
+	 *    For more details see there. 
+	 */
+	static Filter and(Filter[] filters) {
+	    return new AndFilter(filters);
+	}
+
+	/**
+	 * Returns a filter which passes a file 
+	 * iff at least one filter in <code>filters</code> does so. 
+	 * This corresponds the tests <code>expr1 -o .... exprn</code> 
+	 * and <code>expr1 -or .... exprn</code> 
+	 * in the original find command. 
+	 *
+	 * @param filters 
+	 *    a sequence of filters which may be empty. 
+	 *    If empty, this filter passes no file like {@link #FALSE}. 
+	 * @return 
+	 *    a lazy and-filter of type {@link Finder.AndFilter}. 
+	 *    For more details see there. 
+	 */
+	static Filter or(Filter[] filters) {
+	    return new  OrFilter(filters);
+	}
     }
 
     /**
      * Filters files by name. See {@link Finder#name(String)}. 
      */
-    static class NameFilter implements Filter {
+    static class NameFilter extends Filter {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -283,7 +330,7 @@ public abstract class Finder {
      * Do not mix up with {@link Finder#IS_EXEC}. 
      * See {@link Finder#exec(String[])}. 
      */
-    static class ExecFilter implements Filter {
+    static class ExecFilter extends Filter {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -375,7 +422,7 @@ public abstract class Finder {
      * <p>
      * See {@link Finder#neg(Filter)}. 
      */
-    static class NegFilter implements Filter {
+    static class NegFilter extends Filter {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -423,7 +470,7 @@ public abstract class Finder {
      * <p>
      * See {@link Finder#and(Filter[])}. 
      */
-    static class AndFilter implements Filter {
+    static class AndFilter extends Filter {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -472,7 +519,7 @@ public abstract class Finder {
      * <p>
      * See {@link Finder#or(Filter[])}. 
      */
-    static class OrFilter implements Filter {
+    static class OrFilter extends Filter {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -511,7 +558,7 @@ public abstract class Finder {
 
 
     /* -------------------------------------------------------------------- *
-     * Class constants.                                                     *
+     * Class constants (creator methods for Filters come later).            *
      * -------------------------------------------------------------------- */
 
     /**
@@ -607,7 +654,7 @@ public abstract class Finder {
 
 
     /* -------------------------------------------------------------------- *
-     * constructors and creator methods.                                    *
+     * constructors and creator methods for Finders.                        *
      * -------------------------------------------------------------------- */
 
     /**
@@ -636,25 +683,90 @@ public abstract class Finder {
     }
 
     /**
-     * Filter without side effect: 
-     * just passes the files received by this finder 
-     * the (short) names of which 
+     * Adds a trivial filter passing all files received by this finder 
+     * printing their full names to <code>str</code>. 
+     */
+    public Finder print(PrintStream str) {
+	return new PrintFilter(Finder.this, str);
+    }
+
+    /**
+     * Returns a finder by attachig the given filter. 
+     * For adding the most common filters, there are convenience methods. 
+     */
+    public Finder add(Filter filter) {
+	return new Secondary(Finder.this, filter);
+    }
+
+    /**
+     * Convenience method: adds a name filter to this finder. 
+     *
+     * @see #nameFilter(String)
+     */
+    public Finder name(String pattern) {
+	return Finder.this.add(nameFilter(pattern));
+    }
+
+    /**
+     * Convenience method: adds an execution filter to this finder. 
+     *
+     * @see #execFilter(String[])
+     */
+    public Finder exec(String[] cmd) {
+	return Finder.this.add(execFilter(cmd));
+    }
+
+    /**
+     * Convenience method: 
+     * Returns a finder by attachig the inverse of the given filter. 
+     * This corresponds the tests <code>\! expr1</code> 
+     * in the original find command. 
+     *
+     * @see Finder.Filter#not()
+     */
+    public Finder not(Filter filter) {
+	return Finder.this.add(filter.not());
+    }
+
+    /**
+     * Convenience method: 
+     * Returns a finder by attachig an and-filter. 
+     * This corresponds the tests <code>\! expr1</code> 
+     * in the original find command. 
+     *
+     * @see Finder.Filter#and(Filter[])
+     */
+    public Finder and(Filter[] filters) {
+	return Finder.this.add(Filter.and(filters));
+    }
+
+    /**
+     * Convenience method: 
+     * Returns a finder by attachig an or-filter. 
+     * This corresponds the tests <code>\! expr1</code> 
+     * in the original find command. 
+     *
+     * @see Finder.Filter#or(Filter[])
+     */
+    public Finder or(Filter[] filters) {
+	return Finder.this.add(Filter.or(filters));
+    }
+
+    /* -------------------------------------------------------------------- *
+     * constructors and creator methods for Filters.                        *
+     * -------------------------------------------------------------------- */
+
+    /**
+     * Returns a filter passing a file 
+     * iff its (short) names of which 
      * match the regular expression <code>pattern</code>. 
      *
      * @return
      *    an instance of {@link Finder.Secondary} 
      *    instantiated with a filter of type {@link Finder.NameFilter} 
      */
-    public Finder name(String pattern) {
-	return new Secondary(Finder.this, new NameFilter(pattern));
-    }
-
-    /**
-     * Filter passing all files received by this finder 
-     * printing their full names to <code>str</code>. 
-     */
-    public Finder print(PrintStream str) {
-	return new PrintFilter(Finder.this, str);
+    public static Filter nameFilter(String pattern) {
+	return new NameFilter(pattern);
     }
 
     /**
@@ -695,51 +807,8 @@ public abstract class Finder {
      *    an instance of {@link Finder.Secondary} 
      *    instantiated with a filter of type {@link Finder.ExecFilter} 
      */
-    public Finder exec(String[] cmd) {
-	return new Secondary(Finder.this, new ExecFilter(cmd));
-    }
-
-    /**
-     * Returns a filter which passes a file iff <code>filter</code> does not. 
-     */
-    public Finder neg(Filter filter) {
-	return new Secondary(Finder.this, new NegFilter(filter));
-    }
-
-    /**
-     * Returns a filter which passes a file 
-     * iff so do all filters in <code>filters</code>. 
-     * This corresponds the tests <code>expr1 -a .... exprn</code> 
-     * and <code>expr1 -and .... exprn</code> 
-     * in the original find command. 
-     *
-     * @param filters 
-     *    a sequence of filters which may be empty. 
-     *    If empty, this filter passes all files like {@link #TRUE}. 
-     * @return 
-     *    a lazy and-filter of type {@link Finder.AndFilter}. 
-     *    For more details see there. 
-     */
-    public Finder and(Filter[] filters) {
-	return new Secondary(Finder.this, new AndFilter(filters));
-    }
-
-    /**
-     * Returns a filter which passes a file 
-     * iff at least one filter in <code>filters</code> does so. 
-     * This corresponds the tests <code>expr1 -o .... exprn</code> 
-     * and <code>expr1 -or .... exprn</code> 
-     * in the original find command. 
-     *
-     * @param filters 
-     *    a sequence of filters which may be empty. 
-     *    If empty, this filter passes no file like {@link #FALSE}. 
-     * @return 
-     *    a lazy and-filter of type {@link Finder.AndFilter}. 
-     *    For more details see there. 
-     */
-    public Finder or (Filter[] filters) {
-	return new Secondary(Finder.this, new  OrFilter(filters));
+    public static Filter execFilter(String[] cmd) {
+	return new ExecFilter(cmd);
     }
 
 
@@ -765,14 +834,14 @@ public abstract class Finder {
 	File file = new File(args[0]);
 
 	Finder finder = Finder.path(file)
-	    .name(".*\\.java")
-//	    .exec(new String[] {"grep", "matlab", EXEC_ARG})
-	    .neg(new ExecFilter(new String[] {"grep", "class", EXEC_ARG}))
-	    .or(new Filter[] {
-		    new ExecFilter(new String[] {"grep", "enum", EXEC_ARG}),
-		    new ExecFilter(new String[] {"grep", "interface", EXEC_ARG})
-		}
-		    )
+	    .name(".*\\.m")
+//	    .exec(new String[] {"egrep", "matlab", EXEC_ARG})
+	    .not(execFilter(new String[] {"grep", "'", EXEC_ARG}))
+//	    .or(new Filter[] {
+//		    execFilter(new String[] {"grep", "enum", EXEC_ARG}),
+//		    execFilter(new String[] {"grep", "interface", EXEC_ARG})
+//		}
+//		    )
 	    .print(System.out);
 
 	// Finder finder = Finder.path(file);

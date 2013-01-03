@@ -97,6 +97,7 @@ public abstract class Finder {
 	    return file;
 	}
 
+	// ****
 	public boolean pass(File file) {
 	    throw new UnsupportedOperationException();
 	}
@@ -172,7 +173,7 @@ public abstract class Finder {
     /**
      * Filters files by name. See {@link Finder#name(String)}. 
      */
-    class NameFilter extends Finder {
+    class NameFilter extends Secondary {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -183,18 +184,12 @@ public abstract class Finder {
 	 */
 	private final Pattern pattern;
 
-	/**
-	 * The next file to be returned by {@link #next()} if any, 
-	 * i.e. if  {@link #hasNext()} returns <code>true</code>; 
-	 * otherwise this field is <code>null</code>. 
-	 */
-	protected File next;
-
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	NameFilter(String pattern) {
+	NameFilter(Finder encl, String pattern) {
+	    super(encl);
 	    this.pattern = Pattern.compile(pattern);
 	    updateNext();
 	}
@@ -203,19 +198,50 @@ public abstract class Finder {
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */
 
+	public boolean pass(File file) {
+	    return this.pattern.matcher(file.getName()).matches();
+	}
+
+    } // class NameFilter 
+
+    abstract static class Secondary extends Finder {
+
+	/* ---------------------------------------------------------------- *
+	 * fields.                                                          *
+	 * ---------------------------------------------------------------- */
+
+	/**
+	 * The next file to be returned by {@link #next()} if any, 
+	 * i.e. if  {@link #hasNext()} returns <code>true</code>; 
+	 * otherwise this field is <code>null</code>. 
+	 */
+	protected File next;
+
+	Finder encl;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
+
+	Secondary(Finder encl) {
+	    this.encl = encl;
+	}
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
+
 	protected void updateNext() {
-	    while (Finder.this.hasNext()) {
-		this.next = Finder.this.next();
+//	    while (Finder.this.hasNext()) {
+	    while (this.encl.hasNext()) {
+//		this.next = Finder.this.next();
+		this.next = this.encl.next();
 		assert this.next != null;
 		if (pass(this.next)) {
 		    return;
 		}
 	    }
 	    this.next = null;
-	}
-
-	public boolean pass(File file) {
-	    return this.pattern.matcher(file.getName()).matches();
 	}
 
 	public boolean hasNext() {
@@ -229,31 +255,9 @@ public abstract class Finder {
 	    updateNext();
 	    return res;
 	}
-    } // class NameFilter 
-
-    abstract class Secondary extends Finder {
-
-	/* ---------------------------------------------------------------- *
-	 * fields.                                                          *
-	 * ---------------------------------------------------------------- */
-
-	/**
-	 * The next file to be returned by {@link #next()} if any, 
-	 * i.e. if  {@link #hasNext()} returns <code>true</code>; 
-	 * otherwise this field is <code>null</code>. 
-	 */
-	protected File next;
-
-	/* ---------------------------------------------------------------- *
-	 * constructors.                                                    *
-	 * ---------------------------------------------------------------- */
-
-	Secondary() {
-	}
-
     } // class Secondary 
 
-    class PrintFilter extends Finder {
+    class PrintFilter extends Secondary {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -261,13 +265,13 @@ public abstract class Finder {
 
 	private final PrintStream str;
 
-	protected File next;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	PrintFilter(PrintStream str) {
+	PrintFilter(Finder encl, PrintStream str) {
+	    super(encl);
 	    this.str = str;
 	    updateNext();
 	}
@@ -276,35 +280,9 @@ public abstract class Finder {
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */
 
-	protected void updateNext() {
-	    while (Finder.this.hasNext()) {
-		this.next = Finder.this.next();
-		assert this.next != null;
-		if (pass(this.next)) {
-		    return;
-		}
-	    }
-	    this.next = null;
-	}
-
 	public boolean pass(File file) {
 	    return true;
 	}
-
-	// public boolean hasNext() {
-	//     return Finder.this.hasNext();
-	// }
-
-	public boolean hasNext() {
-	    return this.next != null;
-	}
-
-	// public File next() {
-	//     assert hasNext();
-	//     File res = Finder.this.next();
-	//     this.str.println(res.toString());
-	//     return res;
-	// }
 
 	public File next() {
 	    assert hasNext();
@@ -316,7 +294,7 @@ public abstract class Finder {
 	}
     } // class PrintFilter 
 
-    class ExecFilter extends Finder {
+    class ExecFilter extends Secondary {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -328,18 +306,12 @@ public abstract class Finder {
 	 */
 	private final String[] cmd;
 
-	/**
-	 * The next file to be returned by {@link #next()} if any, 
-	 * i.e. if  {@link #hasNext()} returns <code>true</code>; 
-	 * otherwise this field is <code>null</code>. 
-	 */
-	protected File next;
-
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	ExecFilter(String[] cmd) {
+	ExecFilter(Finder encl, String[] cmd) {
+	    super(encl);
 	    this.cmd = cmd;
 	    updateNext();
 	}
@@ -348,16 +320,6 @@ public abstract class Finder {
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */
 
-	protected void updateNext() {
-	    while (Finder.this.hasNext()) {
-		this.next = Finder.this.next();
-		assert this.next != null;
-		if (pass(this.next)) {
-		    return;
-		}
-	    }
-	    this.next = null;
-	}
 
 	public boolean pass(File file) {
 	    Process proc;
@@ -389,20 +351,9 @@ public abstract class Finder {
 	    return exitVal == 0;
 	}
 
-	public boolean hasNext() {
-	    return this.next != null;
-	}
-
-	public File next() {
-	    assert hasNext();
-	    File res = this.next;
-	    assert res != null;
-	    updateNext();
-	    return res;
-	}
     } // class ExecFilter 
 
-    class NegFilter extends Finder {
+    class NegFilter extends Secondary {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -410,13 +361,12 @@ public abstract class Finder {
 
 	private final Finder negFilter;
 
-	protected File next;
-
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	NegFilter(Finder negFilter) {
+	NegFilter(Finder encl, Finder negFilter) {
+	    super(encl);
 	    this.negFilter = negFilter;
 	    updateNext();
 	}
@@ -425,40 +375,10 @@ public abstract class Finder {
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */
 
-	protected void updateNext() {
-	    File notNext;
-	    while (Finder.this.hasNext()) {
-		this.next = Finder.this.next();
-		assert this.next != null;
-		if (pass(this.next)) {
-		    return;
-		}
-	    }
-	    this.next = null;
-	}
 
 	public boolean pass(File file) {
 	    return !this.negFilter.pass(file);
 	}
-
-	public boolean hasNext() {
-	    return this.next != null;
-	}
-
-	public File next() {
-	    assert hasNext();
-	    File res = this.next;
-	    assert res != null;
-	    updateNext();
-	    return res;
-	}
-	// public File next() {
-	//     if (Finder.this.hasNext()) {
-
-	//     }
-	//     return null;
-	// }
-
 
     } // class NegFilter 
 
@@ -498,7 +418,7 @@ public abstract class Finder {
      * match the regular expression <code>pattern</code>. 
      */
     public Finder name(String pattern) {
-	return new NameFilter(pattern);
+	return new NameFilter(Finder.this, pattern);
     }
 
     /**
@@ -506,15 +426,15 @@ public abstract class Finder {
      * printing their full names to <code>str</code>. 
      */
     public Finder print(PrintStream str) {
-	return new PrintFilter(str);
+	return new PrintFilter(Finder.this, str);
     }
 
     public Finder exec(String[] cmd) {
-	return new ExecFilter(cmd);
+	return new ExecFilter(Finder.this, cmd);
     }
 
     public Finder neg(Finder filter) {
-	return new NegFilter(filter);
+	return new NegFilter(Finder.this, filter);
     }
 
 

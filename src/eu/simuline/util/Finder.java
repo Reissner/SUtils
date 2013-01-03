@@ -280,6 +280,7 @@ public abstract class Finder {
     /**
      * Filter executing a shell command and passes the file received 
      * if the shell command succeeds according to its return code. 
+     * Do not mix up with {@link Finder#IS_EXEC}. 
      * See {@link Finder#exec(String[])}. 
      */
     static class ExecFilter implements Filter {
@@ -371,6 +372,8 @@ public abstract class Finder {
      * One of the logical operations of filters: 
      * Returns a filter which passes a file 
      * iff the original filter {@link #negFilter} does not. 
+     * <p>
+     * See {@link Finder#neg(Filter)}. 
      */
     static class NegFilter implements Filter {
 
@@ -417,6 +420,8 @@ public abstract class Finder {
      * Maybe lazy and-filters are not so useful, because, 
      * unlike non-lazy and-filters and or-filters, 
      * they could be realized as a sequence of filters. 
+     * <p>
+     * See {@link Finder#and(Filter[])}. 
      */
     static class AndFilter implements Filter {
 
@@ -463,7 +468,9 @@ public abstract class Finder {
      * This is a lazy or-filter, i.e. if one of the filters accepts the file, 
      * the filters later in the sequence are not executed any more. 
      * So the ordering has an effect, if one of the filters has a side effect.  
-     * Ordering may also affect performance.  
+     * Ordering may also affect performance. 
+     * <p>
+     * See {@link Finder#or(Filter[])}. 
      */
     static class OrFilter implements Filter {
 
@@ -524,7 +531,7 @@ public abstract class Finder {
      * This corresponds the test <code>-true</code> 
      * in the original find command. 
      */
-    public static Filter TRUE = new Filter() {
+    public final static Filter TRUE = new Filter() {
 	    public boolean pass(File file) {
 		return true;
 	    }
@@ -535,11 +542,69 @@ public abstract class Finder {
      * This corresponds the test <code>-false</code> 
      * in the original find command. 
      */
-    public static Filter FALSE = new Filter() {
+    public final static Filter FALSE = new Filter() {
 	    public boolean pass(File file) {
 		return false;
 	    }
 	};
+
+    /**
+     * Filter passing the file received iff it is executable. 
+     * This corresponds the test <code>-executable</code> 
+     * in the original find command. 
+     * Do not mix up with {@link Finder.ExecFilter}. 
+     */
+    public final static Filter CAN_EXEC  = new Filter() {
+	    public boolean pass(File file) {
+		return file.canExecute();
+	    }
+	};
+
+    /**
+     * Filter passing the file received iff it is readable. 
+     * This corresponds the test <code>-readable</code> 
+     * in the original find command. 
+      */
+    public final static Filter CAN_READ  = new Filter() {
+	    public boolean pass(File file) {
+		return file.canRead();
+	    }
+	};
+
+    /**
+     * Filter passing the file received iff it is writable. 
+     * This corresponds the test <code>-writable</code> 
+     * in the original find command. 
+     */
+    public final static Filter CAN_WRITE  = new Filter() {
+	    public boolean pass(File file) {
+		return file.canWrite();
+	    }
+	};
+
+    /**
+     * Filter passing the file received iff it is a regular file. 
+     * This corresponds the test <code>-type f</code> 
+     * in the original find command. 
+     */
+    public final static Filter IS_FILE  = new Filter() {
+	    public boolean pass(File file) {
+		return file.isFile();
+	    }
+	};
+
+    /**
+     * Filter passing the file received iff it is a regular file. 
+     * This corresponds the test <code>-type d</code> 
+     * in the original find command. 
+     */
+    public final static Filter IS_DIR  = new Filter() {
+	    public boolean pass(File file) {
+		return file.isDirectory();
+	    }
+	};
+
+
 
     /* -------------------------------------------------------------------- *
      * constructors and creator methods.                                    *
@@ -644,6 +709,9 @@ public abstract class Finder {
     /**
      * Returns a filter which passes a file 
      * iff so do all filters in <code>filters</code>. 
+     * This corresponds the tests <code>expr1 -a .... exprn</code> 
+     * and <code>expr1 -and .... exprn</code> 
+     * in the original find command. 
      *
      * @param filters 
      *    a sequence of filters which may be empty. 
@@ -659,6 +727,9 @@ public abstract class Finder {
     /**
      * Returns a filter which passes a file 
      * iff at least one filter in <code>filters</code> does so. 
+     * This corresponds the tests <code>expr1 -o .... exprn</code> 
+     * and <code>expr1 -or .... exprn</code> 
+     * in the original find command. 
      *
      * @param filters 
      *    a sequence of filters which may be empty. 

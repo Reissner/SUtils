@@ -97,12 +97,17 @@ public abstract class Finder {
 	    return file;
 	}
 
-	// ****
-	public boolean pass(File file) {
-	    throw new UnsupportedOperationException();
-	}
-
     } // class Primary 
+
+    static interface Filter {
+	boolean pass(File file);
+    }
+
+    static Filter TRUE = new Filter() {
+	    public boolean pass(File file) {
+		return true;
+	    }
+	};
 
     class Multiplexer {
 
@@ -173,7 +178,7 @@ public abstract class Finder {
     /**
      * Filters files by name. See {@link Finder#name(String)}. 
      */
-    class NameFilter extends Secondary {
+    static class NameFilter implements Filter {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -188,10 +193,8 @@ public abstract class Finder {
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	NameFilter(Finder encl, String pattern) {
-	    super(encl);
+	NameFilter(String pattern) {
 	    this.pattern = Pattern.compile(pattern);
-	    updateNext();
 	}
 
 	/* ---------------------------------------------------------------- *
@@ -204,7 +207,7 @@ public abstract class Finder {
 
     } // class NameFilter 
 
-    abstract static class Secondary extends Finder {
+    static class Secondary extends Finder {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -219,12 +222,16 @@ public abstract class Finder {
 
 	Finder encl;
 
+	Filter filter;
+
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	Secondary(Finder encl) {
+	Secondary(Finder encl, Filter filter) {
 	    this.encl = encl;
+	    this.filter = filter;
+	    updateNext();
 	}
 
 	/* ---------------------------------------------------------------- *
@@ -237,7 +244,7 @@ public abstract class Finder {
 //		this.next = Finder.this.next();
 		this.next = this.encl.next();
 		assert this.next != null;
-		if (pass(this.next)) {
+		if (this.filter.pass(this.next)) {
 		    return;
 		}
 	    }
@@ -271,7 +278,7 @@ public abstract class Finder {
 	 * ---------------------------------------------------------------- */
 
 	PrintFilter(Finder encl, PrintStream str) {
-	    super(encl);
+	    super(encl, TRUE);
 	    this.str = str;
 	    updateNext();
 	}
@@ -279,10 +286,6 @@ public abstract class Finder {
 	/* ---------------------------------------------------------------- *
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */
-
-	public boolean pass(File file) {
-	    return true;
-	}
 
 	public File next() {
 	    assert hasNext();
@@ -294,7 +297,7 @@ public abstract class Finder {
 	}
     } // class PrintFilter 
 
-    class ExecFilter extends Secondary {
+    static class ExecFilter implements Filter {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -310,10 +313,8 @@ public abstract class Finder {
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	ExecFilter(Finder encl, String[] cmd) {
-	    super(encl);
+	ExecFilter(String[] cmd) {
 	    this.cmd = cmd;
-	    updateNext();
 	}
 
 	/* ---------------------------------------------------------------- *
@@ -353,22 +354,20 @@ public abstract class Finder {
 
     } // class ExecFilter 
 
-    class NegFilter extends Secondary {
+    static class NegFilter implements Filter {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
 	 * ---------------------------------------------------------------- */
 
-	private final Finder negFilter;
+	private final Filter negFilter;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	NegFilter(Finder encl, Finder negFilter) {
-	    super(encl);
+	NegFilter(Filter negFilter) {
 	    this.negFilter = negFilter;
-	    updateNext();
 	}
 
 	/* ---------------------------------------------------------------- *
@@ -418,7 +417,7 @@ public abstract class Finder {
      * match the regular expression <code>pattern</code>. 
      */
     public Finder name(String pattern) {
-	return new NameFilter(Finder.this, pattern);
+	return new Secondary(Finder.this, new NameFilter(pattern));
     }
 
     /**
@@ -430,11 +429,11 @@ public abstract class Finder {
     }
 
     public Finder exec(String[] cmd) {
-	return new ExecFilter(Finder.this, cmd);
+	return new Secondary(Finder.this, new ExecFilter(cmd));
     }
 
-    public Finder neg(Finder filter) {
-	return new NegFilter(Finder.this, filter);
+    public Finder neg(Filter filter) {
+	return new Secondary(Finder.this, new NegFilter(filter));
     }
 
 
@@ -455,20 +454,14 @@ public abstract class Finder {
      */
     public abstract File next();
 
-    public abstract boolean pass(File file);
-
     public static void main(String[] args) throws Exception {
-	//	int res = Runtime.getRuntime()
-//	    .exec(new String[] {"grep", "Octave", "./src/eu/simuline/matlab/Matlab.g"})
-//	    .waitFor() ;
-//	System.out.println("res: "+res);
-//	System.exit(0);
 
 	File file = new File(args[0]);
 
 	Finder finder = Finder.path(file)
 	    .name(".*\\.java")
-	    .exec(new String[] {"grep", "matlab", EXEC_ARG})
+//	    .exec(new String[] {"grep", "matlab", EXEC_ARG})
+	    .neg(new ExecFilter(new String[] {"grep", "class", EXEC_ARG}))
 	    .print(System.out);
 
 	// Finder finder = Finder.path(file);

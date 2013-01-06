@@ -210,6 +210,7 @@ public abstract class Finder {
 	 *  <code></code>
 	 */
 	private final PrintStream str;
+	private int idx;
 
 
 	/* ---------------------------------------------------------------- *
@@ -219,6 +220,7 @@ public abstract class Finder {
 	PrintFilter(Finder encl, PrintStream str) {
 	    super(encl, TRUE);
 	    this.str = str;
+	    this.idx = 0;
 	}
 
 	/* ---------------------------------------------------------------- *
@@ -229,7 +231,8 @@ public abstract class Finder {
 	    assert hasNext();
 	    File res = this.next;
 	    assert res != null;
-	    this.str.println(res.toString());
+	    this.idx++;
+	    this.str.println(idx+" "+res.toString());
 	    updateNext();
 	    return res;
 	}
@@ -319,7 +322,7 @@ public abstract class Finder {
 	 * ---------------------------------------------------------------- */
 
 	public boolean pass(File file) {
-	    return this.pattern.matcher(file.getName()).matches();
+	    return this.pattern.matcher(file.toString()).matches();
 	}
 
     } // class NameFilter 

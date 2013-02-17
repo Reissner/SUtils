@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
  * This kind of finder is returned by the static method {@link #path(File)}. 
  * Starting with this basic finder, further finders can be added to the pipe 
  * using the member methods 
- * {@link #name(String)} and {@link # print(PrintStream)}. 
+ * {@link #name(String)} and {@link #print(PrintStream)}. 
  *
  * Created: Wed Nov 21 17:29:41 2012
  *
@@ -330,7 +330,6 @@ public abstract class Finder {
     /**
      * Filter executing a shell command and passes the file received 
      * if the shell command succeeds according to its return code. 
-     * Do not mix up with {@link Finder#IS_EXEC}. 
      * See {@link Finder#exec(String[])}. 
      */
     static class ExecFilter extends Filter {
@@ -423,7 +422,7 @@ public abstract class Finder {
      * Returns a filter which passes a file 
      * iff the original filter {@link #negFilter} does not. 
      * <p>
-     * See {@link Finder#neg(Filter)}. 
+     * See {@link Finder#not()}. 
      */
     static class NegFilter extends Filter {
 

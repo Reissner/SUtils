@@ -116,8 +116,8 @@ public class TwoSidedList<E> implements List<E> {
 	 *    <code>
 	 * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
 	 *    </code>. 
-	 * @see #add   (int,                      E,  Direction)
-	 * @see #addAll(int, Collection<? extends E>, Direction)
+	 * @see #add   (int, E,          Direction)
+	 * @see #addAll(int, Collection, Direction)
 	 *
 	 * <!--used by 
 	 * add   (int, E obj,                   Direction)
@@ -129,14 +129,14 @@ public class TwoSidedList<E> implements List<E> {
 	/**
 	 * Checks in {@link TwoSidedList#add(int, E, Direction)} 
 	 * whether by adding elements 
-	 * causes underrun in {@link TwoSidedList#  firstIndex()} 
+	 * causes underrun in {@link TwoSidedList#firstIndex()} 
 	 * or      overrun in {@link TwoSidedList#minFreeIndex()}. 
 	 * 
 	 * @param list
 	 *    the twosided list under consideration. 
 	 * @throws IllegalStateException
 	 *    if adding an object to this list would 
-	 *    cause underrun in {@link TwoSidedList#  firstIndex()} 
+	 *    cause underrun in {@link TwoSidedList#firstIndex()} 
 	 *    or     overrun in {@link TwoSidedList#minFreeIndex()} 
 	 *    depending on this direction. 
 	 * @see TwoSidedList#decFirstIndex()
@@ -148,7 +148,7 @@ public class TwoSidedList<E> implements List<E> {
 	/**
 	 * Checks in {@link TwoSidedList#addAll(int, E, Direction)} 
 	 * whether by adding elements 
-	 * causes underrun in {@link TwoSidedList#  firstIndex()} 
+	 * causes underrun in {@link TwoSidedList#firstIndex()} 
 	 * or      overrun in {@link TwoSidedList#minFreeIndex()}. 
 	 * 
 	 * @param ind
@@ -157,7 +157,7 @@ public class TwoSidedList<E> implements List<E> {
 	 *    the twosided list under consideration. 
 	 * @throws IllegalStateException
 	 *    if adding <code>size</code> objects to this list would 
-	 *    cause underrun in {@link TwoSidedList#  firstIndex()} 
+	 *    cause underrun in {@link TwoSidedList#firstIndex()} 
 	 *    or     overrun in {@link TwoSidedList#minFreeIndex()} 
 	 *    depending on this direction. 
 	 */
@@ -198,10 +198,10 @@ public class TwoSidedList<E> implements List<E> {
      * <p>
      * Note the difference to reference implementations such as 
      * <code>java.util.ArrayList</code> where the type of the list argument 
-     * is <code> List<? extends E></code>. 
+     * is <code>List<? extends E></code>. 
      * We deviate from this solution for performance reason 
      * and provide as an alternative 
-     * the factory method {@link create(List<? extends E>,int)}. 
+     * the factory method {@link #create(List,int)}. 
      * <p>
      * CAUTION: 
      * This list backs {@link #list} and so changes to one of the list 
@@ -254,12 +254,12 @@ public class TwoSidedList<E> implements List<E> {
      * is <code> List<? extends E></code>. 
      * We deviate from this solution for performance reason 
      * and provide as an alternative 
-     * the factory method {@link create(List<? extends E>,int)}. 
+     * the factory method {@link #create(List,int)}. 
      * <p>
      * CAUTION: 
      * Changes to <code>list</code> influence this twosided list 
      * and may cause malfunction. 
-     * Note that unlike {@link #TwoSidedList(List<E>, int)} 
+     * Note that unlike {@link #TwoSidedList(List, int)} 
      * this constructor cannot throw an <code>IllegalStateException</code>. 
      *
      * @param list 
@@ -285,7 +285,7 @@ public class TwoSidedList<E> implements List<E> {
      * Copy constructor with shallow copy of the wrapped list {@link #list}. 
      * As a consequence, modifications of the list created 
      * may affect the original one and the other way round. 
-     * Note that unlike {@link #TwoSidedList(List<E>, int)} 
+     * Note that unlike {@link #TwoSidedList(List, int)} 
      * this constructor cannot throw an <code>IllegalStateException</code>. 
      *
      * @param other
@@ -302,7 +302,7 @@ public class TwoSidedList<E> implements List<E> {
      * copying also the wrapped list {@link #list}. 
      * As a consequence, the list created and the original one 
      * act independently. 
-     * Note that unlike {@link #TwoSidedList(List<E>, int)} 
+     * Note that unlike {@link #TwoSidedList(List, int)} 
      * this constructor cannot throw an <code>IllegalStateException</code>. 
      *
      * @param other
@@ -316,7 +316,7 @@ public class TwoSidedList<E> implements List<E> {
     /**
      * Creates a new empty <code>TwoSidedList</code> which starts growing 
      * with index <code>firstIndex</code>. 
-     * Note that unlike {@link #TwoSidedList(List<E>, int)} 
+     * Note that unlike {@link #TwoSidedList(List, int)} 
      * this constructor cannot throw an <code>IllegalStateException</code>. 
      *
      * @param firstIndex 
@@ -629,10 +629,10 @@ public class TwoSidedList<E> implements List<E> {
     /**
      * Returns the index of the first occurrence 
      * of the specified element <code>obj</code> in this list, 
-     * or {@link #firstIndex()-1} if this list does not contain the element. 
+     * or {@link #firstIndex()}-1 if this list does not contain the element. 
      * More formally, returns the lowest index <code>i</code> 
      * such that <code>(obj==null ? get(i)==null : obj.equals(get(i)))</code>, 
-     * or {@link #firstIndex()-1} if there is no such index. 
+     * or {@link #firstIndex()}-1 if there is no such index. 
      * <p>
      * CAUTION: 
      * <ul>
@@ -644,7 +644,7 @@ public class TwoSidedList<E> implements List<E> {
      * This is an extension in that 
      * wrapping an ordinary list in a twosided list 
      * is by specifying <code>firstIndex() == 0</code> 
-     * (see {@link #TwoSidedList(List<E> list)}). 
+     * (see {@link #TwoSidedList(List list)}). 
      * <li>
      * Note that for <code>firstIndex() == {@link Integer#MIN_VALUE}</code> 
      * <code>firstIndex()-1 > firstIndex()</code>. 
@@ -670,10 +670,10 @@ public class TwoSidedList<E> implements List<E> {
     /**
      * Returns the index of the last occurrence 
      * of the specified element <code>obj</code> in this list, 
-     * or {@link #firstIndex()-1} if this list does not contain the element. 
+     * or {@link #firstIndex()}-1 if this list does not contain the element. 
      * More formally, returns the highest index <code>i</code> 
      * such that <code>(obj==null ? get(i)==null : obj.equals(get(i)))</code>, 
-     * or {@link #firstIndex()-1} if there is no such index. 
+     * or {@link #firstIndex()}-1 if there is no such index. 
      * <p>
      * CAUTION: 
      * <ul>
@@ -685,7 +685,7 @@ public class TwoSidedList<E> implements List<E> {
      * This is an extension in that 
      * wrapping an ordinary list in a twosided list 
      * is by specifying <code>firstIndex() == 0</code> 
-     * (see {@link #TwoSidedList(List<E> list)}). 
+     * (see {@link #TwoSidedList(List list)}). 
      * <li>
      * Note that for <code>firstIndex() == {@link Integer#MIN_VALUE}</code> 
      * <code>firstIndex()-1 > firstIndex()</code>. 
@@ -866,7 +866,7 @@ public class TwoSidedList<E> implements List<E> {
      * Not supported by this implementation. **** breaks contract 
      *
      * @throws UnsupportedOperationException
-     *    use {@link #add(int,E,Direction)} instead. 
+     *    use {@link #add(int,Object,Direction)} instead. 
      */
     public final void add(final int ind, final E obj) {
 	throw new UnsupportedOperationException
@@ -964,7 +964,7 @@ public class TwoSidedList<E> implements List<E> {
      * Not supported by this implementation. **** breaks contract 
      *
      * @throws UnsupportedOperationException
-     *    use {@link removeFirst#(E)} and {@link removeLast#(E)} instead. 
+     *    use {@link #removeFirst(E)} and {@link #removeLast(E)} instead. 
      */
     public final boolean remove(final Object obj) {
 	throw new UnsupportedOperationException
@@ -1033,7 +1033,7 @@ public class TwoSidedList<E> implements List<E> {
     /**
      * Removes all of the elements from this list (optional operation). 
      * The list will be empty after this call returns 
-     * and {@link firstIndex} is unmodified. 
+     * and {@link #firstIndex} is unmodified. 
      *
      * @throws UnsupportedOperationException 
      *    if the clear operation is not supported by {@link #list}. 

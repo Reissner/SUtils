@@ -85,7 +85,7 @@ public class WeakHashSet<E> implements Set<E> {
      * with the default initial capacity (16) 
      * and the default load factor (0.75). 
      *
-     * @see WeakHashSet(int initialCapacity, float loadFactor)
+     * @see #WeakHashSet(int initialCapacity, float loadFactor)
      */
     public WeakHashSet() {
 	this.map = new WeakHashMap<E,Object>();
@@ -145,10 +145,10 @@ public class WeakHashSet<E> implements Set<E> {
      * which is <tt>0.75</tt> and an initial capacity 
      * sufficient to hold the mappings in the specified <tt>WeakHashSet</tt>. 
      *
-     * @param   other  
+     * @param other  
      *    the <tt>Collection</tt> 
      *    whose mappings are to be placed in this <tt>WeakHashSet</tt>.
-     * @throws  NullPointerException  
+     * @throws NullPointerException  
      *    if the specified <tt>Collection</tt> is null.
      */
     public WeakHashSet(Collection<? extends E> other) {
@@ -197,7 +197,7 @@ public class WeakHashSet<E> implements Set<E> {
      * The elements are returned in no particular order.
      *
      * @return an Iterator over the elements in this set.
-     * @see ConcurrentModificationException
+     * @see java.util.ConcurrentModificationException
      */
     public Iterator<E> iterator() {
 	return this.map.keySet().iterator();

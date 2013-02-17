@@ -372,11 +372,11 @@ public class TwoSidedList<E> implements List<E> {
      * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
      *    </code>. 
      * @see #add(int, E, Direction)
-     * @see #addAll(int, Collection<? extends E>, Direction)
+     * @see #addAll(int, Collection, Direction)
      *
      * <!--used by 
-     * add   (int, E obj,                   Direction)
-     * addAll(int, Collection<? extends E>, Direction) 
+     * add   (int, E obj,      Direction)
+     * addAll(int, Collection, Direction) 
      * -->
      */
     private void checkRange(int ind, Direction dir) {

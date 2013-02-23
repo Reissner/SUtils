@@ -494,6 +494,102 @@ public class AddArrays<E> {
     }
 
     /**
+     * Converts an array of <code>Double</code>s 
+     * into an array of according <code>double</code>s. 
+     */
+    public static double[] toPrimitive(Double[] arr) {
+	double[] res = new double[arr.length];
+	for (int i = 0; i < arr.length; i++) {
+	    res[i] = arr[i];
+	}
+	return res;
+    }
+
+    /**
+     * Converts an array of <code>Float</code>s 
+     * into an array of according <code>float</code>s. 
+     */
+    public static float[] toPrimitive(Float[] arr) {
+	float[] res = new float[arr.length];
+	for (int i = 0; i < arr.length; i++) {
+	    res[i] = arr[i];
+	}
+	return res;
+    }
+
+    /**
+     * Converts an array of <code>Long</code>s 
+     * into an array of according <code>long</code>s. 
+     */
+    public static long[] toPrimitive(Long[] arr) {
+	long[] res = new long[arr.length];
+	for (int i = 0; i < arr.length; i++) {
+	    res[i] = arr[i];
+	}
+	return res;
+    }
+
+    /**
+     * Converts an array of <code>Integer</code>s 
+     * into an array of according <code>int</code>s. 
+     */
+    public static int[] toPrimitive(Integer[] arr) {
+	int[] res = new int[arr.length];
+	for (int i = 0; i < arr.length; i++) {
+	    res[i] = arr[i];
+	}
+	return res;
+    }
+
+    /**
+     * Converts an array of <code>Short</code>s 
+     * into an array of according <code>short</code>s. 
+     */
+    public static short[] toPrimitive(Short[] arr) {
+	short[] res = new short[arr.length];
+	for (int i = 0; i < arr.length; i++) {
+	    res[i] = arr[i];
+	}
+	return res;
+    }
+
+    /**
+     * Converts an array of <code>Byte</code>s 
+     * into an array of according <code>byte</code>s. 
+     */
+    public static byte[] toPrimitive(Byte[] arr) {
+	byte[] res = new byte[arr.length];
+	for (int i = 0; i < arr.length; i++) {
+	    res[i] = arr[i];
+	}
+	return res;
+    }
+
+    /**
+     * Converts an array of <code>Boolean</code>s 
+     * into an array of according <code>boolean</code>s. 
+     */
+    public static boolean[] toPrimitive(Boolean[] arr) {
+	boolean[] res = new boolean[arr.length];
+	for (int i = 0; i < arr.length; i++) {
+	    res[i] = arr[i];
+	}
+	return res;
+    }
+
+    /**
+     * Converts an array of <code>Character</code>s 
+     * into an array of according <code>char</code>s. 
+     */
+    public static char[] toPrimitive(Character[] arr) {
+	char[] res = new char[arr.length];
+	for (int i = 0; i < arr.length; i++) {
+	    res[i] = arr[i];
+	}
+	return res;
+    }
+
+    /**
      * Returns an array which corresponds with the given one 
      * except that the entries are unwrapped. 
      *

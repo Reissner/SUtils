@@ -44,7 +44,8 @@ public class GifResource {
      * <code>/cls/</code>: the directory of the classfiles 
      * within simuline-developing environment. 
      */
-    private final static String CLASS    = URL_SEP +"cls"      + URL_SEP;
+    private final static String CLASS    = URL_SEP +"target"     
+	+ URL_SEP  +"classes"     + URL_SEP;
 
     /**
      * <code>/resource/</code>: the directory of the classfiles 
@@ -132,8 +133,8 @@ public class GifResource {
 	    //System.out.println("path: "+path);
 	    //***NO PURE JAVA
 	    URL url = ClassLoader.getSystemResource(path);
-	    //System.out.println("url: "+url);
-	    path = url.toString().replace(CLASS_END,GIF_END);
+	    //System.out.println("1url: "+url);
+	    path = url.toString().replaceAll(CLASS_END+"\\z",GIF_END);
 	    //System.out.println("path2: "+path);
 	    path = path.replace(CLASS,RESOURCE); /// **** a little weak
 	    //System.out.println("path3: "+path);

@@ -422,7 +422,7 @@ public abstract class Finder {
      * Returns a filter which passes a file 
      * iff the original filter {@link #negFilter} does not. 
      * <p>
-     * See {@link Finder#not()}. 
+     * See {@link Finder.Filter#not()}. 
      */
     static class NegFilter extends Filter {
 
@@ -459,7 +459,7 @@ public abstract class Finder {
     /**
      * One of the logical operations of filters: 
      * Returns a filter which passes a file 
-     * iff all original filters in {@link #filter} do so. 
+     * iff all original filters in {@link #filters} do so. 
      * <p>
      * This is a lazy and-filter, i.e. if one of the filters rejects the file, 
      * the filters later in the sequence are not executed any more. 
@@ -512,7 +512,7 @@ public abstract class Finder {
     /**
      * One of the logical operations of filters: 
      * Returns a filter which passes a file 
-     * iff at least one of the original filters in {@link #filter} do so. 
+     * iff at least one of the original filters in {@link #filters} do so. 
      * <p>
      * This is a lazy or-filter, i.e. if one of the filters accepts the file, 
      * the filters later in the sequence are not executed any more. 

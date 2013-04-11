@@ -13,19 +13,19 @@ import java.util.ArrayList;
  * <p>
  * As a consequence, one can add elements not only at the end of this list 
  * but also at its beginning. 
- * For details consider {@link #add(E)}, {@link #addFirst(E)} 
- * and {@link #addLast(E)}. 
- * Method {@link #add(int ind, E obj)} is not supported 
+ * For details consider {@link #add(Object)}, {@link #addFirst(Object)} 
+ * and {@link #addLast(Object)}. 
+ * Method {@link #add(int ind, Object obj)} is not supported 
  * because inserting an element 
  * requires either shift of subsequent elements to the right 
  * or preceeding elements to the left. 
  * To determine the direction of the shift 
- * use {@link #add(int ind, E obj, Direction dir)} instead. 
+ * use {@link #add(int ind, Object obj, Direction dir)} instead. 
  * Similar considerations apply to methods removing elements. 
  * Also affected are the corresponding collections operations 
  * like <code>addAll</code>. 
  * <p>
- * Methods {@link #toArray()} and {@link #toArray(E[])} 
+ * Methods {@link #toArray()} and {@link #toArray(Object[])} 
  * satisfy a generalized contract 
  * based on the additional method {@link #firstIndex()}. 
  * <p>
@@ -116,18 +116,18 @@ public class TwoSidedList<E> implements List<E> {
 	 *    <code>
 	 * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
 	 *    </code>. 
-	 * @see #add   (int, E,          Direction)
+	 * @see #add   (int, Object,     Direction)
 	 * @see #addAll(int, Collection, Direction)
 	 *
 	 * <!--used by 
-	 * add   (int, E obj,                   Direction)
-	 * addAll(int, Collection<? extends E>, Direction) 
+	 * add   (int, Object obj, Direction)
+	 * addAll(int, Collection, Direction) 
 	 * -->
 	 */
 	abstract void checkRange(int ind, TwoSidedList list);
 
 	/**
-	 * Checks in {@link TwoSidedList#add(int, E, Direction)} 
+	 * Checks in {@link TwoSidedList#add(int, Object, Direction)} 
 	 * whether by adding elements 
 	 * causes underrun in {@link TwoSidedList#firstIndex()} 
 	 * or      overrun in {@link TwoSidedList#minFreeIndex()}. 
@@ -146,12 +146,12 @@ public class TwoSidedList<E> implements List<E> {
 	abstract void checkAdd1(TwoSidedList list);
 
 	/**
-	 * Checks in {@link TwoSidedList#addAll(int, E, Direction)} 
+	 * Checks in {@link TwoSidedList#addAll(int, Collection, Direction)} 
 	 * whether by adding elements 
 	 * causes underrun in {@link TwoSidedList#firstIndex()} 
 	 * or      overrun in {@link TwoSidedList#minFreeIndex()}. 
 	 * 
-	 * @param ind
+	 * @param size
 	 *    the number of elements to be added. 
 	 * @param list
 	 *    the twosided list under consideration. 
@@ -178,7 +178,7 @@ public class TwoSidedList<E> implements List<E> {
      * The first index in this <code>TwoSidedList</code>. 
      * Note that this integer may well be negative. 
      * The inequality 
-     * <code>{@link #firstFreeIndex()} >= {@link #firstIndex}</code> 
+     * <code>{@link #minFreeIndex()} >= {@link #firstIndex}</code> 
      * is guaranteed. 
      * Casually, methods adding objects have to reject them 
      * in order not to hurt this 
@@ -371,11 +371,11 @@ public class TwoSidedList<E> implements List<E> {
      *    <code>
      * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
      *    </code>. 
-     * @see #add(int, E, Direction)
+     * @see #add(int, Object, Direction)
      * @see #addAll(int, Collection, Direction)
      *
      * <!--used by 
-     * add   (int, E obj,      Direction)
+     * add   (int, Object obj, Direction)
      * addAll(int, Collection, Direction) 
      * -->
      */
@@ -389,7 +389,7 @@ public class TwoSidedList<E> implements List<E> {
      *
      * @param fromToNothing
      *    either <code>""</code>, <code>"from"</code> or <code>"to"</code>. 
-     *    The latter two cases are used only in {@link #sublist(int,int)} 
+     *    The latter two cases are used only in {@link #subList(int,int)} 
      *    to check the range of the start index and of the end index 
      *    of the sublist to be created. 
      * @param ind
@@ -798,7 +798,7 @@ public class TwoSidedList<E> implements List<E> {
      */
     public final boolean add(final E obj) {
 	throw new UnsupportedOperationException
-	    ("Use addFirst(E) or addLast(E) instead. ");
+	    ("Use addFirst(Object) or addLast(E) instead. ");
     }
 
     /**
@@ -964,7 +964,7 @@ public class TwoSidedList<E> implements List<E> {
      * Not supported by this implementation. **** breaks contract 
      *
      * @throws UnsupportedOperationException
-     *    use {@link #removeFirst(E)} and {@link #removeLast(E)} instead. 
+     *    use {@link #removeFirst(Object)} and {@link #removeLast(Object)} instead. 
      */
     public final boolean remove(final Object obj) {
 	throw new UnsupportedOperationException
@@ -1484,7 +1484,7 @@ public class TwoSidedList<E> implements List<E> {
     }
 
     /**
-     * Returns a hash code which conforms with {@link #equals()}. 
+     * Returns a hash code which conforms with {@link #equals(Object)}. 
      *
      * @return 
      *    the hash code as an <code>int</code> value. 

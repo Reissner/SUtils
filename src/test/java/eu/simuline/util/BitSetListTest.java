@@ -316,10 +316,10 @@ assertEquals(4,bitSetList.size());
 	bitSetList.add(0);
 	bitSetList.add(0);
 
-	assertEquals(1,bitSetList.get(0));
-	assertEquals(1,bitSetList.get(1));
-	assertEquals(0,bitSetList.get(2));
-	assertEquals(0,bitSetList.get(3));
+	assertEquals(1,bitSetList.get(0).intValue());
+	assertEquals(1,bitSetList.get(1).intValue());
+	assertEquals(0,bitSetList.get(2).intValue());
+	assertEquals(0,bitSetList.get(3).intValue());
 	try {
 	    bitSetList.get(-1);
 	    fail();

@@ -275,12 +275,12 @@ public class TwoSidedListTest {
 	tsList = new TwoSidedList<Integer>(list,3);
 	// Here, integer n is at the nth place 
 
-	assertEquals(4,tsList.get(4));
-	assertEquals(4,tsList.set(4,8));
-	assertEquals(8,tsList.get(4));
+	assertEquals(4,tsList.get(4)  .intValue());
+	assertEquals(4,tsList.set(4,8).intValue());
+	assertEquals(8,tsList.get(4)  .intValue());
 
 	tsList.shiftRight(1);
-	assertEquals(8,tsList.get(5));
+	assertEquals(8,tsList.get(5).intValue());
     }
 
     void testRemove() {
@@ -485,15 +485,15 @@ public class TwoSidedListTest {
 	// Here, integer n is at the nth place 
 
 	iter = tsList.listIterator(6);
-	assertEquals(6,iter.next());
-	assertEquals(7,iter.next());
-	assertEquals(8,iter.next());
+	assertEquals(6,iter.next().intValue());
+	assertEquals(7,iter.next().intValue());
+	assertEquals(8,iter.next().intValue());
 	assertTrue(!iter.hasNext());
 
 	iter = tsList.listIterator(6);
-	assertEquals(5,iter.previous());
-	assertEquals(4,iter.previous());
-	assertEquals(3,iter.previous());
+	assertEquals(5,iter.previous().intValue());
+	assertEquals(4,iter.previous().intValue());
+	assertEquals(3,iter.previous().intValue());
 	assertTrue(!iter.hasPrevious());
     }
 

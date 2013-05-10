@@ -1,7 +1,7 @@
 
 package eu.simuline.util;
 
-import eu.simuline.testhelpers.GUIRunListener;
+import eu.simuline.testhelpers.Actions;
 //import eu.simuline.testhelpers.Accessor;
 import eu.simuline.testhelpers.Assert;
 
@@ -1059,9 +1059,6 @@ public class CyclicArrayListIteratorTest {
      * Uncomment either the textual UI, Swing UI, or AWT UI.
      */
     public static void main(String args[]) {
-
-	JUnitCore core = new JUnitCore();
-	core.addListener(new GUIRunListener());
-	core.run(CyclicArrayListIteratorTest.class);
+ 	Actions.run(CyclicArrayListIteratorTest.class);
     }
 }

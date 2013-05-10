@@ -635,16 +635,7 @@ public class AddArraysTest {
      * Uncomment either the textual UI, Swing UI, or AWT UI.
      */
     public static void main(String args[]) {
-/*
-	JUnitCore core = new JUnitCore();
-	core.addListener(new GUIRunListener());
-	core.run(AddArraysTest.class);
-*/
 	Actions.run(AddArraysTest.class);
-
-
-
-//junit.swingui.TestRunner.main(new String[] {AddArraysTest.class.getName()});
     }
 
 }

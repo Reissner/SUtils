@@ -1,7 +1,7 @@
 
 package eu.simuline.util;
 
-import eu.simuline.testhelpers.GUIRunListener;
+import eu.simuline.testhelpers.Actions;
 import eu.simuline.testhelpers.Accessor;
 //import static eu.simuline.testhelpers.Assert;
 
@@ -19,10 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import junit.framework.JUnit4TestAdapter;
 
-
-
 import java.util.Map;
-
 
 @RunWith(Suite.class)
 @SuiteClasses({MultiSetTest.TestAll.class})
@@ -209,9 +206,7 @@ public class MultiSetTest {
 	mset = new MultiSet<String>();
 	result = (Map.Entry)Accessor.invoke(mset,
 					    "getMaxObjWithMult");
-	assertNull(result.getKey());
-	assertEquals(new Integer(0),Accessor.invoke(result.getValue(),
-						    "get"));
+	assertNull(result);
 
 
 	// testcase 2
@@ -377,8 +372,13 @@ public class MultiSetTest {
 	// 
 	//
 	result = new MultiSet<String>();
-	assertEquals(0,result.removeWithMult ("Element1"));
-	assertEquals(0,result.getMultiplicity("Element1"));
+	try {
+	    result.removeWithMult ("Element1");
+	} catch (IllegalArgumentException e) {
+	    assertEquals("Tried to remove object " + "Element1" + 
+			 " which is not in this MultiSet. ", 
+			 e.getMessage());
+	}
 
 
 	// testcase 3
@@ -670,10 +670,7 @@ public class MultiSetTest {
      * Uncomment either the textual UI, Swing UI, or AWT UI.
      */
     public static void main(String args[]) {
-
-	JUnitCore core = new JUnitCore();
-	core.addListener(new GUIRunListener());
-	core.run(MultiSetTest.class);
+	Actions.run(MultiSetTest.class);
     }
 
 }

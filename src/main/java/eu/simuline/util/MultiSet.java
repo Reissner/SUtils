@@ -12,6 +12,8 @@ import java.util.Comparator;
 /**
  * Represents a set with multiplicities. 
  * Mathematically this is something between a set and a family. 
+ * Note that this kind of set does not support <code>null</code> elements. 
+ * <p>
  * Note that this should implement Collection, but still does not *****. 
  * addAll's implementation seems strange, 
  * add seems to be buggy, 
@@ -35,22 +37,13 @@ public class MultiSet<T> {
     private static class Multiplicity implements Comparable {
 
 	/**
-	 * A non-negative integer representing a multiplicity. 
+	 * A positive integer representing a multiplicity. 
 	 */
 	private int mult;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
-
-	/**
-	 * Creates a new <code>Multiplicity</code> instance 
-	 * representing multiplicity <code>0</code>. 
-	 * @see #MultiSet.Multiplicity(int)
-	 */
-	private Multiplicity() {// even more private ;-)
-	    this.mult = 0;
-	}
 
 	/**
 	 * Creates a new <code>Multiplicity</code> instance 
@@ -71,10 +64,6 @@ public class MultiSet<T> {
 	/* ---------------------------------------------------------------- *
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */
-
-	private static Multiplicity createZero() {
-	    return new Multiplicity();
-	}
 
 	private static Multiplicity create(int mult) {
 	    return new Multiplicity(mult);
@@ -309,7 +298,7 @@ public class MultiSet<T> {
      * A constant containing an <em>immutable</em> empty set. 
      * @see MultiSet.Immutable
      */
-    public final static MultiSet EMPTY_SET =  Immutable.createEmpty();
+    public final static MultiSet EMPTY_SET = Immutable.createEmpty();
 
     /* -------------------------------------------------------------------- *
      * fields.                                                              *
@@ -322,9 +311,10 @@ public class MultiSet<T> {
      * representing the corresponding multiplicities. 
      * If an object is not within this set, 
      * the corresponding value is <code>null</code>. 
+     * **** maybe even: object not in keyset. 
      * In the key set no <code>null</code> values may occur. 
      */
-    protected final SortedMap<T,Multiplicity> obj2mult;
+    protected final SortedMap<T, Multiplicity> obj2mult;
 
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
@@ -370,9 +360,11 @@ public class MultiSet<T> {
      * @return 
      *    the number of elements in this <code>MultiSet</code> 
      *    each multiple element counted as a single one. 
-     * @see #sizeWithMult
+     * @see #sizeWithMult()
      */
     public int size() {
+	// works only, since multiplicities 0 are not allowed 
+	// (null-elements in turn would still work here) 
 	return this.obj2mult.size();
     }
 
@@ -386,13 +378,17 @@ public class MultiSet<T> {
      * @return 
      *    the number of elements in this <code>MultiSet</code> 
      *    counted with multiplicities. 
-     * @see #size
+     * @see #size()
      */
     public int sizeWithMult() {
 	int result = 0;
 	for (Multiplicity mult : this.obj2mult.values()) {
 	    result += mult.get();
+	    if (result < 0) {
+		return Integer.MAX_VALUE;
+	    }
 	}
+	assert result >= 0;
 	
 	return result;
     }
@@ -408,8 +404,10 @@ public class MultiSet<T> {
     }
 
     /**
-     * Returns an object wrapping an element in this <code>MultiSet</code> 
-     * with maximal multiplicity together with this multiplicity. 
+     * Returns a Map.Entry 
+     * representing an element in this <code>MultiSet</code> 
+     * with maximal multiplicity together with this multiplicity, 
+     * except if this set is empty. 
      * For empty sets, <code>null</code> is returned. 
      *
      * @return 
@@ -426,34 +424,31 @@ public class MultiSet<T> {
      *    Note that <code>em.getKey()</code> may never be <code>null</code>
      *
      *    <li> if this <code>MultiSet</code> is empty, 
-     *    <code>em.getKey() == null</code> and <code>em.getValue() == 0</code>. 
-     *    Both conditions are equivalet with <code>this.isEmpty()</code>
+     *    <code>null</code> is returned. 
      *    </ul>
+     * @see #getObjWithMaxMult()
+     * @see #getMaxMult()
      */
     private Map.Entry<T,Multiplicity> getMaxObjWithMult() {
-	Map.Entry<T,Multiplicity> maxCand = 
-	    new Map.Entry<T,Multiplicity>() {
-		public T getKey() {
-		    return null;
-		}
-		public Multiplicity getValue() {
-		    return Multiplicity.createZero();
-		}
-		public Multiplicity setValue(Multiplicity value) {
-		    throw new UnsupportedOperationException();
-		}
-	    };
+	// return value for empty set.
+	Map.Entry<T,Multiplicity> maxCand = null;
+
+	// search for greater value than maxVal
+	int maxVal = 0;
+	int cmpVal;
 	for (Map.Entry<T,Multiplicity> cand : this.obj2mult.entrySet()) {
-	    if (          (maxCand.getValue())
-			  .compareTo(   cand.getValue()) < 0) {
+	    cmpVal = cand.getValue().get();
+	    if (maxVal < cmpVal) {
 		maxCand = cand;
+		maxVal = cmpVal;
 	    }
 	}
 	return maxCand;
     }
 
     /**
-     * Returns the in this multiple set with maximal multiplicity. 
+     * Returns one of the elements in this multiple set 
+     * with maximal multiplicity. 
      * The return value is <code>null</code> 
      * if and only if this set is empty. 
      *
@@ -463,49 +458,72 @@ public class MultiSet<T> {
      * @see #isEmpty
      */
     public Object getObjWithMaxMult() {
+	if (isEmpty()) {
+	    return null;
+	}
 	return getMaxObjWithMult().getKey();
     }
 
     /**
      * Returns the maximal multiplicity of an element in this set. 
+     * In particular for empty sets returns <code>0</code>. 
      *
      * @return 
      *    a non-negative <code>int</code> value 
      *    which is the maximal mutliplicity of an element in this set. 
      *    In particular this is <code>0</code> 
      *    if and only if this set is empty. 
-     * @see #getMultiplicity
      */
     public int getMaxMult() {
+	if (isEmpty()) {
+	    return 0;
+	}
 	return getMaxObjWithMult().getValue().get();
     }
 
     /**
      * Returns the multiplicity 
-     * which which the given object occurs within this set. 
+     * with which the given object occurs within this set. 
      *
      * @param obj 
-     *    an <code>Object</code> value. 
+     *    an <code>Object</code> and not null. 
      * @return 
      *    a non-negative <code>int</code> value 
      *    which is the mutliplicity of the given element in this set. 
      *    In particular this is <code>0</code> if and only if 
-     *    <ul>
-     *    <li>
-     *    <code>obj == null</code> or 
-     *    <li>
      *    <code>obj</code> is an instance which is not in this set. 
-     *    </ul>
-     * @see #setMultiplicity
+     * @throws NullPointerException
+     *    for <code>obj==null</code>. 
+     * @see #setMultiplicity(Object)
+     * @see #getMultiplicityObj(Object)
      */
     public int getMultiplicity(Object obj) {
-	Multiplicity result = this.obj2mult.get(obj);
+	// throws NullPointerException for obj==null 
+	Multiplicity result = getMultiplicityObj(obj);
 	return result == null ? 0 : result.get();
     }
 
+    /**
+     * Returns the multiplicity object of the given object in this set 
+     * or <code>null</code>. 
+     *
+     * @param obj 
+     *    an <code>Object</code> and not null. 
+     * @return 
+     *    If <code>obj</code> is an instance which is in this set, 
+     *    a multiplicity object wrapping the multiplicity is returned. 
+     *    If <code>obj</code> is an instance which is not in this set, 
+     *    <code>null</code> is returned. 
+     * @throws NullPointerException
+     *    for <code>obj==null</code>. 
+     * @see #getMultiplicity(Object)
+     */
     private Multiplicity getMultiplicityObj(Object obj) {
-	Multiplicity result = this.obj2mult.get(obj);
-	return result == null ? Multiplicity.createZero() : result;
+	if (obj == null) {
+	    throw new NullPointerException();// NOPMD 
+	}
+	// Here, obj != null. 
+	return  this.obj2mult.get(obj);
     }
 
     /**
@@ -516,17 +534,17 @@ public class MultiSet<T> {
      * such that <tt>(o==null ? e==null : o.equals(e))</tt>. 
      *
      * @param obj 
-     *    element whose presence in this <code>MultiSet</code> 
-     *    is to be tested.
+     *    element (not <code>null</code>) 
+     *    whose presence in this <code>MultiSet</code> is to be tested.
      * @return 
      *    <tt>true</tt> if this <code>MultiSet</code> 
      *    contains the specified element. 
-     *    Since <code>null</code> is not contained 
-     *    in this <code>MultiSet</code>, 
-     *    <code>contains(null) == false</code>. 
+     * @throws NullPointerException
+     *    for <code>obj==null</code>. 
      */
     public boolean contains(Object obj) {
-	return this.obj2mult.get(obj) != null;
+	// throws NullPointerException for obj==null 
+	return getMultiplicityObj(obj) != null;
     }
 
     /**
@@ -650,19 +668,8 @@ public class MultiSet<T> {
      *    if the specified element is null. 
      */
     public int addWithMult(T obj) {
-	if (obj == null) {
-	    throw new NullPointerException();
-	}
-	// Here, obj != null. 
-
-	Multiplicity mult = this.obj2mult.get(obj);
-	if (mult == null) {
-	    this.obj2mult.put(obj, Multiplicity.create(1));
-	    return 1;
-	} else {
-	    mult.add(1);
-	    return mult.get();
-	}
+	// throws NullPointerException for obj==null 
+	return addWithMult(obj, 1);
     }
 
     /**
@@ -677,38 +684,38 @@ public class MultiSet<T> {
      *    a non-negative integer specifying the multiplicity 
      *    with which <code>obj</code> is to be added. 
      * @return 
-     *    a strictly positive <code>int</code> value: 
+     *    a non-negative <code>int</code> value: 
      *    the new multiplicity of <code>obj</code>. 
-     * @throws NullPointerException 
-     *    for <code>obj == null</code>. 
      * @throws IllegalArgumentException 
      *    for <code>addMult &lt; 0</code>. 
+     * @throws NullPointerException 
+     *    for <code>obj==null</code> provided <code>addMult &ge; 0</code>. 
      */
     public int addWithMult(T obj, int addMult) {
-	if (obj == null) {
-	    throw new NullPointerException();
-	}
+
 	if (addMult < 0) {
 	    throw new IllegalArgumentException
 		("Expected non-negative multiplicity; found " + 
 		 addMult + ". ");
 	}
-	// Here, obj != null. 
+	// throws NullPointerException for obj==null 
+	Multiplicity mult = getMultiplicityObj(obj);
 
-	Multiplicity mult = this.obj2mult.get(obj);
 	if (mult == null) {
+	    // Here, this element is not in this set 
 	    if (addMult != 0) {
-		this.obj2mult.put(obj,Multiplicity.create(addMult));
+		assert addMult > 0;
+		mult = Multiplicity.create(addMult);
+		this.obj2mult.put(obj,mult);
 	    }
 	    return addMult;
-	} else {
-	    return mult.add(addMult);
 	}
+	// Here, obj is already in this set. 
+	return mult.add(addMult);
     }
 
     /**
-     * Adds <code>obj</code> to this <code>MultiSet</code> 
-     * and returns the new multiplicity of this object. 
+     * Adds <code>obj</code> to this <code>MultiSet</code>. 
      * In other words, increments the multiplicity of <code>obj</code> by one. 
      * Returns <tt>true</tt> if this <code>MultiSet</code> 
      * interpreted as a set changed as a result of the call. 
@@ -747,23 +754,21 @@ public class MultiSet<T> {
      *    if the specified element is <code>null</code>. 
      */
     public boolean add(T obj) {
-	if (obj == null) {
-	    throw new NullPointerException();
-	}
-	
-	Multiplicity mult = this.obj2mult.get(obj);
+	// throws NullPointerException for obj==null 
+	Multiplicity mult = getMultiplicityObj(obj);
 	if (mult == null) {
-	    this.obj2mult.put(obj,Multiplicity.create(1));
+	    mult = Multiplicity.create(1);
+	    this.obj2mult.put(obj,mult);
 	    return true;
-	} else {
-	    mult.add(1);
-	    return false;
 	}
+	mult.add(1);
+	return false;
    }
 
     /**
-     * Decrements the multiplicity of <code>obj</code> in this <code>MultiSet</code> 
-     * if it is present and returns the <em>old</em> multiplicity of <code>obj</code>; 
+     * Decrements the multiplicity of <code>obj</code> 
+     * in this <code>MultiSet</code> if it is present and 
+     * returns the <em>old</em> multiplicity of <code>obj</code>; 
      * If this is <code>0</code> returns 
      * without altering this <code>MultiSet</code>. 
      *
@@ -778,26 +783,8 @@ public class MultiSet<T> {
      *    if the specified element is null. 
      */
     public int removeWithMult(Object obj) {
-	if (obj == null) {
-	    throw new NullPointerException();
-	}
-	// Here, obj != null. 
-
-
-	Multiplicity mult = getMultiplicityObj(obj);
-	int multInt = mult.get();
-	switch (multInt) {
-	case 0:
-	    // nothing to be done. 
-	    return 0;
-	case  1:
-	    // Here, the new multiplicity is 0
-	    this.obj2mult.remove(obj);
-	    return 1;
-	default:
-	    // Here, the new multiplicity is strictly positive. 
-	    return mult.set(--multInt);
-	}
+	// throws NullPointerException for obj==null 
+	return removeWithMult(obj,1);
    }
 
     /**
@@ -822,18 +809,15 @@ public class MultiSet<T> {
      *    <code>removeMult - obj.getMultiplicity() &lt; 0</code>. 
      */
     public int removeWithMult(Object obj,int removeMult) {
-	if (obj == null) {
-	    throw new NullPointerException();
-	}
-	// Here, obj != null. 
 	if (removeMult < 0) {
 	    throw new IllegalArgumentException
 		("Expected non-negative multiplicity; found " + 
 		 removeMult + ". ");
 	}
-	// Here, obj != null. 
+	// Here, removeMult >= 0. 
 
-	Multiplicity mult = this.obj2mult.get(obj);
+	// throws NullPointerException for obj==null 
+	Multiplicity mult = getMultiplicityObj(obj);
 	if (mult == null) {
 	    if (removeMult != 0) {
 		throw new IllegalArgumentException
@@ -842,6 +826,7 @@ public class MultiSet<T> {
 	    }
 	    return 0;
 	}
+	// return value is old multiplicity 
 	int ret = mult.get();
 	if (ret == removeMult) {
 	    this.obj2mult.remove(obj);
@@ -858,21 +843,21 @@ public class MultiSet<T> {
      * immediately after having (successively) invoked <code>s.remove(o)</code>, 
      * the condition <code>s.contains(o) == false</code> is satisfied. 
      * Returns true if this <code>MultiSet</code> contained the specified 
-     * element (or equivalently, if this <code>MultiSet</code> changed 
-     * as a result of the call). 
+     * element (or equivalently, if (the underlying set of) 
+     * this <code>MultiSet</code> changed as a result of the call). 
      *
      * @param obj 
      *    element the multiplicity of which in this <code>MultiSet</code> 
      *    is to be increased by one. 
      * @return 
-     *    <tt>true</tt> if and only if  this <code>MultiSet</code> changed 
+     *    <tt>true</tt> if and only if this <code>MultiSet</code> changed 
      *    as a result of the call. 
      * @throws NullPointerException 
      *    if the specified element is <code>null</code>. 
      */
     public boolean remove(Object obj) {
 	if (obj == null) {
-	    throw new NullPointerException();
+	    throw new NullPointerException();// NOPMD
 	}
 	// Here, obj != null. 
 
@@ -892,7 +877,7 @@ public class MultiSet<T> {
      *    as a non-negative <code>int</code> value. 
      * @throws IllegalArgumentException 
      *   if either <code>obj == null</code> or <code>mult &le; 0</code>. 
-     * @see #getMultiplicity
+     * @see #getMultiplicity(Object)
      */
     public int setMultiplicity(T obj,int newMult) {
 	if (obj == null) {
@@ -931,9 +916,7 @@ public class MultiSet<T> {
      */
     public boolean containsAll(Collection coll) {
 	for (Object cand : coll) {
-	    if (cand == null) {
-		throw new NullPointerException();
-	    }
+	    // throws NullPointerException if cand == null
 	    if (!contains(cand)) {
 		return false;
 	    }
@@ -958,15 +941,15 @@ public class MultiSet<T> {
 	boolean added = false;
 	for (T cand : mvs.obj2mult.keySet()) {
 	    mvsMult = mvs.getMultiplicity(cand);
-	    // Here, mvsMult != 0 
+	    assert mvsMult > 0;
 	    Multiplicity mult = this.obj2mult.get(cand);
 	    if (mult == null) {
-		this.obj2mult.put(cand,Multiplicity.create(mvsMult));
+		this.obj2mult.put(cand, Multiplicity.create(mvsMult));
 		added = true;
 	    } else {
 		mult.add(mvsMult);
 	    }
-	}
+	} // for 
 	return added;
     }
 
@@ -989,9 +972,7 @@ public class MultiSet<T> {
     public boolean removeAll(Collection<?> coll) {
 	boolean thisChanged = false;
 	for (Object cand : coll) {
-	    if (cand == null) {
-		throw new NullPointerException();
-	    }
+	    // throws NullPointerException if cand == null 
 	    thisChanged |= remove(cand);
 	}
 	return thisChanged;

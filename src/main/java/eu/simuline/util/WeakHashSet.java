@@ -386,9 +386,14 @@ public class WeakHashSet<E> implements Set<E> {
 	}
 	try {
 	    return this.containsAll(other);
-	} catch (ClassCastException e) {
+	} catch (ClassCastException e) {// NOPMD 
+	    // Here, the types of one or more elements in other 
+	    // are incompatible with this collection (optional) 
 	    return false;
-	} catch (NullPointerException e) {
+	} catch (NullPointerException e) {// NOPMD 
+	    assert obj != null;
+	    // Here, other contains one or more null elements 
+	    //and this collection does not permit null elements (optional) 
 	    return false;
 	}
     }
@@ -415,7 +420,8 @@ public class WeakHashSet<E> implements Set<E> {
 	if (iter.hasNext()) {
 	    buf.append(iter.next());
 	    while (iter.hasNext()) {
-		buf.append(", "+iter.next());
+		buf.append(", ");
+		buf.append(iter.next());
 	    }
 	}
 

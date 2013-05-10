@@ -365,7 +365,7 @@ public class AddArrays<E> {
 	    result = Array
 	    .newInstance(BasicTypesCompatibilityChecker.getWrapperCls(type),
 			 0);
-	} catch (RuntimeException e) {
+	} catch (RuntimeException e) {// NOPMD
 	    if (BasicTypesCompatibilityChecker.getWrapperCls(type) == null ||
 		BasicTypesCompatibilityChecker.getWrapperCls(type) == Void.TYPE) {
 		 throw new IllegalArgumentException
@@ -413,7 +413,7 @@ public class AddArrays<E> {
 	    result = Array
 		.newInstance(BasicTypesCompatibilityChecker.getWrappedCls(type),
 			     0);
-	} catch (RuntimeException e) {
+	} catch (RuntimeException e) {// NOPMD
 	    if (BasicTypesCompatibilityChecker.getWrappedCls(type) == null ||
 		BasicTypesCompatibilityChecker.getWrapperCls(type) == Void.TYPE) {
 		 throw new IllegalArgumentException
@@ -718,11 +718,8 @@ public class AddArrays<E> {
 	 *    if one of the arguments is no <code>Object[]</code>. 
 	 *    in particular for type <code>int[]</code>. 
 	 */
-	public int compare(Object[] arr1,Object[] arr2) {
-	    if (arr1 == null || arr2 == null) {
-		throw new NullPointerException();
-	    }
-		    
+	public int compare(Object[] arr1, Object[] arr2) {
+	    // throws NullPointerException if one of the arguments is null 
 	    int minLen = Math.min(arr1.length,arr2.length);
 	    int result;
 	    for (int i = 0; i < minLen; i++) {

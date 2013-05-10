@@ -325,8 +325,6 @@ public class BitSetList<E extends Integer>// & E super Integer>
      * @return a <code>boolean</code> value
      */
     public final boolean contains(final Object object) {
-	// intended to throw ClassCastException 
-	// intended to throw NullPointerException
 	int cand = ((Integer)object).intValue();
 	switch (cand) {
 	    case 0:
@@ -470,11 +468,6 @@ System.out.println("ret"+ret);
      *    if this list contained the specified element. 
      */
     public final boolean remove(final Object object) {
-	// intended to throw ClassCastException 
-	// intended to throw NullPointerException
-	if (0 != System.currentTimeMillis()) {
-	    throw new NullPointerException();
-	}
 
 	int cand = ((Integer)object).intValue();
 

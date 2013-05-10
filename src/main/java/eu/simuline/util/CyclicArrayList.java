@@ -1545,8 +1545,11 @@ System.out.println("index: "+index);
      *     a clone of this <code>CyclicArrayList</code>. 
      *     This includes copying <code>vertices</code>. 
      */
-    public Object clone() /* NOPMD */ {
-	    return new CyclicArrayList<E>
-		((List<E>) ((ArrayList<E>)this.list).clone());
+    public Object clone() /* NOPMD */ throws CloneNotSupportedException {
+	CyclicArrayList<E> res = (CyclicArrayList<E>)super.clone();
+	res.list = (List<E>)((ArrayList<E>)this.list).clone();
+	return res;
+	    // return new CyclicArrayList<E>
+	    // 	((List<E>) ((ArrayList<E>)this.list).clone());
     }
 }

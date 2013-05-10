@@ -1,13 +1,9 @@
 package eu.simuline.util;
 
 import java.io.File;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.IOException;
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Arrays;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
@@ -831,7 +827,7 @@ public abstract class Finder {
      */
     public abstract File next();
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
 	File file = new File(args[0]);
 

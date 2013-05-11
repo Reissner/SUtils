@@ -54,8 +54,7 @@ public class MultiSet<T> {
 	 *    representing a multiplicity. 
 	 * @throws IllegalArgumentException 
 	 *    if <code>mult</code> is not strictly positive. 
-	 * @see #set
-	 * @see #MultiSet.Multiplicity()
+	 * @see #set(int)
 	 */
 	private Multiplicity(int mult) {
 	    set(mult);
@@ -494,7 +493,7 @@ public class MultiSet<T> {
      *    <code>obj</code> is an instance which is not in this set. 
      * @throws NullPointerException
      *    for <code>obj==null</code>. 
-     * @see #setMultiplicity(Object)
+     * @see #setMultiplicity(Object, int)
      * @see #getMultiplicityObj(Object)
      */
     public int getMultiplicity(Object obj) {

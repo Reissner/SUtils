@@ -1141,7 +1141,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	if (size == 0) {
 	    throw new EmptyCyclicListException();
 	}
-	return (index >= 0 ? index%size : (index%size+size)%size);
+	return index >= 0 ? index%size : (index%size+size)%size;
     }
 
     /**

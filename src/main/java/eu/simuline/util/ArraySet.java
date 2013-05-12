@@ -82,7 +82,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * By contract, <code>list.get(a).equals(list.get(b))</code> 
      * implies <code>a == b</code>. 
      */
-    private ArrayList<E> list;
+    private ArrayList<E> list;// NOPMD
 
     /**
      * The comparator initialized in the constructor 
@@ -176,7 +176,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 	return Comparators.getAsListed(getList());
     }
 
-    public final ArrayList<E> getList() {
+    public final List<E> getList() {
 	return this.list;
     }
 
@@ -454,7 +454,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      */
     public final boolean addAll(Collection<? extends E> coll) {
 	if (isSortedWithSameComparator(coll)) {
-	    ArrayList<E> cList;
+	    List<E> cList;
    	    if (coll instanceof ArraySet) {
 		cList = ((ArraySet)coll).getList();
 	    } else {

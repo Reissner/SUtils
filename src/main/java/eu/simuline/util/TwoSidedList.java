@@ -1480,7 +1480,7 @@ public class TwoSidedList<E> implements List<E> {
 	TwoSidedList other = (TwoSidedList)obj;
 
 	return this.list.equals(other.list) 
-	    && (this.firstIndex == other.firstIndex);
+	    && this.firstIndex == other.firstIndex;
     }
 
     /**

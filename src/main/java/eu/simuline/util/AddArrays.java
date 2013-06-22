@@ -18,6 +18,10 @@ import java.util.Comparator;
  */
 public class AddArrays<E> {
 
+    /* -------------------------------------------------------------------- *
+     * class constants.                                                     *
+     * -------------------------------------------------------------------- */
+
     /**
      * The class <code>double[]</code>. 
      */
@@ -29,6 +33,17 @@ public class AddArrays<E> {
     public final static Class DOUBLE_ARRAY2 = getArrayCls(Double.TYPE,2);
 
     public final static Object[] EMPTY = new Object[] {};
+
+    /* -------------------------------------------------------------------- *
+     * constructors.                                                        *
+     * -------------------------------------------------------------------- */
+
+    private AddArrays() {
+    }
+
+    /* -------------------------------------------------------------------- *
+     * static methods.                                                      *
+     * -------------------------------------------------------------------- */
 
     /**
      * Reverses the order of the elements in the specified array. 

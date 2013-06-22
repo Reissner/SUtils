@@ -12,7 +12,7 @@ import java.util.HashMap;
  * @author <a href="mailto:">Ernst Reissner</a>
  * @version 1.0
  */
-public class BasicTypesCompatibilityChecker {
+public abstract class BasicTypesCompatibilityChecker {
 
     /**
      * Maps wrapper classes to the corresponding basic classes. 

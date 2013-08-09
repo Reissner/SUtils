@@ -51,7 +51,8 @@ public class GifResource {
      * <code>/resource/</code>: the directory of the classfiles 
      * within simuline-developing environment. 
      */
-    private final static String RESOURCE = URL_SEP +"resources" + URL_SEP;
+    private final static String RESOURCE = 
+	URL_SEP +"src/main/resources" + URL_SEP;// **** URL_SEP and /
 
     /**
      * A cache for gif-files represented by GifResources. 

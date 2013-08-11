@@ -326,7 +326,9 @@ public abstract class Finder {
     /**
      * Filter executing a shell command and passes the file received 
      * if the shell command succeeds according to its return code. 
-     * See {@link Finder#exec(String[])}. 
+     *
+     * @see Finder#exec(String[])
+     * @see Finder.ExecJavaFilter
      */
     static class ExecFilter extends Filter {
 
@@ -336,7 +338,8 @@ public abstract class Finder {
 
 	/**
 	 * The command to be executed including arguments 
-	 * separated by space as to be passed to {@link Runtime#exec(String)}. 
+	 * separated by space as to be passed to {@link Runtime#exec(String)} 
+	 * in order to decide whether the given file passes the filter. 
 	 * For more information on the entries 
 	 * see {@link Finder#exec(String[])}. 
 	 */
@@ -347,7 +350,7 @@ public abstract class Finder {
 	 * ---------------------------------------------------------------- */
 
 	/**
-	 * Creates an execution filter from the given command. 
+	 * Creates an execution filter from the given command and arguments. 
 	 *
 	 * @param cmd
 	 *    The 0th entry is the command itself and the others are arguments. 
@@ -412,6 +415,77 @@ public abstract class Finder {
 	}
 
     } // class ExecFilter 
+
+    /**
+     * To be implemented by java classes to apply a filter to a file 
+     * and give feedback whether this filter succeeded. 
+     * This is analogous to passing a file to as shell command 
+     * and reading back whether the command succeeded. 
+     * This interface should be used to define a {@link Finder.ExecJavaFilter). 
+     */
+    public interface Callable {
+	/**
+	 * Applies some filter on the given file 
+	 * and returns whether the called operation succeeded. 
+	 */
+	boolean call(File file);
+    } // interface Callable 
+
+    /**
+     * Filter executing a java class implementing {@link Finder.Callable} 
+     * which passes the file received 
+     * if the  method {@link Finder.Callable#call(File)} succeeds 
+     * according to its return code. 
+     *
+     * @seeFinder#exec(String[])
+     * @see Finder.ExecFilter
+     */
+    static class ExecJavaFilter extends Filter {
+
+	/* ---------------------------------------------------------------- *
+	 * fields.                                                          *
+	 * ---------------------------------------------------------------- */
+
+	/**
+	 * The instance to be executed to decide 
+	 * whether a given file passes the filter 
+	 * invoking {@link Finder.Callable#call(File)}. 
+	 * Besides filtering, other actions may be taken as side effect. 
+	 * Parameters are passed to the callable when creating the instance 
+	 * or later by a setter method, depending on the implementation. 
+	 */
+	Callable callable;
+
+	/* ---------------------------------------------------------------- *
+	 * constructors.                                                    *
+	 * ---------------------------------------------------------------- */
+
+	/**
+	 * Creates a java execution filter 
+	 * from the given {@link Finder.Callable}. 
+	 *
+	 * @param callable
+	 *    The callable defining the filter. 
+	 */
+	ExecJavaFilter(Callable callable) {
+	    this.callable = callable;
+	}
+
+	/* ---------------------------------------------------------------- *
+	 * methods.                                                         *
+	 * ---------------------------------------------------------------- */
+
+	/**
+	 * The given file passes this filter, 
+	 * i.e. this method returns <code>true</code>, 
+	 * if so does {@link #callable}. 
+	 */
+	public boolean pass(File file) {
+	    return this.callable.call(file);
+	}
+
+    } // class ExecJavaFilter 
+
 
     /**
      * One of the logical operations of filters: 
@@ -707,6 +781,9 @@ public abstract class Finder {
 
     /**
      * Convenience method: adds an execution filter to this finder. 
+     * @return
+     *    an instance of {@link Finder.Secondary} 
+     *    instantiated with a filter of type {@link Finder.ExecFilter} 
      *
      * @see #execFilter(String[])
      */
@@ -715,8 +792,20 @@ public abstract class Finder {
     }
 
     /**
+     * Convenience method: adds a java execution filter to this finder. 
+     * @return
+     *    an instance of {@link Finder.Secondary} 
+     *    instantiated with a filter of type {@link Finder.ExecJavaFilter} 
+     *
+     * @see #execJavaFilter(Callable)
+     */
+    public Finder execJava(Callable callable) {
+	return Finder.this.add(execJavaFilter(callable));
+    }
+
+    /**
      * Convenience method: 
-     * Returns a finder by attachig the inverse of the given filter. 
+     * Returns a finder by attaching the inverse of the given filter. 
      * This corresponds the tests <code>\! expr1</code> 
      * in the original find command. 
      *
@@ -728,7 +817,7 @@ public abstract class Finder {
 
     /**
      * Convenience method: 
-     * Returns a finder by attachig an and-filter. 
+     * Returns a finder by attaching an and-filter. 
      * This corresponds the tests <code>\! expr1</code> 
      * in the original find command. 
      *
@@ -740,7 +829,7 @@ public abstract class Finder {
 
     /**
      * Convenience method: 
-     * Returns a finder by attachig an or-filter. 
+     * Returns a finder by attaching an or-filter. 
      * This corresponds the tests <code>\! expr1</code> 
      * in the original find command. 
      *
@@ -768,7 +857,7 @@ public abstract class Finder {
     }
 
     /**
-     * Filter invoking a shell command: 
+     * Returns a filter invoking a shell command: 
      * just passes the files received by this finder further 
      * if the command succeeds according to its return value. 
      * Example in original find-terminology: 
@@ -802,11 +891,28 @@ public abstract class Finder {
      *    For example to obtain a grep use 
      *    <code>new String{} {"grep", "pattern without quotes", EXEC_ARG}</code>
      * @return
-     *    an instance of {@link Finder.Secondary} 
-     *    instantiated with a filter of type {@link Finder.ExecFilter} 
+     *    a filter of type {@link Finder.ExecFilter} 
+     * @see #execJavaFilter(Callable)
      */
     public static Filter execFilter(String[] cmd) {
 	return new ExecFilter(cmd);
+    }
+
+    /**
+     * Returns a filter invoking method {@link Finder.Callable#call(File)} 
+     * of the given <code>callable</code>. 
+     *
+     * @param callable
+     *    A callable defining a filter. 
+     *    If parameters are required, 
+     *    these must be given when instantiating the callable 
+     *    or later using setter methods. 
+     * @return
+     *    a filter of type {@link Finder.ExecFilter} 
+     * @see #execFilter(String[])
+     */
+    public static Filter execJavaFilter(Callable callable) {
+	return new ExecJavaFilter(callable);
     }
 
 

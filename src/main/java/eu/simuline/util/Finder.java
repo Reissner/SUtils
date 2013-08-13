@@ -421,7 +421,7 @@ public abstract class Finder {
      * and give feedback whether this filter succeeded. 
      * This is analogous to passing a file to as shell command 
      * and reading back whether the command succeeded. 
-     * This interface should be used to define a {@link Finder.ExecJavaFilter). 
+     * This interface should be used to define a {@link Finder.ExecJavaFilter}. 
      */
     public interface Callable {
 	/**
@@ -437,7 +437,7 @@ public abstract class Finder {
      * if the  method {@link Finder.Callable#call(File)} succeeds 
      * according to its return code. 
      *
-     * @seeFinder#exec(String[])
+     * @see Finder#exec(String[])
      * @see Finder.ExecFilter
      */
     static class ExecJavaFilter extends Filter {

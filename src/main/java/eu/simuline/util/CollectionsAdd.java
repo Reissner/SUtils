@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.WeakHashMap;
+import java.util.EnumSet;
 
 /**
  * An add on of the core class {@link java.util.Collections}. 
@@ -58,7 +60,7 @@ public class CollectionsAdd<E> {
 	 */
 	public ImmutableSet() {
 	    super();
-	    this.mods = new HashSet<Modification>();
+	    this.mods = EnumSet.noneOf(Modification.class);
 	}
 
 	/* ---------------------------------------------------------------- *
@@ -185,6 +187,16 @@ public class CollectionsAdd<E> {
 //     getImmutableSortedSet(Comparator<? super E> cmp) {
 // 	return new ImmutableSortedSet<E>(cmp);
 //     }
+
+    /**
+     * Retuns a weak hash set, i.e. a hash set of weak references. 
+     *
+     * @see java.util.HashMap
+     * @see Collections#newSetFromMap(Map)
+     */
+    public static <E> Set<E> weakHashSet() {
+	return Collections.newSetFromMap(new WeakHashMap<E, Boolean>());
+    }
 
     /**
      * Converts the list given recursively into an array. 

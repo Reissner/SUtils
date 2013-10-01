@@ -34,7 +34,7 @@ public class MultiSet<T> {
      * which can be stored in a map, e.g. {@link MultiSet#obj2mult} 
      * and unlike <code>Integer</code>s these objects are mutable. 
      */
-    private static class Multiplicity implements Comparable {
+    private static class Multiplicity implements Comparable<Multiplicity> {
 
 	/**
 	 * A positive integer representing a multiplicity. 
@@ -126,19 +126,19 @@ public class MultiSet<T> {
 	/**
 	 * Defines the natural ordering on natural numbers. 
 	 *
-	 * @param obj 
-	 *    an <code>Object</code> which should in fact 
+	 * @param mult 
+	 *    a <code>Multiplicity</code> which should in fact 
 	 *    be another {@link MultiSet.Multiplicity}. 
 	 * @return 
 	 *    the difference of the wrapped {@link #mult}-values. 
 	 * @throws NullPointerException 
-	 *    for <code>obj == null</code>. 
+	 *    for <code>mult == null</code>. 
 	 * @throws ClassCastException 
-	 *    if <code>obj</code> is neither <code>null</code> 
+	 *    if <code>mult</code> is neither <code>null</code> 
 	 *    nor an instance of {@link MultiSet.Multiplicity}. 
 	 */
-	public int compareTo(Object obj) {
-	    return this.get()-((Multiplicity)obj).get();
+	public int compareTo(Multiplicity mult) {
+	    return this.get()-mult.get();
 	}
 
 	// api-docs provided by javadoc. 
@@ -176,7 +176,7 @@ public class MultiSet<T> {
 
     /**
      * Represents immutable <code>MultiSet</code>s 
-     * as e.g. the one in {@link MultiSet#EMPTY_SET}. 
+     * as e.g. the one given by {@link MultiSet#emptyMultiSet()}. 
      */
     public final static class Immutable<T> extends MultiSet<T> {
 
@@ -185,7 +185,7 @@ public class MultiSet<T> {
 	 * ---------------------------------------------------------------- */
 
 	/**
-	 * Creates a new, empty <code>ImmutableMultiSet</code>. 
+	 * Creates a new, empty <code>Immutable</code>. 
 	 */
 	private Immutable() {
 	    super();
@@ -207,8 +207,8 @@ public class MultiSet<T> {
 	 * ---------------------------------------------------------------- */
 
 
-	private static Immutable createEmpty() {
-	    return new Immutable();
+	private static <T> Immutable<T> createEmpty() {
+	    return new Immutable<T>();
 	}
 
 	/*
@@ -287,17 +287,12 @@ public class MultiSet<T> {
 	    throw new UnsupportedOperationException();
 	}
 
-    } // class ImmutableMultiSet 
+    } // class Immutable 
 
     /* -------------------------------------------------------------------- *
      * class constants.                                                     *
      * -------------------------------------------------------------------- */
 
-    /**
-     * A constant containing an <em>immutable</em> empty set. 
-     * @see MultiSet.Immutable
-     */
-    public final static MultiSet EMPTY_SET = Immutable.createEmpty();
 
     /* -------------------------------------------------------------------- *
      * fields.                                                              *
@@ -316,7 +311,7 @@ public class MultiSet<T> {
     protected final SortedMap<T, Multiplicity> obj2mult;
 
     /* -------------------------------------------------------------------- *
-     * constructors.                                                        *
+     * constructors and creator methods.                                    *
      * -------------------------------------------------------------------- */
 
     /**
@@ -342,6 +337,15 @@ public class MultiSet<T> {
     public MultiSet(MultiSet<? extends T> other) {
 	this.obj2mult = new TreeMap<T,Multiplicity>(other.obj2mult);
     }
+
+    /**
+     * Returns an <em>immutable</em> empty set. 
+     * @see MultiSet.Immutable
+     */
+    public static <T> MultiSet<T> emptyMultiSet() {
+	return Immutable.createEmpty();
+    }
+
 
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
@@ -559,7 +563,7 @@ public class MultiSet<T> {
      *    an <tt>Iterator</tt> over the elements in this collection 
      *    considering each element exactly once ignoring its multiplicity. 
      */
-    public Iterator iterator() {
+    public Iterator<T> iterator() {
 	return getSet().iterator();
     }
 
@@ -913,7 +917,7 @@ public class MultiSet<T> {
      *    if the specified collection is <tt>null</tt>.
      * @see #contains(Object)
      */
-    public boolean containsAll(Collection coll) {
+    public boolean containsAll(Collection<?> coll) {
 	for (Object cand : coll) {
 	    // throws NullPointerException if cand == null
 	    if (!contains(cand)) {
@@ -996,8 +1000,9 @@ public class MultiSet<T> {
      */
     public boolean retainAll(Collection<?> coll) {
 	boolean result = false;
-	Iterator iter = iterator();
-	Object cand;
+
+	Iterator<T> iter = iterator();
+	T cand;
 	while (iter.hasNext()) {
 	    cand = iter.next();
 	    if (!coll.contains(cand)) {
@@ -1050,7 +1055,7 @@ public class MultiSet<T> {
 	if (!(obj instanceof MultiSet)) {
 	    return false;
 	}
-	MultiSet other = (MultiSet)obj;
+	MultiSet<?> other = (MultiSet)obj;
 	return this.obj2mult.equals(other.obj2mult);
     }
 

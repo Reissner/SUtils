@@ -172,7 +172,7 @@ public class MultiSetTest {
 	//
 	// The empty set
 	//
-	assertTrue(MultiSet.EMPTY_SET.isEmpty());
+	assertTrue(MultiSet.emptyMultiSet().isEmpty());
 
 
 	// testcase 2

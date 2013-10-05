@@ -3,6 +3,7 @@ package eu.simuline.util;
 import java.util.Comparator;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Comparators.java
@@ -58,7 +59,7 @@ public abstract class Comparators {// NOPMD
      * Thus the ordering is consistent with equals only, 
      * if restricted to the elements of {@link #seq} 
      * plus one single object not in {@link #seq}. 
-     * This suffices to make the method {@link SortedSet#add(Object)} 
+     * This suffices to make the method {@link Set#add(Object)} 
      * to work properly. 
      * <p>
      * The ordering is always total, 
@@ -91,7 +92,7 @@ public abstract class Comparators {// NOPMD
 	// **** does not check that the elements of seq are pairwise different. 
 	AsListed(List<E> seq) {
 	    if (seq == null) {
-		throw new NullPointerException();
+		throw new NullPointerException();// NOPMD
 	    }
 	    this.seq = seq;
 	    assert this.seq != null;
@@ -158,7 +159,7 @@ public abstract class Comparators {// NOPMD
     }
 
     /**
-     * Returns an ordering given by the list {@link #seq}. 
+     * Returns an ordering given by the list {@link Comparators.AsListed#seq}. 
      * Elements not in the list are all minimal 
      * and pairwise equal with respect to this comparator. 
      * They are less than all elements in the list. 

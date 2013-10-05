@@ -25,11 +25,11 @@ import java.util.AbstractSet;
  * adding n elements requires O(n) time. 
  * All of the other operations run in linear time (roughly speaking). 
  * <p>
- * Each ArraySet instance has a capacity. 
+ * Each ListSet instance has a capacity. 
  * The capacity is the size of the array used 
  * to store the elements in the list. 
  * It is always at least as large as the set size. 
- * As elements are added an ArraySet, its capacity grows automatically. 
+ * As elements are added an ListSet, its capacity grows automatically. 
  * The details of the growth policy are not specified 
  * beyond the fact that adding an element has constant amortized time cost. 
  * <p>
@@ -42,8 +42,8 @@ import java.util.AbstractSet;
  * If no such object exists, the set should be "wrapped" 
  * using the Collections.synchronizedSet method. 
  * This is best done at creation time, 
- * to prevent accidental unsynchronized access to the ArraySet instance: 
- * <ore>Set s = Collections.synchronizedSet(new ArraySet(...));</pre>
+ * to prevent accidental unsynchronized access to the ListSet instance: 
+ * <ore>Set s = Collections.synchronizedSet(new ListSet(...));</pre>
  * <p>
  * The iterators returned by this class's iterator method are fail-fast: 
  * if the set ismodified at any time after the iterator is created, 
@@ -62,8 +62,7 @@ import java.util.AbstractSet;
  * @see java.util.AbstractSet
  * @see java.util.Collections
  */
-// **** should be renamed: ListSet instead of ArraySet 
-public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
+public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 
     /* -------------------------------------------------------------------- *
      * inner classes.                                                       *
@@ -101,15 +100,15 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * -------------------------------------------------------------------- */
 
     /**
-     * Creates a new <code>ArraySet</code> with ordering as added 
+     * Creates a new <code>ListSet</code> with ordering as added 
      * in ascending ordering. 
      */
-    public static <E> ArraySet<E> sortedAsAdded() {
+    public static <E> ListSet<E> sortedAsAdded() {
 	return sortedAsListed(new ArrayList<E>());
     }
 
     /**
-     * Returns an <code>ArraySet</code> with elements and ordering 
+     * Returns an <code>ListSet</code> with elements and ordering 
      * given by <code>list</code> 
      * as described in {@link Comparators#getAsListed(List)}. 
      * If an element is added to <code>list</code>, 
@@ -122,15 +121,15 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * @throws NullPointerException
      *    if <code>list</code> is <code>null</code>. 
      */
-    public static <E> ArraySet<E> sortedAsListed(List<E> list) {
-	return new ArraySet(list, Comparators.getAsListed(list));
+    public static <E> ListSet<E> sortedAsListed(List<E> list) {
+	return new ListSet(list, Comparators.getAsListed(list));
     }
 
     /**
-     * Creates a new <code>ArraySet</code> 
+     * Creates a new <code>ListSet</code> 
      * with elements given by <code>list</code> 
      */
-    private ArraySet(List<E> list, Comparator<? super E> cmp) {
+    private ListSet(List<E> list, Comparator<? super E> cmp) {
 	this.list = list;
 	this.outerCmp = cmp;
 
@@ -168,7 +167,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * @throws NullPointerException
      *     if the specified sorted set is <code>null</code>.   
      */
-    public ArraySet(SortedSet<E> sortedSet) {
+    public ListSet(SortedSet<E> sortedSet) {
 	this(sortedSet.comparator());
 	//addAll(sortedSet);
 	// could be improved by explicitely iterating 
@@ -197,7 +196,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * @throws NullPointerException
      *    if the specified collection is <code>null</code>. 
      */
-    public ArraySet(Collection<? extends E> coll) {//,boolean isSortedAsAdded
+    public ListSet(Collection<? extends E> coll) {//,boolean isSortedAsAdded
 	this((Comparator<? super E>)null);
 	addAll(coll);// NOPMD 
 	//this(new OrderingDesc<E>(coll,isSortedAsAdded));
@@ -239,7 +238,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      *    the comparator that will be used to order this set. 
      *    If null, the natural ordering of the elements will be used. 
      */
-    public ArraySet(Comparator<? super E> cmp) {
+    public ListSet(Comparator<? super E> cmp) {
 	this(new ArrayList<E>(), cmp);
     }
 
@@ -259,9 +258,9 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * whose elements are integers), 
      * the add call will throw a {@link ClassCastException}. 
      * For a generalization to a given comparator 
-     * see {@link #ArraySet(Comparator)}. 
+     * see {@link #ListSet(Comparator)}. 
      */
-    public ArraySet() {
+    public ListSet() {
 	this((Comparator<? super E>)null);
     }
 
@@ -541,8 +540,8 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
     public final boolean addAll(Collection<? extends E> coll) {
 	if (isSortedWithSameComparator(coll)) {
 	    List<E> cList;
-//   	    if (coll instanceof ArraySet) {
-//		cList = ((ArraySet)coll).getList();
+//   	    if (coll instanceof ListSet) {
+//		cList = ((ListSet)coll).getList();
 //	    } else {
 		cList = new ArrayList<E>(coll);
 //	    }
@@ -748,7 +747,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
     }
 
     // api-docs inherited from SortedSet 
-    public ArraySet<E> subSet(E fromObj, E toObj) {
+    public ListSet<E> subSet(E fromObj, E toObj) {
 	int fromIdx = Collections.binarySearch(this.list,fromObj,this.innerCmp);
 	if (fromIdx < 0) {
 	    fromIdx = -fromIdx-1;
@@ -765,7 +764,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 	// Here, toIdx contains the index of the first element of this set 
 	// too large to be in the resulting subset 
 
-	return new ArraySet<E>(this.list.subList(fromIdx, toIdx),
+	return new ListSet<E>(this.list.subList(fromIdx, toIdx),
 			       this.outerCmp);
     }
 
@@ -789,7 +788,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 	// Here, fromIdx contains the index of the first element in this set  
 	// which shall be in the resulting subset 
 
-	return new ArraySet<E>(this.list.subList(fromIdx, size()),
+	return new ListSet<E>(this.list.subList(fromIdx, size()),
 			       this.outerCmp);
     }
 
@@ -895,9 +894,9 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 
 
     public static void main(String[] args) {
-	ArraySet<Integer> aSet;
+	ListSet<Integer> aSet;
 
-	// aSet = ArraySet.sortedAsAdded();
+	// aSet = ListSet.sortedAsAdded();
 	// aSet.add(0);
 	// aSet.add(1);
 	// aSet.add(2);
@@ -906,7 +905,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 	// System.out.println(": "+aSet.comparator()
 	// 		   .compare(aSet.first(),aSet.last()));
 
-	aSet = ArraySet.sortedAsListed(java.util.Arrays.asList(new Integer[] {
+	aSet = ListSet.sortedAsListed(java.util.Arrays.asList(new Integer[] {
 		    3, 2, 1}));
 	System.out.println(": "+aSet.getList());
 

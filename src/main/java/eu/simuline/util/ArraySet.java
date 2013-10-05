@@ -33,11 +33,6 @@ import java.util.AbstractSet;
  * The details of the growth policy are not specified 
  * beyond the fact that adding an element has constant amortized time cost. 
  * <p>
- * An application can increase the capacity of an ArraySet instance 
- * before adding a large number of elements 
- * using the {@link #ensureCapacity} operation. 
- * This may reduce the amount of incremental reallocation. 
- * <p>
  * <em>Note that this implementation is not synchronized. </em>
  * If multiple threads access a set concurrently, 
  * and at least one of the threads modifies the set, 
@@ -67,6 +62,7 @@ import java.util.AbstractSet;
  * @see java.util.AbstractSet
  * @see java.util.Collections
  */
+// **** should be renamed: ListSet instead of ArraySet 
 public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 
     /* -------------------------------------------------------------------- *
@@ -82,14 +78,14 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * By contract, <code>list.get(a).equals(list.get(b))</code> 
      * implies <code>a == b</code>. 
      */
-    private ArrayList<E> list;// NOPMD
+    private final List<E> list;
 
     /**
      * The comparator initialized in the constructor 
-     * and returned by {@link #comparator}. 
+     * and returned by {@link #comparator()}. 
      * This may well be <code>null</code> and is nowhere used directly. 
      */
-    private Comparator<? super E> outerCmp;
+    private final Comparator<? super E> outerCmp;
 
     /**
      * If {@link #outerCmp} is not <code>null</code>, 
@@ -98,53 +94,50 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * and throws a <code>ClassCastException</code> 
      * if feeded with no appropriate <code>Comparable</code>. 
      */
-    private Comparator<? super E> innerCmp;
+    private final Comparator<? super E> innerCmp;
 
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
      * -------------------------------------------------------------------- */
 
     /**
-     * Creates a new <code>ArraySet</code>. 
+     * Creates a new <code>ArraySet</code> with ordering as added 
+     * in ascending ordering. 
      */
     public static <E> ArraySet<E> sortedAsAdded() {
-	ArraySet<E> res = new ArraySet<E>();
-	res.innerCmp = res.outerCmp =  res.asListed();
-	return res;
+	return sortedAsListed(new ArrayList<E>());
     }
 
-
-    /*
-     * Creates a new set containing the elements of the specified collection. 
-     * The corresponding iterator returns the elements in the order 
-     * they are returned by the collection's iterator. 
-     * The backing ArrayList instance {@link #list} 
-     * has an initial capacity of 110% the size of the specified collection. 
+    /**
+     * Returns an <code>ArraySet</code> with elements and ordering 
+     * given by <code>list</code> 
+     * as described in {@link Comparators#getAsListed(List)}. 
+     * If an element is added to <code>list</code>, 
+     * the ordering is as added at the end of <code>list</code>. 
      *
-     * @param coll 
-     *    the collection whose elements are to be placed into this set. 
+     * CAUTION: The list backs this set: 
+     * changes in the list affect this set and the other way round. 
+     * Changing the list also changes the ordering. 
+     *    
+     * @throws NullPointerException
+     *    if <code>list</code> is <code>null</code>. 
      */
-    public ArraySet(Collection<? extends E> coll) {//,boolean isSortedAsAdded
-	this((Comparator<? super E>)null);
-	addAll(coll);// NOPMD 
-	//this(new OrderingDesc<E>(coll,isSortedAsAdded));
+    public static <E> ArraySet<E> sortedAsListed(List<E> list) {
+	return new ArraySet(list, Comparators.getAsListed(list));
     }
-/*
-    void test(Comparator<E> cmp) {
-	this.innerCmp = new Comparator<E>() {
-	    public int compare(E o1,E o2) {
-		return ((Comparable<E>)o1).compareTo(o2);
-	    }
-	};
-    }
-*/
-    public ArraySet(Comparator<? super E> cmp) {
 
-	this.list = new ArrayList<E>();
+    /**
+     * Creates a new <code>ArraySet</code> 
+     * with elements given by <code>list</code> 
+     */
+    private ArraySet(List<E> list, Comparator<? super E> cmp) {
+	this.list = list;
 	this.outerCmp = cmp;
 
+	// set innerCmp 
 	if (cmp == null) {
 	    this.innerCmp = new Comparator<E>() {
+		// throws a ClassCastException if not comparable. 
 		public int compare(E obj1,E obj2) {
 		    return ((Comparable<E>)obj1).compareTo(obj2);
 		}
@@ -152,6 +145,8 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 	} else {
 	    this.innerCmp = cmp;
 	}
+	Collections.sort(this.list, this.innerCmp);
+
 	
 	/*
 	this.innerCmp = (cmp == null)
@@ -164,6 +159,108 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 	*/
     }
 
+    /**
+     * Constructs a new set containing the same elements 
+     * and using the same ordering as the <code>sortedSet</code>.
+     *
+     * @param sortedSet
+     *    sorted set whose elements will comprise the new set
+     * @throws NullPointerException
+     *     if the specified sorted set is <code>null</code>.   
+     */
+    public ArraySet(SortedSet<E> sortedSet) {
+	this(sortedSet.comparator());
+	//addAll(sortedSet);
+	// could be improved by explicitely iterating 
+	for (E elem : sortedSet) {
+	    this.list.add(elem);
+	}
+    }
+
+    /**
+     * Creates a new set containing the elements of the specified collection 
+     * in the natural ordering.  
+     * All elements inserted into the set 
+     * must implement the Comparable interface. 
+     * Furthermore, all such elements must be mutually comparable: 
+     * <code>e1.compareTo(e2)</code> must not throw a ClassCastException 
+     * for any elements <code>e1</code> and <code>e2</code> in the set. 
+     * <p>
+     * The backing ArrayList instance {@link #list} 
+     * has an initial capacity of 110% the size of the specified collection. 
+     *
+     * @param coll 
+     *    the collection whose elements are to be placed into this set. 
+     * @throws ClassCastException
+     *    if the elements in c are not Comparable, 
+     *    or are not mutually comparable. 
+     * @throws NullPointerException
+     *    if the specified collection is <code>null</code>. 
+     */
+    public ArraySet(Collection<? extends E> coll) {//,boolean isSortedAsAdded
+	this((Comparator<? super E>)null);
+	addAll(coll);// NOPMD 
+	//this(new OrderingDesc<E>(coll,isSortedAsAdded));
+    }
+    /*
+    void test(Comparator<E> cmp) {
+	this.innerCmp = new Comparator<E>() {
+	    public int compare(E o1,E o2) {
+		return ((Comparable<E>)o1).compareTo(o2);
+	    }
+	};
+    }
+    */
+
+
+    /**
+     * Constructs a new, empty set, 
+     * sorted according to the specified comparator <code>cmp</code>. 
+     * For <code>cmp==null</code> 
+     * a comparator defining the natural ordering is assumed. 
+     * <p>
+     * All elements inserted into the set 
+     * must be mutually comparable by the specified comparator: 
+     * <code>cmp.compare(e1, e2)</code> must not throw a ClassCastException 
+     * for any elements <code>e1</code> and <code>e2</code> in the set. 
+     * If the user attempts to add an element to the set 
+     * that violates this constraint, 
+     * the add call will throw a {@link ClassCastException}.
+     * <p>
+     * Implementational note: 
+     * Whereas {@link #outerCmp} is initialized with <code>cmp</code> 
+     * whether it is <code>null</code> or not, 
+     * {@link #innerCmp} is initialized with <code>cmp</code> 
+     * only if this is not <code>null</code>. 
+     * Otherwise, it is initialized with a comparator 
+     * defining the natural ordering. 
+     *
+     * @param cmp
+     *    the comparator that will be used to order this set. 
+     *    If null, the natural ordering of the elements will be used. 
+     */
+    public ArraySet(Comparator<? super E> cmp) {
+	this(new ArrayList<E>(), cmp);
+    }
+
+
+
+    /**
+     * Constructs a new, empty set, 
+     * sorted according to the natural ordering of its elements. 
+     * All elements inserted into the set 
+     * must implement the Comparable interface. 
+     * Furthermore, all such elements must be mutually comparable: 
+     * <code>e1.compareTo(e2)</code> must not throw a ClassCastException 
+     * for any elements <code>e1</code> and <code>e2</code> in the set. 
+     * If the user attempts to add an element to the set 
+     * that violates this constraint 
+     * (for example, the user attempts to add a string element to a set 
+     * whose elements are integers), 
+     * the add call will throw a {@link ClassCastException}. 
+     * For a generalization to a given comparator 
+     * see {@link #ArraySet(Comparator)}. 
+     */
     public ArraySet() {
 	this((Comparator<? super E>)null);
     }
@@ -172,18 +269,19 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * methods.                                                             *
      * -------------------------------------------------------------------- */
 
-    public Comparators.AsListed<E> asListed() {
-	return Comparators.getAsListed(getList());
-    }
-
+    /**
+     * Returns a list backing this set, 
+     * so changes in the returned list are reflected in this set, 
+     * and vice-versa. 
+     */
     public final List<E> getList() {
 	return this.list;
     }
 
     /**
      * Returns the number of elements in this set (its cardinality).  
-     * If thisset contains more than <tt>Integer.MAX_VALUE</tt> elements, 
-     * returns <tt>Integer.MAX_VALUE</tt>.
+     * If thisset contains more than <code>Integer.MAX_VALUE</code> elements, 
+     * returns <code>Integer.MAX_VALUE</code>.
      *
      * @return the number of elements in this set (its cardinality).
      */
@@ -193,22 +291,10 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
     }
 
     /**
-     * Increases the capacity of this ArraySet instance, if necessary, 
-     * to ensure that it can hold at least the number of elements 
-     * specified by the minimum capacity argument. 
-     *
-     * @param minCapacity 
-     *    the desired minimum capacity. 
-     */
-    public void ensureCapacity(int minCapacity) {
-	this.list.ensureCapacity(minCapacity);
-    }
-
-    /**
-     * Returns <tt>true</tt> if this set contains no elements. 
+     * Returns <code>true</code> if this set contains no elements. 
      *
      * @return 
-     *    <tt>true</tt> if this set contains no elements.
+     *    <code>true</code> if this set contains no elements.
      */
      public boolean isEmpty() {
 	return this.list.isEmpty();
@@ -216,15 +302,15 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
     }
 
     /**
-     * Returns <tt>true</tt> if this set contains the specified element. 
-     * More formally, returns <tt>true</tt> if and only 
+     * Returns <code>true</code> if this set contains the specified element. 
+     * More formally, returns <code>true</code> if and only 
      * if this set contains an element <code>e</code> 
      * such that <code>(obj==null ? e==null : obj.equals(e))</code>. 
      *
      * @param obj 
      *    obj is some object that may be in this collection. 
      * @return 
-     *    <tt>true</tt> if this set contains the specified element.
+     *    <code>true</code> if this set contains the specified element.
      */
      public boolean contains(Object obj) {
 	 try {
@@ -260,7 +346,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * @return 
      *    an iterator over the elements in this set.
      */
-     public ListIterator listIterator() {
+     public ListIterator<E> listIterator() {
 	return this.list.listIterator();
 	// more complicated with null not in list. 
     }
@@ -268,7 +354,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
     /**
      * Returns an array containing all of the elements in this set; 
      * the order is as in the backing list {@link #list}. 
-     * Obeys the general contract of the <tt>Collection.toArray</tt> method.
+     * Obeys the general contract of the <code>Collection.toArray</code> method.
      *
      * @return 
      *    an array containing all of the elements in this set.
@@ -282,7 +368,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * whose runtime type is that of the specified array; 
      * the order is as in the backing list {@link #list}. 
      * Obeys the general contract 
-     * of the <tt>Collection.toArray(Object[])</tt> method.
+     * of the <code>Collection.toArray(Object[])</code> method.
      *
      * @param arr 
      *    the array into which the elements of this set are to be stored, 
@@ -309,7 +395,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * to this set if this set contains no element <code>e</code> 
      * such that <code>(o==null ? e==null : o.equals(e))</code>. 
      * If this set already contains the specified element, 
-     * the call leaves this set unchanged and returns <tt>false</tt>. 
+     * the call leaves this set unchanged and returns <code>false</code>. 
      * In combination with the restriction on constructors, 
      * this ensures that sets never contain duplicate elements. 
      * <p>
@@ -319,7 +405,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * @param obj 
      *    element to be added to this set. 
      * @return 
-     *    <tt>true</tt> if this set did not already contain the specified
+     *    <code>true</code> if this set did not already contain the specified
      *    element.
      */
     public final boolean add(E obj) {
@@ -338,7 +424,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * More formally, removes an element <code>e</code> 
      * such that <code>(o==null ?  e==null : o.equals(e))</code>, 
      * if the set contains such an element. 
-     * Returns <tt>true</tt> if the set contained the specified element 
+     * Returns <code>true</code> if the set contained the specified element 
      * (or equivalently, if the set changed as a result of the call). 
      * (The set will not contain the specified element once the call returns.)
      *
@@ -356,16 +442,16 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
     /*----------------------------------------------------------------------*/
 
     /**
-     * Returns <tt>true</tt> if this set contains all of the elements 
+     * Returns <code>true</code> if this set contains all of the elements 
      * of the specified collection. 
      * If the specified collection is also a set, 
-     * this method returns <tt>true</tt> 
+     * this method returns <code>true</code> 
      * if it is a <i>subset</i> of this set. 
      *
      * @param coll 
      *    collection to be checked for containment in this set.
      * @return 
-     *    <tt>true</tt> if this set contains all of the elements 
+     *    <code>true</code> if this set contains all of the elements 
      *    of the specified collection. 
      */
     public boolean containsAll(Collection<?> coll) {
@@ -374,7 +460,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 	    int min = 0;
 	    int sup = this.list.size();
 	    int index;
-	    Iterator iter = coll.iterator();
+	    Iterator<?> iter = coll.iterator();
 	    E elem;
 	    while (iter.hasNext()) {
 		try { /// **** not so good implementation. 
@@ -395,7 +481,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 	    }
 	    return true;
 	} // same comparator 
-	Iterator iter = coll.iterator();
+	Iterator<?> iter = coll.iterator();
 	while (iter.hasNext()) {
 	    if (!contains(iter.next())) {
 		return false;
@@ -424,11 +510,11 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      *    This case implies that neither are <code>null</code>. 
      *    </ul>
      */
-    private final boolean isSortedWithSameComparator(Collection coll) {
+    private final boolean isSortedWithSameComparator(Collection<?> coll) {
 	if (!(coll instanceof SortedSet)) {
 	    return false;
 	}
-	SortedSet sSet = (SortedSet)coll;
+	SortedSet<?> sSet = (SortedSet)coll;
 	if (sSet.comparator() == this.comparator() || 
 	    (this.comparator() != null && 
 	     this.comparator().equals(sSet.comparator()))) {
@@ -441,7 +527,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * Adds all of the elements in the specified collection to this set 
      * if they're not already present. 
      * If the specified collection is also a set, 
-     * the <tt>addAll</tt> operation effectively modifies this set so 
+     * the <code>addAll</code> operation effectively modifies this set so 
      * that its value is the <i>union</i> of the two sets. 
      * The behavior of this operation is unspecified if the specified
      * collection is modified while the operation is in progress. 
@@ -449,17 +535,17 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * @param coll 
      *    collection whose elements are to be added to this set. 
      * @return 
-     *    <tt>true</tt> if this set changed as a result of the call. 
+     *    <code>true</code> if this set changed as a result of the call. 
      * @see #add
      */
     public final boolean addAll(Collection<? extends E> coll) {
 	if (isSortedWithSameComparator(coll)) {
 	    List<E> cList;
-   	    if (coll instanceof ArraySet) {
-		cList = ((ArraySet)coll).getList();
-	    } else {
+//   	    if (coll instanceof ArraySet) {
+//		cList = ((ArraySet)coll).getList();
+//	    } else {
 		cList = new ArrayList<E>(coll);
-	    }
+//	    }
 	    return addList(this.list,cList);
 	} else {
 	    boolean modified = false;
@@ -612,7 +698,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * @param coll 
      *    collection that defines which elements this set will retain. 
      * @return 
-     *    <tt>true</tt> if this collection changed as a result of the call. 
+     *    <code>true</code> if this collection changed as a result of the call. 
      * @see #remove
      */
     public boolean retainAll(Collection<?> coll) {
@@ -636,7 +722,7 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      *    collection that defines 
      *    which elements will be removed from this set. 
      * @return 
-     *    <tt>true</tt> if this set changed as a result of the call. 
+     *    <code>true</code> if this set changed as a result of the call. 
      * @see #remove
      */
     public boolean removeAll(Collection<?> coll) {
@@ -652,65 +738,75 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
 	this.list.clear();
     }
 
-    /*----------------------------------------------------------------------*/
-    /* methods implementing SortedSet                                       */
-    /*----------------------------------------------------------------------*/
+    /*----------------------------------------------------------------------*
+     * methods implementing SortedSet                                       *
+     *----------------------------------------------------------------------*/
 
+    // api-docs inherited from SortedSet 
     public Comparator<? super E> comparator() {
 	return this.outerCmp;
     }
 
-    public SortedSet<E> subSet(E fromObj, E toObj) {
-	int fromI = this.list.indexOf(fromObj);
-	if (fromI == -1) {
-	    return new ArraySet<E>(this.outerCmp);
+    // api-docs inherited from SortedSet 
+    public ArraySet<E> subSet(E fromObj, E toObj) {
+	int fromIdx = Collections.binarySearch(this.list,fromObj,this.innerCmp);
+	if (fromIdx < 0) {
+	    fromIdx = -fromIdx-1;
 	}
-	
-	int toI = this.list.indexOf(toObj);
-	if (toI == -1) {
-	    toI = this.list.size();
+	assert fromIdx >= 0;
+	// Here, fromIdx contains the index of the first element in this set  
+	// which shall be in the resulting subset 
+
+	int toIdx = Collections.binarySearch(this.list,toObj,this.innerCmp);
+	if (toIdx < 0) {
+	    toIdx = -toIdx-1;
 	}
-	
-	ArraySet<E> result = new ArraySet<E>(this.outerCmp);
-	result.addAll(this.list.subList(fromI,toI));
-	return result;
+	assert toIdx >= 0;
+	// Here, toIdx contains the index of the first element of this set 
+	// too large to be in the resulting subset 
+
+	return new ArraySet<E>(this.list.subList(fromIdx, toIdx),
+			       this.outerCmp);
     }
 
+    // api-docs inherited from SortedSet 
     public SortedSet<E> headSet(E toObj) {
-	int toI = this.list.indexOf(toObj);
-	if (toI == -1) {
-	    toI = this.list.size();
+	if (isEmpty()) {
+	    return this;
 	}
-	ArraySet<E> result = new ArraySet<E>(this.outerCmp);
-	result.addAll(this.list.subList(0,toI));
-	return result;
+	// Here, first() exists 
+
+	return subSet(first(), toObj);
     }
 
-    public SortedSet<E> tailSet(E from) {
-	int fromI = this.list.indexOf(from);
-	if (fromI == -1) {
-	    return new ArraySet<E>(this.outerCmp);
+    // api-docs inherited from SortedSet 
+   public SortedSet<E> tailSet(E fromObj) {
+	int fromIdx = Collections.binarySearch(this.list,fromObj,this.innerCmp);
+	if (fromIdx < 0) {
+	    fromIdx = -fromIdx;
 	}
-	
-	ArraySet<E> result = new ArraySet<E>(this.outerCmp);
-	result.addAll(this.list.subList(fromI,this.list.size()));
-	return result;
+	assert fromIdx >= 0;
+	// Here, fromIdx contains the index of the first element in this set  
+	// which shall be in the resulting subset 
+
+	return new ArraySet<E>(this.list.subList(fromIdx, size()),
+			       this.outerCmp);
     }
 
+    // api-docs inherited from SortedSet 
     public E first() {
-	try {
-	     return this.list.get(0);
-	} catch (IndexOutOfBoundsException e) {
-	    throw new NoSuchElementException();// NOPMD
+	if (isEmpty()) {
+	    throw new NoSuchElementException();
 	}
+	return this.list.get(0);
     }
 
+    // api-docs inherited from SortedSet 
     public E last() {
-	try {
-	     return this.list.get(this.list.size()-1);
-	} catch (IndexOutOfBoundsException e) {
-	    throw new NoSuchElementException();// NOPMD
+	if (isEmpty()) {
+	    throw new NoSuchElementException();
 	}
+	return this.list.get(this.list.size()-1);
     }
 
     /*----------------------------------------------------------------------*/
@@ -718,8 +814,10 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
     /*----------------------------------------------------------------------*/
 
     /**
+     * **** ask at oracle whether for sorted sets equality 
+     * should include ordering. **** 
      * Compares the specified object with this set for equality. 
-     * Returns <tt>true</tt> if the specified object is also a set, 
+     * Returns <code>true</code> if the specified object is also a set, 
      * the two sets have the same size, 
      * and every member of the specified set is contained in this set 
      * (or equivalently, every member of this set 
@@ -730,10 +828,9 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * @param obj 
      *    Object to be compared for equality with this set. 
      * @return 
-     *    <tt>true</tt> if the specified Object is equal to this set. 
+     *    <code>true</code> if the specified Object is equal to this set. 
      */
     public boolean equals(Object obj) {
-
 	if (!(obj instanceof Set)) {
 	    return false;
 	}
@@ -773,11 +870,11 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      * Returns the hash code value for this set. 
      * The hash code of a set is defined to be the sum 
      * of the hash codes of the elements in the set, 
-     * where the hashcode of a <tt>null</tt> element is defined to be zero. 
+     * where the hashcode of a <code>null</code> element is defined to be zero. 
      * This ensures that <code>s1.equals(s2)</code> implies that 
      * <code>s1.hashCode()==s2.hashCode()</code> for any two sets 
      * <code>s1</code> and <code>s2</code>, as required by the general 
-     * contract of the <tt>Object.hashCode</tt> method. 
+     * contract of the <code>Object.hashCode</code> method. 
      *
      * @return 
      *    the hash code value for this set. 
@@ -787,12 +884,45 @@ public class ArraySet<E> extends AbstractSet<E> implements SortedSet<E> {
      */
     public int hashCode() {
 	int code = 0;
-	Iterator iter = this.iterator();
-	Object cand;
+	Iterator<E> iter = this.iterator();
+	E cand;
 	while (iter.hasNext()) {
 	    cand = iter.next();
 	    code += cand == null ? 0 : cand.hashCode();
 	}
 	return code;
+    }
+
+
+    public static void main(String[] args) {
+	ArraySet<Integer> aSet;
+
+	// aSet = ArraySet.sortedAsAdded();
+	// aSet.add(0);
+	// aSet.add(1);
+	// aSet.add(2);
+	// aSet.add(3);
+	// System.out.println(": "+aSet.getList());
+	// System.out.println(": "+aSet.comparator()
+	// 		   .compare(aSet.first(),aSet.last()));
+
+	aSet = ArraySet.sortedAsListed(java.util.Arrays.asList(new Integer[] {
+		    3, 2, 1}));
+	System.out.println(": "+aSet.getList());
+
+	
+	/*	
+	List<Integer> list = new ArrayList<Integer>();
+	list.add(0);
+	list.add(1);
+	list.add(2);
+	list.add(3);
+	Iterator<Integer> iter1 = list.iterator();
+	Iterator<Integer> iter2 = list.iterator();
+	iter1.next();
+	iter1.remove();
+	iter2.next();// throws ConcurrentModificationException 
+	// no correction of internal cursors 
+	*/
     }
 }

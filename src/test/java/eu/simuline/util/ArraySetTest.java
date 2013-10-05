@@ -23,7 +23,7 @@ import junit.framework.JUnit4TestAdapter;
 
 
 import java.util.Comparator;
-import java.util.Arrays;
+import static java.util.Arrays.asList;
 
 
 
@@ -36,7 +36,7 @@ public class ArraySetTest {
      * framework.                                                           *
      * -------------------------------------------------------------------- */
 
-    static ArraySetTest TEST = new ArraySetTest();
+    static final ArraySetTest TEST = new ArraySetTest();
 
     public static class TestAll {
 	@Test public void testAdd() {
@@ -51,6 +51,9 @@ public class ArraySetTest {
 	@Test public void testAddAll() {
 	    ArraySetTest.TEST.testAddAll();
 	}
+	@Test public void testSubSet() {
+	    ArraySetTest.TEST.testSubSet();
+	}
     } // class TestAll
 
 
@@ -60,121 +63,168 @@ public class ArraySetTest {
      * -------------------------------------------------------------------- */
 
     public void testAdd() {
-	ArraySet arraySet;
+	ArraySet<Integer> arraySet;
 
+	// empty set with natural ordering 
 	arraySet = new ArraySet<Integer>();
 	assertEquals(0,arraySet.size());
 	assertTrue(arraySet.isEmpty());
-	assertTrue(!arraySet.contains(new Integer(3)));
+	assertTrue(!arraySet.contains(3));
 	assertTrue(!arraySet.contains(null));
 	assertTrue(!arraySet.contains(new Double(0)));
-	assertTrue(!arraySet.iterator().hasNext());
+	assertTrue(!arraySet.    iterator().hasNext());
 	assertTrue(!arraySet.listIterator().hasNext());
 	assertEquals(0,arraySet.toArray().length);
 	assertNull(arraySet.comparator());
 
 
-	assertTrue(arraySet.add(new Integer(3)));
-	assertTrue(arraySet.add(new Integer(2)));
-	assertTrue(arraySet.add(new Integer(1)));
-	Assert.assertArraysEquals(new Object[] {
-	    new Integer(1), new Integer(2), new Integer(3)
-	},
-			    arraySet.toArray());
-	assertTrue(!arraySet.add(new Integer(2)));
-	Assert.assertArraysEquals(new Object[] {
-	    new Integer(1), new Integer(2), new Integer(3)
-	},
-			    arraySet.toArray());
+	// set with natural ordering 
+	assertTrue( arraySet.add(3));
+	assertTrue( arraySet.add(2));
+	assertTrue( arraySet.add(1));
+	Assert.assertArraysEquals(new Object[] {1, 2, 3},
+				  arraySet.toArray());
+	assertTrue(!arraySet.add(2));
+	Assert.assertArraysEquals(new Object[] {1, 2, 3	},
+				  arraySet.toArray());
 
+
+	// set with ordering given by a comparator 
 	Comparator<Integer> cmp = new Comparator<Integer>() {
 	    public int compare(Integer o1,Integer o2) {
 		return -o1.compareTo(o2);
 	    }
 	};
 	arraySet = new ArraySet<Integer>(cmp);
-	assertTrue(arraySet.add(new Integer(3)));
-	assertTrue(arraySet.add(new Integer(2)));
-	assertTrue(arraySet.add(new Integer(1)));
-	Assert.assertArraysEquals(new Object[] {
-	    new Integer(3), new Integer(2), new Integer(1)
-	},
-			    arraySet.toArray());
-	assertTrue(!arraySet.add(new Integer(2)));
-	Assert.assertArraysEquals(new Object[] {
-	    new Integer(3), new Integer(2), new Integer(1)
-	},
-			    arraySet.toArray());
+	assertTrue( arraySet.add(3));
+	assertTrue( arraySet.add(2));
+	assertTrue( arraySet.add(1));
+	Assert.assertArraysEquals(new Object[] {3, 2, 1},
+				  arraySet.toArray());
+	assertTrue(!arraySet.add(2));
+	Assert.assertArraysEquals(new Object[] {3, 2, 1},
+				  arraySet.toArray());
+
+
+	// set with ordering given by successive adding 
+	arraySet = ArraySet.sortedAsAdded();
+	assertTrue( arraySet.add(2));
+	assertTrue( arraySet.add(3));
+	assertTrue( arraySet.add(1));
+
+	Assert.assertArraysEquals(new Object[] {2, 3, 1},
+				  arraySet.toArray());
+	assertTrue(!arraySet.add(2));
+	Assert.assertArraysEquals(new Object[] {2, 3, 1},
+				  arraySet.toArray());
+
 
     } // testAdd 
 
     public void testContains() {
-	ArraySet arraySet;
+	ArraySet<Integer> arraySet;
 
-	arraySet = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(3), new Integer(2), new Integer(1)}));
-	Assert.assertArraysEquals(new Object[] {
-	    new Integer(1), new Integer(2), new Integer(3)
-	},
-				  arraySet.toArray());
+	// check with natural ordering 
+	arraySet = new ArraySet<Integer>(asList(new Integer[] {
+		    3, 2, 1}));
+	Assert.assertArraysEquals(new Object[] {1, 2, 3}, arraySet.toArray());
 
-	assertTrue(arraySet.contains(new Integer(3)));
-	assertTrue(arraySet.contains(new Integer(2)));
-	assertTrue(arraySet.contains(new Integer(1)));
-	assertTrue(!arraySet.contains(new Integer(0)));
+	assertTrue( arraySet.contains(3));
+	assertTrue( arraySet.contains(2));
+	assertTrue( arraySet.contains(1));
+	assertTrue(!arraySet.contains(0));
 	assertTrue(!arraySet.contains(""));
+
+	// check with ordering given by initial list 
+	arraySet = ArraySet.sortedAsListed(asList(new Integer[] {
+		    3, 2, 1}));
+	Assert.assertArraysEquals(new Integer[] {3, 2, 1}, arraySet.toArray());
+
+	assertTrue( arraySet.contains(3));
+	assertTrue( arraySet.contains(2));
+	assertTrue( arraySet.contains(1));
+	assertTrue(!arraySet.contains(0));
+	assertTrue(!arraySet.contains(""));
+
     } // testContains 
 
     public void testContainsAll() {
-	ArraySet arraySet1, arraySet2;
+	ArraySet<Integer> arraySet1, arraySet2;
 
-	arraySet1 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(3), new Integer(2), new Integer(1)}));
-	arraySet2 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(3), new Integer(2), new Integer(1)}));
+	arraySet1 = new ArraySet<Integer>(asList(new Integer[] {
+	    3, 2, 1}));
+	arraySet2 = new ArraySet<Integer>(asList(new Integer[] {
+	    3, 2, 1}));
 	assertTrue(arraySet1.containsAll(arraySet2));
 
-	arraySet1 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(4), new Integer(3), new Integer(2), new Integer(1)}));
-	arraySet2 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(3), new Integer(2), new Integer(1)}));
-	assertTrue(arraySet1.containsAll(arraySet2));
+	arraySet1 = new ArraySet<Integer>(asList(new Integer[] {
+	    4, 3, 2, 1}));
+	arraySet2 = new ArraySet<Integer>(asList(new Integer[] {
+	    3, 2, 1}));
+	assertTrue( arraySet1.containsAll(arraySet2));
+	assertTrue(!arraySet2.containsAll(arraySet1));
 
-	arraySet1 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(3), new Integer(2), new Integer(1)}));
-	arraySet2 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(4), new Integer(3), new Integer(2), new Integer(1)}));
-	assertTrue(!arraySet1.containsAll(arraySet2));
-
-	arraySet1 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
+	arraySet1 = new ArraySet<Integer>(asList(new Integer[] {
 	    }));
-	arraySet2 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(4), new Integer(3), new Integer(2), new Integer(1)}));
+	arraySet2 = new ArraySet<Integer>(asList(new Integer[] {
+	    4, 3, 2, 1}));
 	assertTrue(!arraySet1.containsAll(arraySet2));
+	assertTrue( arraySet2.containsAll(arraySet1));
 
     } // testContainsAll 
 
     public void testAddAll() {
-	ArraySet arraySet1, arraySet2, arraySet3;
+	ArraySet<Integer> arraySet1, arraySet2, arraySet3;
 
-	arraySet1 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(3), new Integer(2), new Integer(1)}));
-	arraySet2 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(3), new Integer(2), new Integer(1)}));
-	arraySet3 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(3), new Integer(2), new Integer(1)}));
-	assertTrue(!arraySet1.addAll(arraySet2));
+	arraySet1 = new ArraySet<Integer>(asList(new Integer[] {
+	    3, 2, 1}));
+	arraySet2 = new ArraySet<Integer>(asList(new Integer[] {
+	    3, 2, 1}));
+	arraySet3 = new ArraySet<Integer>(asList(new Integer[] {
+	    3, 2, 1}));
+	assertTrue( !arraySet1.addAll(arraySet2));
 	assertEquals(arraySet1,arraySet3);
 
-	arraySet1 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(3), new Integer(2), new Integer(1)}));
-	arraySet2 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(4), new Integer(2), new Integer(1)}));
-	arraySet3 = new ArraySet<Integer>(Arrays.asList(new Integer[] {
-	    new Integer(4), new Integer(3), new Integer(2), new Integer(1)}));
-	assertTrue(arraySet1.addAll(arraySet2));
+	arraySet1 = new ArraySet<Integer>(asList(new Integer[] {
+	    3, 2, 1}));
+	arraySet2 = new ArraySet<Integer>(asList(new Integer[] {
+	    4, 2, 1}));
+	arraySet3 = new ArraySet<Integer>(asList(new Integer[] {
+	    4, 3, 2, 1}));
+	assertTrue(  arraySet1.addAll(arraySet2));
 	assertEquals(arraySet1,arraySet3);
      } // testAddAll
+
+    public void testSubSet() {
+	ArraySet<Integer> arraySet1, arraySet2;
+
+	arraySet1 = new ArraySet<Integer>(asList(new Integer[] {
+		    0, 2, 3, 4}));
+	Assert.assertArraysEquals(new Object[] {0, 2, 3, 4},
+				  arraySet1.toArray());
+
+	arraySet2 = arraySet1.subSet(0, 3);
+	Assert.assertArraysEquals(new Object[] {0, 2},
+				  arraySet2.toArray());
+
+	arraySet2 = arraySet1.subSet(0, 4);
+	Assert.assertArraysEquals(new Object[] {0, 2, 3},
+				  arraySet2.toArray());
+
+	arraySet2 = arraySet1.subSet(0, 1);
+	Assert.assertArraysEquals(new Object[] {0},
+				  arraySet2.toArray());
+
+	arraySet2 = arraySet1.subSet(1, 4);
+	Assert.assertArraysEquals(new Object[] {2, 3},
+				  arraySet2.toArray());
+
+	arraySet2 = arraySet1.subSet(1, 5);
+	Assert.assertArraysEquals(new Object[] {2, 3, 4},
+				  arraySet2.toArray());
+
+
+    } // testSubSet 
 
     /* -------------------------------------------------------------------- *
      * framework.                                                           *

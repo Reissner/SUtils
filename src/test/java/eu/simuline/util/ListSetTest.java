@@ -28,31 +28,31 @@ import static java.util.Arrays.asList;
 
 
 @RunWith(Suite.class)
-@SuiteClasses({ArraySetTest.TestAll.class})
-public class ArraySetTest {
+@SuiteClasses({ListSetTest.TestAll.class})
+public class ListSetTest {
 
 
     /* -------------------------------------------------------------------- *
      * framework.                                                           *
      * -------------------------------------------------------------------- */
 
-    static final ArraySetTest TEST = new ArraySetTest();
+    static final ListSetTest TEST = new ListSetTest();
 
     public static class TestAll {
 	@Test public void testAdd() {
-	    ArraySetTest.TEST.testAdd();	    
+	    ListSetTest.TEST.testAdd();	    
 	}
 	@Test public void testContains() {
-	    ArraySetTest.TEST.testContains();	    
+	    ListSetTest.TEST.testContains();	    
 	}
 	@Test public void testContainsAll() {
-	    ArraySetTest.TEST.testContainsAll();	    
+	    ListSetTest.TEST.testContainsAll();	    
 	}
 	@Test public void testAddAll() {
-	    ArraySetTest.TEST.testAddAll();
+	    ListSetTest.TEST.testAddAll();
 	}
 	@Test public void testSubSet() {
-	    ArraySetTest.TEST.testSubSet();
+	    ListSetTest.TEST.testSubSet();
 	}
     } // class TestAll
 
@@ -63,10 +63,10 @@ public class ArraySetTest {
      * -------------------------------------------------------------------- */
 
     public void testAdd() {
-	ArraySet<Integer> arraySet;
+	ListSet<Integer> arraySet;
 
 	// empty set with natural ordering 
-	arraySet = new ArraySet<Integer>();
+	arraySet = new ListSet<Integer>();
 	assertEquals(0,arraySet.size());
 	assertTrue(arraySet.isEmpty());
 	assertTrue(!arraySet.contains(3));
@@ -95,7 +95,7 @@ public class ArraySetTest {
 		return -o1.compareTo(o2);
 	    }
 	};
-	arraySet = new ArraySet<Integer>(cmp);
+	arraySet = new ListSet<Integer>(cmp);
 	assertTrue( arraySet.add(3));
 	assertTrue( arraySet.add(2));
 	assertTrue( arraySet.add(1));
@@ -107,7 +107,7 @@ public class ArraySetTest {
 
 
 	// set with ordering given by successive adding 
-	arraySet = ArraySet.sortedAsAdded();
+	arraySet = ListSet.sortedAsAdded();
 	assertTrue( arraySet.add(2));
 	assertTrue( arraySet.add(3));
 	assertTrue( arraySet.add(1));
@@ -122,10 +122,10 @@ public class ArraySetTest {
     } // testAdd 
 
     public void testContains() {
-	ArraySet<Integer> arraySet;
+	ListSet<Integer> arraySet;
 
 	// check with natural ordering 
-	arraySet = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet = new ListSet<Integer>(asList(new Integer[] {
 		    3, 2, 1}));
 	Assert.assertArraysEquals(new Object[] {1, 2, 3}, arraySet.toArray());
 
@@ -136,7 +136,7 @@ public class ArraySetTest {
 	assertTrue(!arraySet.contains(""));
 
 	// check with ordering given by initial list 
-	arraySet = ArraySet.sortedAsListed(asList(new Integer[] {
+	arraySet = ListSet.sortedAsListed(asList(new Integer[] {
 		    3, 2, 1}));
 	Assert.assertArraysEquals(new Integer[] {3, 2, 1}, arraySet.toArray());
 
@@ -149,24 +149,24 @@ public class ArraySetTest {
     } // testContains 
 
     public void testContainsAll() {
-	ArraySet<Integer> arraySet1, arraySet2;
+	ListSet<Integer> arraySet1, arraySet2;
 
-	arraySet1 = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet1 = new ListSet<Integer>(asList(new Integer[] {
 	    3, 2, 1}));
-	arraySet2 = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet2 = new ListSet<Integer>(asList(new Integer[] {
 	    3, 2, 1}));
 	assertTrue(arraySet1.containsAll(arraySet2));
 
-	arraySet1 = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet1 = new ListSet<Integer>(asList(new Integer[] {
 	    4, 3, 2, 1}));
-	arraySet2 = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet2 = new ListSet<Integer>(asList(new Integer[] {
 	    3, 2, 1}));
 	assertTrue( arraySet1.containsAll(arraySet2));
 	assertTrue(!arraySet2.containsAll(arraySet1));
 
-	arraySet1 = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet1 = new ListSet<Integer>(asList(new Integer[] {
 	    }));
-	arraySet2 = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet2 = new ListSet<Integer>(asList(new Integer[] {
 	    4, 3, 2, 1}));
 	assertTrue(!arraySet1.containsAll(arraySet2));
 	assertTrue( arraySet2.containsAll(arraySet1));
@@ -174,31 +174,31 @@ public class ArraySetTest {
     } // testContainsAll 
 
     public void testAddAll() {
-	ArraySet<Integer> arraySet1, arraySet2, arraySet3;
+	ListSet<Integer> arraySet1, arraySet2, arraySet3;
 
-	arraySet1 = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet1 = new ListSet<Integer>(asList(new Integer[] {
 	    3, 2, 1}));
-	arraySet2 = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet2 = new ListSet<Integer>(asList(new Integer[] {
 	    3, 2, 1}));
-	arraySet3 = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet3 = new ListSet<Integer>(asList(new Integer[] {
 	    3, 2, 1}));
 	assertTrue( !arraySet1.addAll(arraySet2));
 	assertEquals(arraySet1,arraySet3);
 
-	arraySet1 = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet1 = new ListSet<Integer>(asList(new Integer[] {
 	    3, 2, 1}));
-	arraySet2 = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet2 = new ListSet<Integer>(asList(new Integer[] {
 	    4, 2, 1}));
-	arraySet3 = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet3 = new ListSet<Integer>(asList(new Integer[] {
 	    4, 3, 2, 1}));
 	assertTrue(  arraySet1.addAll(arraySet2));
 	assertEquals(arraySet1,arraySet3);
      } // testAddAll
 
     public void testSubSet() {
-	ArraySet<Integer> arraySet1, arraySet2;
+	ListSet<Integer> arraySet1, arraySet2;
 
-	arraySet1 = new ArraySet<Integer>(asList(new Integer[] {
+	arraySet1 = new ListSet<Integer>(asList(new Integer[] {
 		    0, 2, 3, 4}));
 	Assert.assertArraysEquals(new Object[] {0, 2, 3, 4},
 				  arraySet1.toArray());
@@ -231,7 +231,7 @@ public class ArraySetTest {
      * -------------------------------------------------------------------- */
 
     public static junit.framework.Test suite() {
-	return new JUnit4TestAdapter(ArraySetTest.class);
+	return new JUnit4TestAdapter(ListSetTest.class);
     }
 
 
@@ -241,7 +241,7 @@ public class ArraySetTest {
      * Uncomment either the textual UI, Swing UI, or AWT UI.
      */
     public static void main(String args[]) {
-	Actions.run(ArraySetTest.class);
+	Actions.run(ListSetTest.class);
     }
 }
 

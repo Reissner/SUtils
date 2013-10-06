@@ -95,6 +95,10 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      */
     private final Comparator<? super E> innerCmp;
 
+    // Comparator<? super E> innerCmp() {
+    // 	return this.innerCmp;
+    // }
+
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
      * -------------------------------------------------------------------- */
@@ -746,50 +750,37 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	return this.outerCmp;
     }
 
+    // also used in {@link ListMap} 
+    final int obj2idx(E obj) {
+	int idx = Collections.binarySearch(this.list,obj,this.innerCmp);
+	if (idx < 0) {
+	    idx = -idx-1;
+	}
+	assert idx >= 0;
+	return idx;
+    }
+
+    // also used in {@link ListMap} 
+    // **** seems to be compiler/vm bug: 
+    // no failure when trying to compile subSetIdx renamed in subSet  
+    // although this should give name clash when invoked with E=Integer 
+    ListSet<E> subSetIdx(int fromIdx, int toIdx) {
+	return new ListSet<E>(this.list.subList(fromIdx, toIdx), this.outerCmp);
+    }
+
     // api-docs inherited from SortedSet 
     public ListSet<E> subSet(E fromObj, E toObj) {
-	int fromIdx = Collections.binarySearch(this.list,fromObj,this.innerCmp);
-	if (fromIdx < 0) {
-	    fromIdx = -fromIdx-1;
-	}
-	assert fromIdx >= 0;
-	// Here, fromIdx contains the index of the first element in this set  
-	// which shall be in the resulting subset 
-
-	int toIdx = Collections.binarySearch(this.list,toObj,this.innerCmp);
-	if (toIdx < 0) {
-	    toIdx = -toIdx-1;
-	}
-	assert toIdx >= 0;
-	// Here, toIdx contains the index of the first element of this set 
-	// too large to be in the resulting subset 
-
-	return new ListSet<E>(this.list.subList(fromIdx, toIdx),
-			       this.outerCmp);
+	return subSetIdx(obj2idx(fromObj), obj2idx(toObj));
     }
 
     // api-docs inherited from SortedSet 
     public SortedSet<E> headSet(E toObj) {
-	if (isEmpty()) {
-	    return this;
-	}
-	// Here, first() exists 
-
-	return subSet(first(), toObj);
+	return subSetIdx(0, obj2idx(toObj));
     }
 
     // api-docs inherited from SortedSet 
-   public SortedSet<E> tailSet(E fromObj) {
-	int fromIdx = Collections.binarySearch(this.list,fromObj,this.innerCmp);
-	if (fromIdx < 0) {
-	    fromIdx = -fromIdx;
-	}
-	assert fromIdx >= 0;
-	// Here, fromIdx contains the index of the first element in this set  
-	// which shall be in the resulting subset 
-
-	return new ListSet<E>(this.list.subList(fromIdx, size()),
-			       this.outerCmp);
+    public SortedSet<E> tailSet(E fromObj) {
+	return subSetIdx(obj2idx(fromObj), size());
     }
 
     // api-docs inherited from SortedSet 
@@ -805,7 +796,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	if (isEmpty()) {
 	    throw new NoSuchElementException();
 	}
-	return this.list.get(this.list.size()-1);
+	return this.list.get(size()-1);
     }
 
     /*----------------------------------------------------------------------*/

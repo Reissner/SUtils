@@ -95,10 +95,6 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      */
     private final Comparator<? super E> innerCmp;
 
-    // Comparator<? super E> innerCmp() {
-    // 	return this.innerCmp;
-    // }
-
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
      * -------------------------------------------------------------------- */

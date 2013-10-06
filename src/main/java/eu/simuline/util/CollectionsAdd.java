@@ -25,7 +25,7 @@ public class CollectionsAdd<E> {
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
-    /*
+    /**
      * A class of <code>Set</code>s 
      * throwing an <code>UnsupportedOperationException</code> 
      * when trying to modify it. 
@@ -35,131 +35,131 @@ public class CollectionsAdd<E> {
      */
     public final static class ImmutableSet<E> extends HashSet<E> {
 
-	private static final long serialVersionUID = -2479143000061671589L;
+    	private static final long serialVersionUID = -2479143000061671589L;
 
-	public enum Modification {
-	    AddObj, RemoveObj, 
-		Clear, AddAll, RetainAll, RemoveAll, 
-		Iterator, RemoveIter;
-	} // enum Modification 
+    	public enum Modification {
+    	    AddObj, RemoveObj, 
+    		Clear, AddAll, RetainAll, RemoveAll, 
+    		Iterator, RemoveIter;
+    	} // enum Modification 
 
-	/* ---------------------------------------------------------------- *
-	 * fields.                                                          *
-	 * ---------------------------------------------------------------- */
+    	/* ---------------------------------------------------------------- *
+    	 * fields.                                                          *
+    	 * ---------------------------------------------------------------- */
 
-	Set<Modification> mods;
+    	Set<Modification> mods;
 
-	/* ---------------------------------------------------------------- *
-	 * constructors.                                                    *
-	 * ---------------------------------------------------------------- */
+    	/* ---------------------------------------------------------------- *
+    	 * constructors.                                                    *
+    	 * ---------------------------------------------------------------- */
 
-	/**
-	 * Creates a new empty <code>ImmutableSet</code> 
-	 * instance <code>s</code> 
-	 * satisfying <code>s.comparator() == null</code>. 
-	 */
-	public ImmutableSet() {
-	    super();
-	    this.mods = EnumSet.noneOf(Modification.class);
-	}
+    	/**
+    	 * Creates a new empty <code>ImmutableSet</code> 
+    	 * instance <code>s</code> 
+    	 * satisfying <code>s.comparator() == null</code>. 
+    	 */
+    	public ImmutableSet() {
+    	    super();
+    	    this.mods = EnumSet.noneOf(Modification.class);
+    	}
 
-	/* ---------------------------------------------------------------- *
-	 * methods.                                                         *
-	 * ---------------------------------------------------------------- */
+    	/* ---------------------------------------------------------------- *
+    	 * methods.                                                         *
+    	 * ---------------------------------------------------------------- */
 
 
-	public ImmutableSet<E> allowModification(Modification mod) {
-	    this.mods.add(mod);
-	    return this;
-	}
+    	public ImmutableSet<E> allowModification(Modification mod) {
+    	    this.mods.add(mod);
+    	    return this;
+    	}
 
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean add(E obj) {
-	    if (this.mods.contains(Modification.AddObj)) {
-		return super.add(obj);
-	    }
+    	/**
+    	 * @throws UnsupportedOperationException
+    	 */
+    	public boolean add(E obj) {
+    	    if (this.mods.contains(Modification.AddObj)) {
+    		return super.add(obj);
+    	    }
 
-	    throw new UnsupportedOperationException();
-	}
+    	    throw new UnsupportedOperationException();
+    	}
 
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean remove(Object obj) {
-	    if (this.mods.contains(Modification.RemoveObj)) {
-		return super.remove(obj);
-	    }
-	    throw new UnsupportedOperationException();
-	}
+    	/**
+    	 * @throws UnsupportedOperationException
+    	 */
+    	public boolean remove(Object obj) {
+    	    if (this.mods.contains(Modification.RemoveObj)) {
+    		return super.remove(obj);
+    	    }
+    	    throw new UnsupportedOperationException();
+    	}
 
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public void clear() {
-	    if (this.mods.contains(Modification.Clear)) {
-		super.clear();
-	    }
-	    throw new UnsupportedOperationException();
-	}
+    	/**
+    	 * @throws UnsupportedOperationException
+    	 */
+    	public void clear() {
+    	    if (this.mods.contains(Modification.Clear)) {
+    		super.clear();
+    	    }
+    	    throw new UnsupportedOperationException();
+    	}
 
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean addAll(Collection<? extends E> cmp) {
-	    if (this.mods.contains(Modification.AddAll)) {
-		return super.addAll(cmp);
-	    }
-	    throw new UnsupportedOperationException();
-	}
+    	/**
+    	 * @throws UnsupportedOperationException
+    	 */
+    	public boolean addAll(Collection<? extends E> cmp) {
+    	    if (this.mods.contains(Modification.AddAll)) {
+    		return super.addAll(cmp);
+    	    }
+    	    throw new UnsupportedOperationException();
+    	}
 
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean retainAll(Collection<?> cmp) {
-	    if (this.mods.contains(Modification.RetainAll)) {
-		return super.retainAll(cmp);
-	    }
-	    throw new UnsupportedOperationException();
-	}
+    	/**
+    	 * @throws UnsupportedOperationException
+    	 */
+    	public boolean retainAll(Collection<?> cmp) {
+    	    if (this.mods.contains(Modification.RetainAll)) {
+    		return super.retainAll(cmp);
+    	    }
+    	    throw new UnsupportedOperationException();
+    	}
 
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean removeAll(Collection<?> cmp) {
-	    if (this.mods.contains(Modification.RemoveAll)) {
-		return super.removeAll(cmp);
-	    }
-	    throw new UnsupportedOperationException();
-	}
+    	/**
+    	 * @throws UnsupportedOperationException
+    	 */
+    	public boolean removeAll(Collection<?> cmp) {
+    	    if (this.mods.contains(Modification.RemoveAll)) {
+    		return super.removeAll(cmp);
+    	    }
+    	    throw new UnsupportedOperationException();
+    	}
 
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public Iterator<E> iterator() {
-	    if (this.mods.contains(Modification.Iterator)) {
-		return new Iterator<E>() {
-		    Iterator<E> wrapped = ImmutableSet.super.iterator();
-		    public boolean hasNext() {
-			return this.wrapped.hasNext();
-		    }
+    	/**
+    	 * @throws UnsupportedOperationException
+    	 */
+    	public Iterator<E> iterator() {
+    	    if (this.mods.contains(Modification.Iterator)) {
+    		return new Iterator<E>() {
+    		    Iterator<E> wrapped = ImmutableSet.super.iterator();
+    		    public boolean hasNext() {
+    			return this.wrapped.hasNext();
+    		    }
 
-		    public E next() {
-			return this.wrapped.next();
-		    }
+    		    public E next() {
+    			return this.wrapped.next();
+    		    }
 
-		    public void remove() {
-			if (ImmutableSet.this.mods
-			    .contains(Modification.RemoveIter)) {
-			    this.wrapped.remove();
-			}
-			throw new UnsupportedOperationException();
-		    }
-		};
-	    }
-	    throw new UnsupportedOperationException();
-	}
+    		    public void remove() {
+    			if (ImmutableSet.this.mods
+    			    .contains(Modification.RemoveIter)) {
+    			    this.wrapped.remove();
+    			}
+    			throw new UnsupportedOperationException();
+    		    }
+    		};
+    	    }
+    	    throw new UnsupportedOperationException();
+    	}
     } // class ImmutableSet 
 
     /* -------------------------------------------------------------------- *

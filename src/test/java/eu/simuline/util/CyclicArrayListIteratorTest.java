@@ -398,7 +398,7 @@ public class CyclicArrayListIteratorTest {
 	// empty list
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	flag = true;
 
 	step = System.currentTimeMillis();
@@ -417,7 +417,7 @@ public class CyclicArrayListIteratorTest {
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
 	    new Integer(0)
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	flag = false;
 
 	step = System.currentTimeMillis();
@@ -436,7 +436,7 @@ public class CyclicArrayListIteratorTest {
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
 	    new Integer(0)
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	cIter1.next();
 	flag = true;
 
@@ -457,7 +457,7 @@ public class CyclicArrayListIteratorTest {
 	// empty list
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	flag = true;
 
 	step = System.currentTimeMillis();
@@ -477,7 +477,7 @@ public class CyclicArrayListIteratorTest {
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
 	    new Integer(0)
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	flag = true;
 
 	step = System.currentTimeMillis();
@@ -496,7 +496,7 @@ public class CyclicArrayListIteratorTest {
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
 	    new Integer(0)
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	cIter1.next();
 	flag = false;
 
@@ -517,7 +517,7 @@ public class CyclicArrayListIteratorTest {
 	// empty list
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 
 	step = System.currentTimeMillis();
 	try {
@@ -543,7 +543,7 @@ public class CyclicArrayListIteratorTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    cIter1 = cList1.cyclicIterator();
+	    cIter1 = cList1.cyclicIterator(0);
 	    obj0 = (Integer)cIter1.next();
 	    obj1 = (Integer)cIter1.next();
 	    obj2 = (Integer)cIter1.next();
@@ -570,7 +570,7 @@ public class CyclicArrayListIteratorTest {
 	// empty list
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 
 	step = System.currentTimeMillis();
 	try {
@@ -596,7 +596,7 @@ public class CyclicArrayListIteratorTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    cIter1 = cList1.cyclicIterator();
+	    cIter1 = cList1.cyclicIterator(0);
 	    cIter1.next();
 	    cIter1.next();
 	    cIter1.next();
@@ -629,7 +629,7 @@ public class CyclicArrayListIteratorTest {
 	    new Integer(0),
 	    new Integer(1),
 	    new Integer(2)
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	index = -20;
 
 	step = System.currentTimeMillis();
@@ -650,7 +650,7 @@ public class CyclicArrayListIteratorTest {
 	    new Integer(0),
 	    new Integer(1),
 	    new Integer(2)
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	cIter1.next();
 	index = -20;
 
@@ -674,7 +674,7 @@ public class CyclicArrayListIteratorTest {
 	    new Integer(2),
 	    new Integer(1),
 	    new Integer(2),
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	cIter1.next();
 	index = 2;
 
@@ -704,7 +704,7 @@ public class CyclicArrayListIteratorTest {
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
 	    cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-		    }).cyclicIterator();
+		    }).cyclicIterator(0);
 	    cIter1.add(new Integer(10));
 	    }
 	step = System.currentTimeMillis()-step;
@@ -728,7 +728,7 @@ public class CyclicArrayListIteratorTest {
 		new Integer(0),
 		new Integer(1),
 		new Integer(2)
-		    }).cyclicIterator();
+		    }).cyclicIterator(0);
 	    cIter1.add(new Integer(10));
 	    }
 	step = System.currentTimeMillis()-step;
@@ -755,7 +755,7 @@ public class CyclicArrayListIteratorTest {
 	    new Integer(0),
 	    new Integer(1),
 	    new Integer(2)
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	cIter1.next();
 
 	step = System.currentTimeMillis();
@@ -778,7 +778,7 @@ public class CyclicArrayListIteratorTest {
 	    new Integer(0),
 	    new Integer(1),
 	    new Integer(2)
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	cIter1.next();
 	cIter1.next();
 
@@ -802,7 +802,7 @@ public class CyclicArrayListIteratorTest {
 	    new Integer(0),
 	    new Integer(1),
 	    new Integer(2)
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	cIter1.next();
 	cIter1.next();
 	cIter1.next();
@@ -832,7 +832,7 @@ public class CyclicArrayListIteratorTest {
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
 	    cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-		    }).cyclicIterator();
+		    }).cyclicIterator(0);
 	    cIter1.addAll(list1);
 	    }
 	step = System.currentTimeMillis()-step;
@@ -862,7 +862,7 @@ public class CyclicArrayListIteratorTest {
 		new Integer(0),
 		new Integer(1),
 		new Integer(2)
-		    }).cyclicIterator();
+		    }).cyclicIterator(0);
 	    cIter1.addAll(list1);
 	    }
 	step = System.currentTimeMillis()-step;
@@ -899,7 +899,7 @@ public class CyclicArrayListIteratorTest {
 		new Integer(0),
 		new Integer(1),
 		new Integer(2)
-		    }).cyclicIterator();
+		    }).cyclicIterator(0);
 	    cIter1.next();
 	    cIter1.addAll(list1);
 	}
@@ -935,7 +935,7 @@ public class CyclicArrayListIteratorTest {
 		new Integer(0),
 		new Integer(1),
 		new Integer(2)
-		    }).cyclicIterator();
+		    }).cyclicIterator(0);
 	    cIter1.next();
 	    cIter1.next();
 
@@ -972,7 +972,7 @@ public class CyclicArrayListIteratorTest {
 		new Integer(0),
 		new Integer(1),
 		new Integer(2)
-		    }).cyclicIterator();
+		    }).cyclicIterator(0);
 	    cIter1.next();
 	    cIter1.next();
 	    cIter1.next();
@@ -1005,12 +1005,12 @@ public class CyclicArrayListIteratorTest {
 	    new Integer(0),
 	    new Integer(1),
 	    new Integer(2)
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	cIter2 = new CyclicArrayList<Integer>(new Integer[] {
 	    new Integer(0),
 	    new Integer(1),
 	    new Integer(2)
-		}).cyclicIterator();
+		}).cyclicIterator(0);
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
 	    flag = cIter1.retEquals(cIter2);

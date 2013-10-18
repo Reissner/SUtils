@@ -64,7 +64,7 @@ public class CyclicArrayListTest {
 	    CyclicArrayListTest.TEST.testAddAll();	    
 	}
 	@Test public void testEquals() {
-	    CyclicArrayListTest.TEST.testEquals();	    
+	    CyclicArrayListTest.TEST.testEqualsCyclic();	    
 	}
 	@Test public void testToArray() {
 	    CyclicArrayListTest.TEST.testToArray();	    
@@ -1038,11 +1038,12 @@ public class CyclicArrayListTest {
 
     } // testAddAll 
 
-    public void testEquals() {
+    // provides tests for methods equals and equalsCyclic 
+    public void testEqualsCyclic() {
 
 	// testcase 1
 	//
-	// exactly equal. 
+	// exactly equalCyclic. 
 	//
 	cList1 = new CyclicArrayList<Integer>(new Integer[] {
 	    new Integer(0),
@@ -1056,11 +1057,17 @@ public class CyclicArrayListTest {
 		});
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
+	    flag = cList1.equalsCyclic(cList2);
+	}
+	step = System.currentTimeMillis()-step;
+	assertTrue(flag);
+
+	for (int i = 0; i < repetition; i++) {
 	    flag = cList1.equals(cList2);
 	}
 	step = System.currentTimeMillis()-step;
 	assertTrue(flag);
-	//reportTestCase(" equals:              ");
+	//reportTestCase(" equalsCyclic:              ");
 
 
 	// testcase 2
@@ -1079,11 +1086,17 @@ public class CyclicArrayListTest {
 		});
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    flag = cList1.equals(cList2);
+	    flag = cList1.equalsCyclic(cList2);
 	}
 	step = System.currentTimeMillis()-step;
 	assertTrue(flag);
-	//reportTestCase(" equals:              ");
+
+	for (int i = 0; i < repetition; i++) {
+	    flag = cList1.equals(cList2);
+	}
+	step = System.currentTimeMillis()-step;
+	assertTrue(!flag);
+	//reportTestCase(" equalsCyclic:              ");
 
 	// testcase 3
 	//
@@ -1095,13 +1108,13 @@ public class CyclicArrayListTest {
 		});
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    flag = cList1.equals(cList2);
+	    flag = cList1.equalsCyclic(cList2);
 	}
 	step = System.currentTimeMillis()-step;
 	assertTrue(flag);
-	//reportTestCase(" equals:              ");
+	//reportTestCase(" equalsCyclic:              ");
 
-    } // testEquals 
+    } // testEqualsyCyclic 
 
     public void testToArray() {
 
@@ -1119,7 +1132,7 @@ public class CyclicArrayListTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    objArray1 = (Integer[])cList1.toArray(0,new Integer[2]);
+	    objArray1 = cList1.toArray(0,new Integer[2]);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -1185,7 +1198,7 @@ public class CyclicArrayListTest {
 	
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    objArray1 = (Integer[])cList1.toArray(-3,new Integer[5]);
+	    objArray1 = cList1.toArray(-3,new Integer[5]);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -1306,7 +1319,7 @@ public class CyclicArrayListTest {
 	    new Integer(1)
 		};
 	cList3 = new CyclicArrayList<Integer>(objArray1);
-	Assert.assertEquals(cList3,cList2);
+	Assert.assertTrue(cList3.equalsCyclic(cList2));
 	//reportTestCase(" getInverse:          ");
 
 

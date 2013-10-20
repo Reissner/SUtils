@@ -118,7 +118,7 @@ public abstract class Caster {
      *    </ul>
      * @see BasicTypesCompatibilityChecker#areCompatible
      */
-    public abstract boolean areCompatible(Class cls,Object obj);
+    public abstract boolean areCompatible(Class<?> cls,Object obj);
 
     /**
      * Provided the return value is not <code>null</code>, 

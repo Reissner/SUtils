@@ -108,7 +108,7 @@ public interface CyclicIterator<E> extends Iterator<E> {
      */
     E previous();
  
-    /**
+    /*
      * Returns the index of the element 
      * that would be returned by a subsequent call to <tt>next</tt>.
      *
@@ -119,7 +119,7 @@ public interface CyclicIterator<E> extends Iterator<E> {
      */
     //int nextIndex();
 
-    /**
+    /*
      * Returns the index of the element 
      * that would be returned by a subsequent call to <tt>previous</tt>. 
      *

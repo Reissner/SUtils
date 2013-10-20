@@ -80,16 +80,16 @@ public class BitSetListTest {
      * -------------------------------------------------------------------- */
 
     public void testConstr() throws Exception {
-	BitSetList<Integer> bitSetList;
+	BitSetList bitSetList;
 
 
-	bitSetList = new BitSetList<Integer>(25);
+	bitSetList = new BitSetList(25);
 	assertTrue(bitSetList.isEmpty());
 	assertEquals(64,
 		     ((BitSet)Accessor.getField(bitSetList,"wrapped")).size());
 
 
-	bitSetList = new BitSetList<Integer>(Arrays.asList(new Integer[] {
+	bitSetList = new BitSetList(Arrays.asList(new Integer[] {
 	    new Integer(0), 
 	    new Integer(1), 
 	    new Integer(1), 
@@ -112,11 +112,11 @@ public class BitSetListTest {
     } // testConstr() 
 
     public void testEquals() {
-	BitSetList<Integer> bitSetList;
-	List<Integer> listCmp;
+	BitSetList bitSetList;
+	List listCmp;
 
-	bitSetList = new BitSetList<Integer>(25);
-	listCmp = new ArrayList<Integer>();
+	bitSetList = new BitSetList(25);
+	listCmp = new ArrayList();
 
 	bitSetList.add(0);
 	bitSetList.add(1);
@@ -148,8 +148,8 @@ public class BitSetListTest {
     } // testEquals
 
     public void testAdd() {
-	BitSetList<Integer> bitSetList;
-	bitSetList = new BitSetList<Integer>();
+	BitSetList bitSetList;
+	bitSetList = new BitSetList();
 
 	assertEquals(0,bitSetList.size());
 	assertTrue(bitSetList.isEmpty());
@@ -223,8 +223,8 @@ public class BitSetListTest {
 
     public void testContains() {
 
-	BitSetList<Integer> bitSetList;
-	bitSetList = new BitSetList<Integer>();
+	BitSetList bitSetList;
+	bitSetList = new BitSetList();
 
 
 	assertTrue(!bitSetList.contains(new Integer(3)));
@@ -245,8 +245,8 @@ public class BitSetListTest {
     } // testContains() 
 
     public void testSize() {
-	BitSetList<Integer> bitSetList;
-	bitSetList = new BitSetList<Integer>();
+	BitSetList bitSetList;
+	bitSetList = new BitSetList();
 
 	assertEquals(0,bitSetList.size());
 
@@ -262,8 +262,8 @@ public class BitSetListTest {
     }
 
     public void testRemove() {
-	BitSetList<Integer> bitSetList;
-	bitSetList = new BitSetList<Integer>();
+	BitSetList bitSetList;
+	bitSetList = new BitSetList();
 
 	try {
 	    bitSetList.remove(0);
@@ -285,8 +285,8 @@ assertEquals(2,bitSetList.size());
     }
 
     public void testSet() {
-	BitSetList<Integer> bitSetList;
-	bitSetList = new BitSetList<Integer>();
+	BitSetList bitSetList;
+	bitSetList = new BitSetList();
 	try {
 	    bitSetList.set(0,1);
 	    fail();
@@ -308,8 +308,8 @@ assertEquals(4,bitSetList.size());
     }
 
     public void testGet() {
-	BitSetList<Integer> bitSetList;
-	bitSetList = new BitSetList<Integer>();
+	BitSetList bitSetList;
+	bitSetList = new BitSetList();
 	bitSetList.add(1);
 	bitSetList.add(1);
 	bitSetList.add(0);

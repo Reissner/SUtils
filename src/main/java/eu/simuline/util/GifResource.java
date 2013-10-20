@@ -57,8 +57,8 @@ public class GifResource {
     /**
      * A cache for gif-files represented by GifResources. 
      */
-    private final static Map<Class,ImageIcon> gifs = 
-	new HashMap<Class,ImageIcon>();
+    private final static Map<Class<?>,ImageIcon> gifs = 
+	new HashMap<Class<?>,ImageIcon>();
 
     /* -------------------------------------------------------------------- *
      * fields.                                                              *
@@ -70,7 +70,7 @@ public class GifResource {
      * constructor.                                                         *
      * -------------------------------------------------------------------- */
 
-    /**
+    /*
      * Creates a new <code>GifResource</code> instance.
      * To this end **** is this constructor really needed???? **** 
      * <ul>

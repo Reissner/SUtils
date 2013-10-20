@@ -350,7 +350,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 	}
 
 	private Map.Entry<K,V> key2entry(K key) {
-	    return new ListMap.Entry(key, get(key));
+	    return new ListMap<K,V>.Entry(key, get(key));
 	}
 
 	public Map.Entry<K,V> first() {
@@ -825,4 +825,3 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 	list.iterator().remove();
     }
 }
-

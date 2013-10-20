@@ -122,7 +122,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      *    if <code>list</code> is <code>null</code>. 
      */
     public static <E> ListSet<E> sortedAsListed(List<E> list) {
-	return new ListSet(list, Comparators.getAsListed(list));
+	return new ListSet<E>(list, Comparators.getAsListed(list));
     }
 
     /**
@@ -912,3 +912,4 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	*/
     }
 }
+

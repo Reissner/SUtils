@@ -1477,7 +1477,7 @@ public class TwoSidedList<E> implements List<E> {
 	if (!(obj instanceof TwoSidedList)) {
 	    return false;
 	}
-	TwoSidedList other = (TwoSidedList)obj;
+	TwoSidedList<E> other = (TwoSidedList<E>)obj;
 
 	return this.list.equals(other.list) 
 	    && this.firstIndex == other.firstIndex;

@@ -9,6 +9,10 @@ package eu.simuline.util;
  */
 public enum DetOs {
  
+    /*----------------------------------------------------------------------*
+     * constants                                                            *
+     *----------------------------------------------------------------------*/
+
     Win() {
 	boolean isThis() {
 	    return osString().indexOf("win") >= 0;
@@ -34,12 +38,32 @@ public enum DetOs {
  	}
     };
 
+    /*----------------------------------------------------------------------*
+     * methods                                                              *
+     *----------------------------------------------------------------------*/
+
+    /**
+     * Returns whether this is the operating system currently running. 
+     */
     abstract boolean isThis();
 
+    /**
+     * Returns a string representation 
+     * of the operating system currently running 
+     * as given by property <code>os.name</code> in lower case. 
+     *
+     * @see System.getProperty(String)
+     */
     private static String osString() {
 	return  System.getProperty("os.name").toLowerCase();
     }
 
+    /**
+     * Returns a representation of the operating system currently running. 
+     *
+     * @throws IllegalStateException
+     *    if the operating system cannot be detected. 
+     */
     public static DetOs getOpSys() {
 	DetOs detOs = null;
 	for (DetOs cand : DetOs.values()) {

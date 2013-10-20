@@ -10,15 +10,43 @@ package eu.simuline.util;
  */
 public enum DataModel {
  
-    BitsB("64"), 
-    BitsA("32"), 
+    /*----------------------------------------------------------------------*
+     * constants                                                            *
+     *----------------------------------------------------------------------*/
+
+    /**
+     * Represents a data model known to be based on 64-bit entities. 
+     */
+    Bits64("64"),
+
+    /**
+     * Represents a data model known to be based on 32-bit entities. 
+     */
+    Bits32("32"),
+
+    /**
+     * Represents a data model with unknown number of bits or data model 
+     * representable neither by {@link #Bits64} nor by {@link #Bits32}. 
+     */
     Unknown("unknown");
 
+    /*----------------------------------------------------------------------*
+     * fields                                                               *
+     *----------------------------------------------------------------------*/
+
     private final String code;
+
+    /*----------------------------------------------------------------------*
+     * constructors                                                         *
+     *----------------------------------------------------------------------*/
 
     DataModel(String code) {
 	this.code = code;
     }
+
+    /*----------------------------------------------------------------------*
+     * methods                                                              *
+     *----------------------------------------------------------------------*/
 
     public static DataModel getDataModel() {
 	String code = System.getProperty("sun.arch.data.model");

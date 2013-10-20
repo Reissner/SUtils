@@ -5,8 +5,6 @@ import java.lang.reflect.Array;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Comparator;
 
 /**
@@ -117,7 +115,7 @@ public class AddArrays<E> {
      *    if <code>array[i]</code> is not an <code>Object[]</code>; 
      *    <code>list.get(i) == recAsList(array[i])</code> otherwise. 
      *    Note that <code>list</code> may be a nested list. 
-     * @see CollectionsAdd#recToArray(List)
+     * @see CollectionsExt#recToArray(List)
      */
     public static List<Object> recAsList(Object[] array) {
 
@@ -125,37 +123,6 @@ public class AddArrays<E> {
 	for (int i = 0; i < array.length; i++) {
 	    if (array[i] instanceof Object[]) {
 		result.add(recAsList((Object[])array[i]));
-	    } else {
-		result.add(array[i]);		 
-	    }
-	}
-	return result;
-    }
-
-    // not so good because of ordering. 
-    // use ListSet instead? 
-    /**
-     * Turns the given array recursively 
-     * into a hierarchy of nested sets. 
-     * Note that unlike Arrays.asList, this is not a simple wrapper 
-     * and that the ordering gets lost 
-     * 
-     *
-     * @param array 
-     *    an array of objects which may in turn be arrays of objects. 
-     * @return 
-     *    a set <code>set</code> of objects satisfying 
-     *    <code>set.contains(o) &lt;==> o == array[i]</code> 
-     *    if <code>array[i]</code> is not an <code>Object[]</code>; 
-     *    <code>o == recAsList(array[i])</code> otherwise. 
-     *    Note that <code>set</code> may be a nested set. 
-     */
-    public static Set<Object> recAsSet(Object[] array) {
-
-	Set<Object> result = new HashSet<Object>();
-	for (int i = 0; i < array.length; i++) {
-	    if (array[i] instanceof Object[]) {
-		result.add(recAsSet((Object[])array[i]));
 	    } else {
 		result.add(array[i]);		 
 	    }

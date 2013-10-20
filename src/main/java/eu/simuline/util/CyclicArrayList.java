@@ -634,7 +634,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	    if (!(other instanceof CyclicIterator)) {
 		return false; 
 	    }
-	    CyclicIterator otherIter = (CyclicIterator)other;
+	    CyclicIterator<E> otherIter = (CyclicIterator<E>)other;
 	    if (this.cal.equals(otherIter.getCyclicList()) && 
 		this.getFirstIndex() == otherIter.getFirstIndex() &&
 		this.getIndex()      == otherIter.getIndex()) {
@@ -1589,3 +1589,4 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	// 	((List<E>) ((ArrayList<E>)this.list).clone());
     }
 }
+

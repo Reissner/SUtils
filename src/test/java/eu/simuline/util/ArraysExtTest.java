@@ -28,8 +28,8 @@ import junit.framework.JUnit4TestAdapter;
 import java.lang.reflect.InvocationTargetException;
 
 @RunWith(Suite.class)
-@SuiteClasses({AddArraysTest.TestAll.class})
-public class AddArraysTest {
+@SuiteClasses({ArraysExtTest.TestAll.class})
+public class ArraysExtTest {
 
 
     /* -------------------------------------------------------------------- *
@@ -37,7 +37,7 @@ public class AddArraysTest {
      * -------------------------------------------------------------------- */
 
 
-    static AddArraysTest TEST = new AddArraysTest();
+    static ArraysExtTest TEST = new ArraysExtTest();
 
 
     public static class TestAll {
@@ -46,21 +46,21 @@ public class AddArraysTest {
 	    repetition = 1;
 	}
 	@Test public void testGetArrayCls() {
-	    AddArraysTest.TEST.testGetArrayCls();	    
+	    ArraysExtTest.TEST.testGetArrayCls();	    
 	}
 	@Test public void testCreateEmptyArray() 
 	    throws InvocationTargetException {
-	    AddArraysTest.TEST.testCreateEmptyArray();	    
+	    ArraysExtTest.TEST.testCreateEmptyArray();	    
 	}
 	@Test public void testUNWrap() {
-	    AddArraysTest.TEST.testUNWrap();	    
+	    ArraysExtTest.TEST.testUNWrap();	    
 	}
     } // class TestAll
 
 
 
     static Class getTestedClass() {
-	return AddArrays.class;
+	return ArraysExt.class;
     }
 
     /* -------------------------------------------------------------------- *
@@ -83,7 +83,7 @@ public class AddArraysTest {
 	//
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    result = AddArrays.getArrayCls(Boolean.TYPE,0);
+	    result = ArraysExt.getArrayCls(Boolean.TYPE,0);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -97,7 +97,7 @@ public class AddArraysTest {
 	//
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    result = AddArrays.getArrayCls(Boolean.TYPE,3);
+	    result = ArraysExt.getArrayCls(Boolean.TYPE,3);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -111,7 +111,7 @@ public class AddArraysTest {
 	//
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    result = AddArrays.getArrayCls(Boolean.TYPE,2);
+	    result = ArraysExt.getArrayCls(Boolean.TYPE,2);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -121,8 +121,8 @@ public class AddArraysTest {
     } // testGetArrayCls 
 
     /**
-     * Tests for methods {@link AddArrays#createWrappedEmptyArray} 
-     * and for {@link AddArrays#createUnWrappedEmptyArray}. 
+     * Tests for methods {@link ArraysExt#createWrappedEmptyArray} 
+     * and for {@link ArraysExt#createUnWrappedEmptyArray}. 
      *
      * @exception Exception 
      *    because of invokcation via reflection. 
@@ -291,7 +291,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	try {
-	    AddArrays.wrapArray(dunWrapped);
+	    ArraysExt.wrapArray(dunWrapped);
 	    fail("exception expected. ");
 	} catch(Exception e) {
 	    step = System.currentTimeMillis()-step;
@@ -309,7 +309,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	try {
-	    AddArrays.wrapArray(dunWrapped);
+	    ArraysExt.wrapArray(dunWrapped);
 	    fail("exception expected. ");
 	} catch(Exception e) {
 	    step = System.currentTimeMillis()-step;
@@ -329,7 +329,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dwrapped = (Integer[][])AddArrays.wrapArray(dunWrapped);
+	    dwrapped = (Integer[][])ArraysExt.wrapArray(dunWrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -347,7 +347,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dwrapped = (Integer[][])AddArrays.wrapArray(dunWrapped);
+	    dwrapped = (Integer[][])ArraysExt.wrapArray(dunWrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -368,7 +368,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dwrapped = (Integer[][])AddArrays.wrapArray(dunWrapped);
+	    dwrapped = (Integer[][])ArraysExt.wrapArray(dunWrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -387,7 +387,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dwrapped = (Integer[])AddArrays.wrapArray(dunWrapped);
+	    dwrapped = (Integer[])ArraysExt.wrapArray(dunWrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -403,7 +403,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dwrapped = (Integer[])AddArrays.wrapArray(dunWrapped);
+	    dwrapped = (Integer[])ArraysExt.wrapArray(dunWrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -419,7 +419,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dwrapped = (Integer[])AddArrays.wrapArray(dunWrapped);
+	    dwrapped = (Integer[])ArraysExt.wrapArray(dunWrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -447,7 +447,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dwrapped = (Integer[][])AddArrays.wrapArray(dunWrapped);
+	    dwrapped = (Integer[][])ArraysExt.wrapArray(dunWrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -469,7 +469,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	try {
-	    AddArrays.unWrapArray(dwrapped);
+	    ArraysExt.unWrapArray(dwrapped);
 	    fail("exception expected. ");
 	} catch(Exception e) {
 	    step = System.currentTimeMillis()-step;
@@ -489,7 +489,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dunWrapped = AddArrays.unWrapArray(dwrapped);
+	    dunWrapped = ArraysExt.unWrapArray(dwrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -507,7 +507,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dunWrapped = AddArrays.unWrapArray(dwrapped);
+	    dunWrapped = ArraysExt.unWrapArray(dwrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -528,7 +528,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dunWrapped = AddArrays.unWrapArray(dwrapped);
+	    dunWrapped = ArraysExt.unWrapArray(dwrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -547,7 +547,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dunWrapped = AddArrays.unWrapArray(dwrapped);
+	    dunWrapped = ArraysExt.unWrapArray(dwrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -563,7 +563,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dunWrapped = AddArrays.unWrapArray(dwrapped);
+	    dunWrapped = ArraysExt.unWrapArray(dwrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -584,7 +584,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dunWrapped = AddArrays.unWrapArray(dwrapped);
+	    dunWrapped = ArraysExt.unWrapArray(dwrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -605,7 +605,7 @@ public class AddArraysTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    dunWrapped = AddArrays.unWrapArray(dwrapped);
+	    dunWrapped = ArraysExt.unWrapArray(dwrapped);
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -625,7 +625,7 @@ public class AddArraysTest {
      * -------------------------------------------------------------------- */
 
     public static junit.framework.Test suite() {
-	return new JUnit4TestAdapter(AddArraysTest.class);
+	return new JUnit4TestAdapter(ArraysExtTest.class);
     }
 
 
@@ -635,7 +635,7 @@ public class AddArraysTest {
      * Uncomment either the textual UI, Swing UI, or AWT UI.
      */
     public static void main(String args[]) {
-	Actions.run(AddArraysTest.class);
+	Actions.run(ArraysExtTest.class);
     }
 
 }

@@ -20,8 +20,8 @@ public abstract class BasicTypesCompatibilityChecker {
      * Note that {@link Void#TYPE} is mapped to itself. 
      * @see #areCompatible 
      */
-    private final static Map<Class,Class> MAP_WRAPPER2BASIC_TYPE = 
-	new HashMap<Class,Class>();
+    private final static Map<Class<?>,Class<?>> MAP_WRAPPER2BASIC_TYPE = 
+	new HashMap<Class<?>,Class<?>>();
 
     /**
      * Maps basic classes to the corresponding wrapper classes. 
@@ -29,8 +29,8 @@ public abstract class BasicTypesCompatibilityChecker {
      * Note that Void is mapped to Void. 
      * @see #areCompatible 
      */
-    private final static Map<Class,Class> MAP_BASIC_TYPE2WRAPPER = 
-	new HashMap<Class,Class>();
+    private final static Map<Class<?>,Class<?>> MAP_BASIC_TYPE2WRAPPER = 
+	new HashMap<Class<?>,Class<?>>();
 
 
     /**
@@ -99,7 +99,7 @@ public abstract class BasicTypesCompatibilityChecker {
      *    </ul>
      * @see #MAP_WRAPPER2BASIC_TYPE 
      */
-    public static boolean areCompatible(Class cls, Object obj) {
+    public static boolean areCompatible(Class<?> cls, Object obj) {
 
 	if (cls.isPrimitive()) {
 	    // Here, cls represents a primitive class. 
@@ -108,7 +108,7 @@ public abstract class BasicTypesCompatibilityChecker {
 		return false;
 	    }
 	    // Here, obj != null. 
-	    Class basicType = getWrappedCls(obj.getClass());
+	    Class<?> basicType = getWrappedCls(obj.getClass());
 	    if (cls.equals(basicType)) {
 		// includes basicType != null. 
 		return true;
@@ -136,7 +136,7 @@ public abstract class BasicTypesCompatibilityChecker {
      *    <code>null</code> otherwise. 
      *    Note that {@link Void#TYPE} wraps itself. 
      */
-    public static Class getWrappedCls(Class cls) {
+    public static Class<?> getWrappedCls(Class<?> cls) {
 	return MAP_WRAPPER2BASIC_TYPE.get(cls);
     }
 
@@ -152,7 +152,8 @@ public abstract class BasicTypesCompatibilityChecker {
      *    <code>null</code> otherwise. 
      *    Note that {@link Void#TYPE} is wrapped by itself. 
      */
-    public static Class getWrapperCls(Class cls) {
+    public static Class<?> getWrapperCls(Class<?> cls) {
 	return MAP_BASIC_TYPE2WRAPPER.get(cls);
     }
 }// NOPMD
+

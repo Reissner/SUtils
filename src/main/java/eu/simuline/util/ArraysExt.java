@@ -23,12 +23,12 @@ public class ArraysExt<E> {
     /**
      * The class <code>double[]</code>. 
      */
-    public final static Class DOUBLE_ARRAY1 = getArrayCls(Double.TYPE,1);
+    public final static Class<?> DOUBLE_ARRAY1 = getArrayCls(Double.TYPE,1);
 
     /**
      * The class <code>double[][]</code>. 
      */
-    public final static Class DOUBLE_ARRAY2 = getArrayCls(Double.TYPE,2);
+    public final static Class<?> DOUBLE_ARRAY2 = getArrayCls(Double.TYPE,2);
 
     public final static Object[] EMPTY = new Object[] {};
 
@@ -188,7 +188,7 @@ public class ArraysExt<E> {
      *    and this condition holds for some component. 
      *    This is a recursive definition. 
      */
-    public static Object recAsList(Object source,Class cls) {
+    public static Object recAsList(Object source,Class<?> cls) {
 	return recAsList(source,cls,Caster.BASIC_TYPES);
     }
 
@@ -256,7 +256,7 @@ public class ArraysExt<E> {
      *    and this condition holds for some component. 
      *    This is a recursive definition. 
      */
-    public static Object recAsList(Object source,Class cls,Caster caster) {
+    public static Object recAsList(Object source,Class<?> cls,Caster caster) {
 
 	/// ***** problem: 
 	// what about double[][][]? --- wrong caster?!? 
@@ -295,8 +295,8 @@ public class ArraysExt<E> {
      *    The class of the array 
      *    <code>new (elementCls)[]...dim...[]</code>. 
      */
-    public static Class getArrayCls(Class elementCls, int dim) {
-	Class result = elementCls;
+    public static Class<?> getArrayCls(Class<?> elementCls, int dim) {
+	Class<?> result = elementCls;
 	for (int i = 0; i < dim; i++) {
 	    result = Array.newInstance(result,0).getClass();
 	}
@@ -304,7 +304,7 @@ public class ArraysExt<E> {
     }
 
     // ***** not yet ok 
-    public static Class getArrayWrapperCls(Class cls) {
+    public static Class<?> getArrayWrapperCls(Class<?> cls) {
 
 	if (cls.isArray()) {
 	    return getArrayWrapperCls(cls.getComponentType());
@@ -336,7 +336,7 @@ public class ArraysExt<E> {
 
 	Object result;
 	int counter = 0;
-	Class type = elemArray.getClass();
+	Class<?> type = elemArray.getClass();
 	while (type.getComponentType() != null) {
 	    counter++;
 	    type = type.getComponentType();
@@ -384,7 +384,7 @@ public class ArraysExt<E> {
 
 	Object result;
 	int counter = 0;
-	Class type = wrappedArray.getClass();
+	Class<?> type = wrappedArray.getClass();
 	while (type.getComponentType() != null) {
 	    counter++;
 	    type = type.getComponentType();
@@ -449,8 +449,8 @@ public class ArraysExt<E> {
 		("Required an array; found " + elemArray + ". ");
 	}
 	// Here, elemArray is an array and so compType is not null. 
-	Class compType = elemArray.getClass().getComponentType();
-	Class compWrapperType = BasicTypesCompatibilityChecker
+	Class<?> compType = elemArray.getClass().getComponentType();
+	Class<?> compWrapperType = BasicTypesCompatibilityChecker
 	    .getWrapperCls(compType);
 	if (compWrapperType == null) {
 	    // Here, the entry type is not elementary. 
@@ -598,8 +598,8 @@ public class ArraysExt<E> {
 	}
 	
 	int len = wrappedArray.length;
-	Class compType = wrappedArray.getClass().getComponentType();
-	Class compWrappedType = BasicTypesCompatibilityChecker
+	Class<?> compType = wrappedArray.getClass().getComponentType();
+	Class<?> compWrappedType = BasicTypesCompatibilityChecker
 	    .getWrappedCls(compType);
 	if (compWrappedType == null) {
 	    // Here, the entry type is not a wrapper. 

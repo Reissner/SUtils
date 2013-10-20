@@ -296,7 +296,7 @@ public class SGMLParser {
 	     *    this is <code>false</code>. 
 	     */
 	    public boolean testChar(char chr) {		
-		if (this.END_OF_COMMENT.charAt(index++) == chr) {
+		if (END_OF_COMMENT.charAt(index++) == chr) {
 		    if (this.index == END_OF_COMMENT.length()-1) {
 			this.index = 0;
 			return true;

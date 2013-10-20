@@ -15,9 +15,7 @@ import java.util.BitSet;
  * @author <a href="mailto:ernst@">Ernst Reissner</a>
  * @version 1.0
  */
-public class BitSetList<E extends Integer>// & E super Integer> 
-    extends AbstractList<Integer> 
-    implements Cloneable {
+public class BitSetList extends AbstractList<Integer> implements Cloneable {
 
     /* -------------------------------------------------------------------- *
      * fields.                                                              *

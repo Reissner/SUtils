@@ -88,13 +88,13 @@ public class CollectionsExt<E> {
 	RemoveIter,
 	// occurs for Lists only via ListIterators 
 	/**
-	 * Modification by {@link Iterator#add(Object)} 
+	 * Modification by {@link ListIterator#add(Object)} 
 	 * of iterator attached with underlying {@link List} 
 	 * via {@link List#listIterator()} or {@link List#listIterator(int)}. 
 	 */
 	AddIter, 
 	/**
-	 * Modification by {@link Iterator#set(Object)} 
+	 * Modification by {@link ListIterator#set(Object)} 
 	 * of iterator attached with underlying {@link List} 
 	 * via {@link List#listIterator()} or {@link List#listIterator(int)}. 
 	 */

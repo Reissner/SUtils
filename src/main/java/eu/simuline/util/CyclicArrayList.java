@@ -7,24 +7,26 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
- * Resizable-array implementation of the <tt>CyclicList</tt> interface. 
+ * Resizable-array implementation of the <code>CyclicList</code> interface. 
  * Implements all optional operations, and permits all elements, 
- * including<tt>null</tt>. 
- * In addition to implementing the <tt>>CyclicList</tt> interface, 
+ * including<code>null</code>. 
+ * In addition to implementing the <code>>CyclicList</code> interface, 
  * this class provides methods to manipulate the size of the array that is
  * used internally to store the list. 
  * <p>
- * The <tt>size</tt>, <tt>isEmpty</tt>, <tt>get</tt>, <tt>set</tt>,
- * and <tt>iterator</tt> operations run in constant time. 
- * The <tt>add</tt> operation runs in <i>amortized constant time</i>, 
+ * The <code>size</code>, <code>isEmpty</code>, 
+ * <code>get</code>, <code>set</code>,
+ * and <code>iterator</code> operations run in constant time. 
+ * The <code>add</code> operation runs in <i>amortized constant time</i>, 
  * that is, adding n elements requires O(n) time. 
  * All of the other operations run in linear time (roughly speaking). 
  * <!--The constant factor is low compared 
- * to that for the <tt>LinkedList</tt> implementation. -->
+ * to that for the <code>LinkedList</code> implementation. -->
  *<p>
- * Each <tt>CyclicArrayList</tt> instance has a <i>capacity</i>. 
+ * Each <code>CyclicArrayList</code> instance has a <i>capacity</i>. 
  * The capacity is the size of the array 
  * used to store the elements in the list. 
  * It is always at least as large as the list size. 
@@ -33,13 +35,13 @@ import java.util.NoSuchElementException;
  * that adding an element has constant amortized time cost. 
  * <p>
  * An application can increase the capacity 
- * of a <tt>CyclicArrayList</tt> instance
+ * of a <code>CyclicArrayList</code> instance
  * before adding a large number of elements 
- * using the <tt>ensureCapacity</tt> operation. 
+ * using the <code>ensureCapacity</code> operation. 
  * This may reduce the amount of incremental reallocation. 
  * <p>
  * <strong>Note that this implementation is not synchronized.</strong> 
- * if Multiple threads access an <tt>CyclicArrayList</tt> instance 
+ * if Multiple threads access an <code>CyclicArrayList</code> instance 
  * concurrently, 
  * and at least one of the threads modifies the list structurally, 
  * it <i>must</i> be synchronized externally. 
@@ -50,19 +52,19 @@ import java.util.NoSuchElementException;
  * This is typically accomplished by synchronizing on some object 
  * that naturally encapsulates the list. 
  * <!--If no such object exists, the list should be "wrapped" 
- * using the <tt>Collections.synchronizedList</tt>
+ * using the <code>Collections.synchronizedList</code>
  * method.  This is best done at creation time, to prevent accidental
  * unsynchronized access to the list:
  * <pre>
  *      List list = Collections.synchronizedList(new ArrayList(...));
  * </pre>-->
  * <p>
- * The iterator returned by this class's <tt>iterator</tt> and
- * <tt>iterator(int)</tt> methods are <i>fail-fast</i>: 
+ * The iterator returned by this class's <code>iterator</code> and
+ * <code>iterator(int)</code> methods are <i>fail-fast</i>: 
  * if list is structurally modified 
  * at any time after the iterator is created, 
  * in any way except through the iterator's own remove or add methods, 
- * the iterator will throw a <tt>ConcurrentModificationException</tt>. 
+ * the iterator will throw a <code>ConcurrentModificationException</code>. 
  * Thus, in the face of concurrent modification, 
  * the iterator fails quickly and cleanly, rather than risking arbitrary, 
  * non-deterministic behavior at an undetermined time in the future.
@@ -75,6 +77,65 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
     /*----------------------------------------------------------------------*/
     /* Inner classes                                                        */
     /*----------------------------------------------------------------------*/
+
+    enum StateIter {
+
+	/**
+	 * The condition <code>calledLast == CALLED_NOTHING</code> means 
+	 * that neither of the methods 
+	 * {@link CyclicIterator#next}, {@link CyclicIterator#previous}, 
+	 * {@link CyclicIterator#add} and {@link CyclicIterator#remove} 
+	 * was ever successfully invoked 
+	 * since this iterator was created or refreshed. 
+	 *
+	 * @see CyclicIterator#refresh
+	 */
+	CALLED_NOTHING(),
+
+	/**
+	 * The condition <code>calledLast == CALLED_PREVIOUS</code> means 
+	 * that among the methods 
+	 * {@link CyclicIterator#next}, {@link CyclicIterator#previous}, 
+	 * {@link CyclicIterator#add} and {@link CyclicIterator#remove} 
+	 * the method {@link CyclicIterator#previous} 
+	 * was the last successfully invoked 
+	 * since this iterator was created or refreshed. 
+	 */
+	CALLED_PREVIOUS(),
+
+	/**
+	 * The condition <code>calledLast == CALLED_NEXT</code> means 
+	 * that among the methods 
+	 * {@link CyclicIterator#next}, {@link CyclicIterator#previous}, 
+	 * {@link CyclicIterator#add} and {@link CyclicIterator#remove} 
+	 * the method {@link CyclicIterator#next} 
+	 * was the last successfully invoked 
+	 * since this iterator was created or refreshed. 
+	 */
+	CALLED_NEXT(),
+
+	/**
+	 * The condition <code>calledLast == CALLED_ADD</code> means 
+	 * that among the methods 
+	 * {@link CyclicIterator#next}, {@link CyclicIterator#previous}, 
+	 * {@link CyclicIterator#add} and {@link CyclicIterator#remove} 
+	 * the method {@link CyclicIterator#add} 
+	 * was the last successfully invoked 
+	 * since this iterator was created or refreshed. 
+	 */
+	CALLED_ADD(),
+
+	/**
+	 * The condition <code>calledLast == CALLED_REMOVE</code> means 
+	 * that among the methods 
+	 * {@link CyclicIterator#next}, {@link CyclicIterator#previous}, 
+	 * {@link CyclicIterator#add} and {@link CyclicIterator#remove} 
+	 * the method {@link CyclicIterator#previous} was the last invoked 
+	 * since this iterator was created or refreshed. 
+	 */
+	CALLED_REMOVE();
+
+    } // enum StateIter 
 
     /**
      * An iterator over a {@link CyclicList}. 
@@ -94,73 +155,21 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	/* Fields                                                           */
 	/*------------------------------------------------------------------*/
 
-	/**
-	 * The condition <code>calledLast == CALLED_NOTHING</code> means 
-	 * that neither of the methods 
-	 * {@link #next}, {@link #previous}, {@link #add} and {@link #remove} 
-	 * was ever successfully invoked 
-	 * since this iterator was created or refreshed. 
-	 *
-	 * @see #refresh
-	 */
-	private final static int CALLED_NOTHING = 0;
-
-
-	/**
-	 * The condition <code>calledLast == CALLED_PREVIOUS</code> means 
-	 * that among the methods 
-	 * {@link #next}, {@link #previous}, {@link #add} and {@link #remove} 
-	 * the method {@link #previous} was the last successfully invoked 
-	 * since this iterator was created or refreshed. 
-	 */
-	private final static int CALLED_PREVIOUS = 1;
-
-	/**
-	 * The condition <code>calledLast == CALLED_NEXT</code> means 
-	 * that among the methods 
-	 * {@link #next}, {@link #previous}, {@link #add} and {@link #remove} 
-	 * the method {@link #next} was the last successfully invoked 
-	 * since this iterator was created or refreshed. 
-	 */
-	private final static int CALLED_NEXT = 2;
-
-	/**
-	 * The condition <code>calledLast == CALLED_ADD</code> means 
-	 * that among the methods 
-	 * {@link #next}, {@link #previous}, {@link #add} and {@link #remove} 
-	 * the method {@link #add} was the last successfully invoked 
-	 * since this iterator was created or refreshed. 
-	 */
-	private final static int CALLED_ADD = 3;
-
-	/**
-	 * The condition <code>calledLast == CALLED_REMOVE</code> means 
-	 * that among the methods 
-	 * {@link #next}, {@link #previous}, {@link #add} and {@link #remove} 
-	 * the method {@link #previous} was the last invoked 
-	 * since this iterator was created or refreshed. 
-	 */
-	private final static int CALLED_REMOVE = 4;
 
 	/**
 	 * Indicates the last method invoked. 
 	 *
-	 * @see #CALLED_NOTHING
-	 * @see #CALLED_PREVIOUS
-	 * @see #CALLED_NEXT
-	 * @see #CALLED_ADD
-	 * @see #CALLED_REMOVE
 	 * @see #refresh
 	 */
-	protected int calledLast;
+	protected StateIter calledLast;
 
 	/**
 	 * A non-negative index which points, 
 	 * modulo <code>list.size()-1</code>, 
-	 * to the <tt>0,...,list.size()-1</tt>th element 
+	 * to the <code>0,...,list.size()-1</code>th element 
 	 * of <code>list</code> 
 	 * provided {@link #list} is not empty; 
-	 * if it is empty, <tt>index == -1</tt>
+	 * if it is empty, <code>index == -1</code>
 	 */
 	protected int index;
 
@@ -210,7 +219,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 		? -1 
 		: this.cal.shiftIndex(index);
 	    this.startIndex = this.index;
-	    this.calledLast = CALLED_NOTHING;
+	    this.calledLast = StateIter.CALLED_NOTHING;
 	}
 
 	/**
@@ -246,7 +255,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	    // Here, the underlying list is not empty. 
 	    this.index = this.cal.shiftIndex(this.index);
 	    this.startIndex = this.index;
-	    this.calledLast = CALLED_NOTHING;
+	    this.calledLast = StateIter.CALLED_NOTHING;
 	}
 
 	/**
@@ -284,14 +293,14 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 		: this.index%this.cal.size();
 	}
 
-	/**
+	/*
 	 * Returns the index of the element 
-	 * that would be returned by a subsequent call to <tt>next</tt>.
+	 * that would be returned by a subsequent call to <code>next</code>.
 	 *
 	 * @return 
 	 *    the index of the element 
-	 *    that would be returned by a subsequent call to <tt>next</tt>. 
-	 *    The range is <tt>0,...,size()-1</tt>. 
+	 *    that would be returned by a subsequent call to <code>next</code>. 
+	 *    The range is <code>0,...,size()-1</code>. 
 	 */
 	//public int nextIndex() {
 	//	return this.index%this.cal.size();
@@ -328,8 +337,8 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	/**
 	 * Returns the next element in the interation. 
 	 * This method may be called repeatedly to iterate through the list, 
-	 * or intermixed with calls to <tt>previous</tt> to go back and forth. 
-	 * (Note that alternating calls to <tt>next</tt> and <tt>previous</tt> 
+	 * or intermixed with calls to <code>previous</code> to go back and forth. 
+	 * (Note that alternating calls to <code>next</code> and <code>previous</code> 
 	 * will return the same element repeatedly.)
 	 *
 	 * @return 
@@ -342,7 +351,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	    if (!hasNext()) {
 		throw new NoSuchElementException();
 	    }
-	    this.calledLast = CALLED_NEXT;
+	    this.calledLast = StateIter.CALLED_NEXT;
 	    return this.cal.get(this.index++);
 	}
 
@@ -362,8 +371,8 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	 * Returns the previous element in the cyclic list. 
 	 * This method may be called repeatedly 
 	 * to iterate through the list backwards, 
-	 * or intermixed with calls to <tt>next</tt> to go back and forth. 
-	 * (Note that alternating calls to <tt>next</tt> and <tt>previous</tt> 
+	 * or intermixed with calls to <code>next</code> to go back and forth. 
+	 * (Note that alternating calls to <code>next</code> and <code>previous</code> 
 	 * will return the same element repeatedly.) 
 	 *
 	 * @return 
@@ -376,7 +385,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	    if (!hasPrev()) {
 		throw new NoSuchElementException();
 	    }
-	    this.calledLast = CALLED_PREVIOUS;
+	    this.calledLast = StateIter.CALLED_PREVIOUS;
 	    return this.cal.get(--this.index);
 	}
 
@@ -392,7 +401,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	 *    <ul>
 	 *    <li> 
 	 *    the index minimal index 
-	 *    <tt>ind in {0,...,this.cal.size()-1}</tt> 
+	 *    <code>ind in {0,...,this.cal.size()-1}</code> 
 	 *    satisfying 
 	 *    <code>obj.equals(this.cal.get(ind))</code> 
 	 *    if possible;
@@ -448,19 +457,19 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	/**
 	 * Inserts the specified element into the cyclic list. 
 	 * The element is inserted immediately before the next element 
-	 * that would be returned by <tt>next</tt>, if any, 
+	 * that would be returned by <code>next</code>, if any, 
 	 * and after the next element 
-	 * that would be returned by <tt>previous</tt>, if any. 
+	 * that would be returned by <code>previous</code>, if any. 
 	 * (If the cyclic list is empty, 
 	 * the new element becomes the sole element on the cyclic list.) 
 	 * <p>
 	 * The new element is inserted before the implicit cursor: 
-	 * a subsequent call to <tt>next</tt> would be unaffected, 
-	 * and a subsequent call to <tt>previous</tt> 
+	 * a subsequent call to <code>next</code> would be unaffected, 
+	 * and a subsequent call to <code>previous</code> 
 	 * would return the new element. 
 	 * (This call increases by one the value 
 	 * that would be returned by a call 
-	 * to <tt>nextIndex</tt> or to <tt>previousIndex</tt>.) 
+	 * to <code>nextIndex</code> or to <code>previousIndex</code>.) 
 	 *
 	 * @param obj 
 	 *    An object to be inserted in the list this iterator points to. 
@@ -474,27 +483,27 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	    }
 
 	    this.index++;
-	    this.calledLast = CALLED_ADD;
+	    this.calledLast = StateIter.CALLED_ADD;
 	}
 
 	/**
 	 * Inserts the specified list into the underlying cyclic list. 
 	 * The list is inserted immediately before the next element 
-	 * that would be returned by <tt>next</tt>, if any, 
+	 * that would be returned by <code>next</code>, if any, 
 	 * and after the next element 
-	 * that would be returned by <tt>previous</tt>, if any. 
+	 * that would be returned by <code>previous</code>, if any. 
 	 * (If the cyclic list is empty, 
 	 * the new cyclic list comprises the given list.) 
 	 * <p>
 	 * The given list is inserted before the implicit cursor: 
-	 * a subsequent call to <tt>next</tt> would be unaffected, 
-	 * and a subsequent call to <tt>previous</tt> 
+	 * a subsequent call to <code>next</code> would be unaffected, 
+	 * and a subsequent call to <code>previous</code> 
 	 * would return the given list in reversed order. 
 	 * (This call increases by <code>list.size()</code> 
 	 * the value that would be returned by a call 
-	 * to <tt>nextIndex</tt> or <tt>previousIndex</tt>.) 
+	 * to <code>nextIndex</code> or <code>previousIndex</code>.) 
 	 * <p>
-	 * If <code>list.size()</code> contains a single element <tt>e</tt>, 
+	 * If <code>list.size()</code> contains a single element <code>e</code>, 
 	 * <code>addAll(list)</code> is equivalent with <code>add(e)</code>.
 	 *
 	 * @param addList 
@@ -514,25 +523,25 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	    }
 
 	    this.index += addList.size();
-	    this.calledLast = CALLED_ADD;
+	    this.calledLast = StateIter.CALLED_ADD;
 	}
 
 	/**
 	 * Replaces the last element 
-	 * returned by <tt>next</tt> or <tt>previous</tt> 
+	 * returned by <code>next</code> or <code>previous</code> 
 	 * with the specified element (optional operation). 
 	 * This call can be made only 
-	 * if neither <tt>ListIterator.remove</tt> nor <tt>add</tt> 
+	 * if neither <code>ListIterator.remove</code> nor <code>add</code> 
 	 * have been called after the last call to 
-	 * <tt>next</tt> or <tt>previous</tt>. 
+	 * <code>next</code> or <code>previous</code>. 
 	 *
 	 * @param obj
 	 *    the element with which to replace the last element 
 	 *    returned by next or previous. 
 	 * @exception IllegalStateException 
-	 *    if neither <tt>next</tt> nor <tt>previous</tt> have been called, 
-	 *    or <tt>remove</tt> or <tt>add</tt> have been called 
-	 *    after the last call to <tt>next</tt> or <tt>previous</tt>. 
+	 *    if neither <code>next</code> nor <code>previous</code> have been called, 
+	 *    or <code>remove</code> or <code>add</code> have been called 
+	 *    after the last call to <code>next</code> or <code>previous</code>. 
 	 */
 	public void set(E obj) {
 
@@ -596,7 +605,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	    default:
 		throw new IllegalStateException("****");
 	    }
-	    this.calledLast = CALLED_REMOVE;
+	    this.calledLast = StateIter.CALLED_REMOVE;
 	}
 
 
@@ -716,6 +725,83 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 
     } // class CyclicArrayIterator 
 
+    // ***** required for reimplementation of method {@link #cycle(int) 
+    // static abstract class CycledList<E> implements CyclicList<E>, Cloneable {
+    // 	CyclicList<E> wrapped;
+    // 	int numCycled;
+
+    // 	public int size() {
+    // 	    return this.wrapped.size();
+    // 	}
+    // 	public boolean isEmpty() {
+    // 	    return this.wrapped.isEmpty();
+    // 	}
+    // 	public CyclicList<E> getInverse() {
+    // 	    throw new NotYetImplementedException();
+    // 	}
+    // 	public boolean contains(Object obj) {
+    // 	    return this.wrapped.contains(obj);
+    // 	}
+    // 	// public Iterator<E> iterator() {
+    // 	//     throw new NotYetImplementedException();
+    // 	// }
+    // 	public CyclicIterator<E> cyclicIterator(int index) {
+    // 	    return this.wrapped.cyclicIterator(index+this.numCycled);
+    // 	}
+    // 	public Object[] toArray(int index) {
+    // 	    throw new NotYetImplementedException();
+    // 	}
+    // 	public <E> E[] toArray(int index,E[] array) {
+    // 	    throw new NotYetImplementedException();
+    // 	}
+    // 	public List<E> asList(int index) {
+    // 	    throw new NotYetImplementedException();
+    // 	}
+    // 	// 	public 
+    // 	// //List<E> asList() {
+    // 	// 	    throw new NotYetImplementedException();
+    // 	// 	}
+    // 	public CyclicList<E> cycle(int num) {
+    // 	    throw new NotYetImplementedException();
+    // 	}
+    // 	public void clear() {
+    // 	    this.wrapped.clear();
+    // 	}
+    // 	public boolean equals(Object obj) {
+    // 	    throw new NotYetImplementedException();
+    // 	}
+    // 	public int hashCode() {
+    // 	    throw new NotYetImplementedException();
+    // 	}
+    // 	public  E set(int index, E element) {
+    // 	    return this.wrapped.set(index+this.numCycled, element);
+    // 	}
+    // 	public void replace(int index, Iterator<E> iter) {
+    // 	    throw new NotYetImplementedException();
+    // 	}
+    // 	public void replace(int index, List<E> list) {
+    // 	    this.wrapped.replace(index+this.numCycled, list);
+    // 	}
+    // 	public void add(int index, E element) {
+    // 	    this.wrapped.add(index+this.numCycled, element);
+    // 	}
+    // 	public void addAll(int index, Iterator<E> iter) {
+    // 	    throw new NotYetImplementedException();
+    // 	}
+    // 	public void addAll(int index, List<? extends E> list) {
+    // 	    throw new NotYetImplementedException();
+    // 	}
+    // 	public E remove(int index) throws EmptyCyclicListException {
+    // 	    return this.wrapped.remove(index+this.numCycled);
+    // 	}
+    // 	public int getIndexOf(int idx, Object obj) {
+    // 	    return this.wrapped.getIndexOf(idx+this.numCycled, obj);
+    // 	}
+    // 	public CyclicList<E> getCopy(int len) {
+    // 	    throw new NotYetImplementedException();
+    // 	}
+    //} // class CycledList 
+
     /*----------------------------------------------------------------------*/
     /* Fields                                                               */
     /*----------------------------------------------------------------------*/
@@ -725,7 +811,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      * it satisfies <code>this.get(i) == list.get(i)</code> 
      * for all indices <code>i</code> for which the right hand side is valid. 
      */
-    private List<E> list;
+    private final List<E> list;
 
 
     /*----------------------------------------------------------------------*/
@@ -748,7 +834,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      *    some array of objects. 
      */
     public CyclicArrayList(E[] list) {
-	this.list = new ArrayList<E>(Arrays.asList(list));
+	this(Arrays.asList(list));
     }
 
     /**
@@ -770,7 +856,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      *    some cyclic list of objects. 
      */
     public CyclicArrayList(CyclicList<? extends E> other) {
-	this.list = new ArrayList<E>(other.asList());
+	this(other.asList());
     }
 
     /*----------------------------------------------------------------------*/
@@ -779,8 +865,8 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 
     /**
      * Returns the number of elements in this list. 
-     * If this list contains more than <tt>Integer.MAX_VALUE</tt> elements, 
-     * returns <tt>Integer.MAX_VALUE</tt>.
+     * If this list contains more than <code>Integer.MAX_VALUE</code> elements, 
+     * returns <code>Integer.MAX_VALUE</code>.
      *
      * @return 
      *    the number of elements in this list. 
@@ -790,9 +876,9 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
     }
 
     /**
-     * Returns <tt>true</tt> iff this list contains no elements.
+     * Returns <code>true</code> iff this list contains no elements.
      *
-     * @return <tt>true</tt> iff this list contains no elements.
+     * @return <code>true</code> iff this list contains no elements.
      */
     public boolean isEmpty() {
 	return size() == 0;
@@ -808,55 +894,31 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
     public CyclicList<E> getInverse() {
 
 	CyclicList<E> result = new CyclicArrayList<E>();
-	for (int i = 0; i < this.size(); i++) {
-	    result.add(0,this.get(i));
+	for (int i = this.size()-1; i >= 0; i--) {
+	    result.add(this.get(i));
 	}
 	return result;
     }
 
     /**
      *
-     * Returns <tt>true</tt> if this list contains the specified element. 
-     * More formally, returns <tt>true</tt> 
-     * if and only if this list contains at least one element <tt>e</tt> 
+     * Returns <code>true</code> if this list contains the specified element. 
+     * More formally, returns <code>true</code> 
+     * if and only if this list contains at least one element <code>e</code> 
      * such that 
-     * <tt>(o==null&nbsp;?&nbsp;e==null&nbsp;:&nbsp;o.equals(e))</tt>. 
+     * <code>(o==null&nbsp;?&nbsp;e==null&nbsp;:&nbsp;o.equals(e))</code>. 
      *
      * @param obj 
      *    element whose presence in this list is to be tested.
      * @return 
-     *    <tt>true</tt> if this list contains the specified element.
+     *    <code>true</code> if this list contains the specified element.
      */
     public boolean contains(Object obj) {
-	for (int i = 0; i < size(); i++) {
-	    if (obj.equals(get(i))) {
-		return true;
-	    }
-	}	
-	return false;
+	return this.list.contains(obj);
     }
 
     public boolean containsAll(Collection<?> coll) {
-	Iterator iter = coll.iterator();
-	while (iter.hasNext()) {
-	    if (contains(iter.next())) {
-		return true;
-	    }
-	}	
-	return false;
-    }
-
-    /**
-     * Returns {@link #iterator(int) iterator(index)} 
-     * for some unspecified <code>index</code>. 
-     * ***** what if this list is empty. 
-     *
-     * @return 
-     *    {@link #iterator(int) iterator(index)} 
-     *    for some unspecified <code>index</code>. 
-     */
-    public CyclicIterator<E> cyclicIterator() {
-	return cyclicIterator(0);
+	return this.list.containsAll(coll);
     }
 
     /**
@@ -864,14 +926,15 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      * of the elements in this list (in proper sequence), 
      * starting at the specified position in this list. 
      * The specified index indicates the first element 
-     * that would be returned by an initial call to the <tt>next</tt> method. 
-     * An initial call to the <tt>previous</tt> method 
+     * that would be returned by an initial call 
+     * to the <code>next</code> method. 
+     * An initial call to the <code>previous</code> method 
      * would return the element with the specified index minus one 
      * (modulo the length of this cyclic list).
      *
      * @param index 
      *    index of first element to be returned from the list iterator 
-     *    (by a call to the <tt>next</tt> method). 
+     *    (by a call to the <code>next</code> method). 
      *    This is interpreted modulo the length of this cyclic list. 
      *    Any index (even a negative one) is valid. 
      * @return 
@@ -883,11 +946,9 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	return new CyclicArrayIterator<E>(this,index);
     }
 
+    // api-docs provided by Collection 
     public Iterator<E> iterator() {
-	return iterator(0);
-    }
-    public Iterator<E> iterator(int ind) {
-	return cyclicIterator(ind);
+    	return cyclicIterator(0);
     }
 
     // **** unspecified order 
@@ -943,36 +1004,6 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      */
     public <E> E[] toArray(int index, E[] ret) {
 	return cycle(index).list.toArray(ret);
-/*
-	// if ret.length is not sufficient to store the result... 
-	if (ret.length < this.list.size()) {
-	    // ... replace ret by a new array. 
-	    ret = (Object[])
-	    Array.newInstance(ret.getClass().getComponentType(),
-			      this.list.size());
-	}
-	// Here, ret is an array of the appropriate type 
-	// which is long enough to store this cyclic list. 
-	if (size() == 0) {
-	    return ret;
-	}
-	
-	while (index < 0) {
-	    index += size();
-	}
-	while (index >= size()) {
-	    System.out.println("index: "+index);
-	    
-	    index -= size();
-	}
-	assert 0 <= index && index < size();
-
-	System.arraycopy(this.list, index, 
-			 ret,       0,         this.list.size()-index);
-	System.arraycopy(this.list, 0,     
-			 ret,       this.list.size()-index, index);
-	return ret;
-*/
     }
 
     public List<E> asList(int index) {
@@ -984,7 +1015,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
     }
 
     /**
-     * Returns a cyclic permutation <tt>p</tt> of this cyclic list. 
+     * Returns a cyclic permutation <code>p</code> of this cyclic list. 
      *
      * @param index 
      *    index of the element in the cyclic list 
@@ -992,33 +1023,21 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      *    This is interpreted modulo the length of this cyclic list. 
      *    Any index (even negative ones) are valid. 
      * @return 
-     *    a cyclic permutation <tt>p</tt> of this cyclic list. 
+     *    a cyclic permutation <code>p</code> of this cyclic list. 
      *    It satisfies <code>p.size() == this.size()</code> and 
      *    <code>p.get(i) == this.get(i+num)</code>. 
      */
     public CyclicArrayList<E> cycle(int index) {
+	// maybe better: a view. **** 
+	// to that end use inner class CycledList 
 	if (size() == 0) {
 	    return new CyclicArrayList<E>(this);
 	}
-	
-	while (index < 0) {
-	    index += size();
-	}
-	while (index >= size()) {
-	    System.out.println("index: "+index);
-	    
-	    index -= size();
-	}
-	assert 0 <= index && index < size();
-	ArrayList<E> ret = new ArrayList<E>();
-	ret.addAll(this.list.subList(index,this.list.size()));
+
+	index = shiftIndex(index);
+	ArrayList<E> ret = new ArrayList<E>(size());
+	ret.addAll(this.list.subList(index,size()));
 	ret.addAll(this.list.subList(0,    index));
-/*
-	System.arraycopy(this.list, index, 
-			 ret,       0,         this.list.size()-index);
-	System.arraycopy(this.list, 0,     
-			 ret,       this.list.size()-index, index);
-*/
 	return new CyclicArrayList<E>(ret);
     }
 
@@ -1035,26 +1054,57 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 
     /**
      * Compares the specified object with this cyclic list for equality. 
-     * Returns <tt>true</tt> 
+     * Returns <code>true</code> 
+     * if and only if the specified object is also a cyclic list, 
+     * both lists have the same size and 
+     * all corresponding pairs of elements the two lists are <i>equal</i>. 
+     * (Two elements <code>e1</code> and <code>e2</code> are <i>equal</i> 
+     * if <code>(e1==null ? e2==null : e1.equals(e2))</code>.) 
+     * In other words, two cyclic lists are defined to be 
+     * equal if they contain the same elements in the same order 
+     * according to their iterators. 
+     * This definition ensures that the equals method works properly 
+     * across different implementations 
+     * of the <code>CyclicList</code> interface. 
+     *
+     * @param obj 
+     *    the object to be compared for equality with this list. 
+     * @return 
+     *    <code>true</code> if the specified object is equal to this list. 
+     * @see #equalsCyclic(Object)
+     */
+    public boolean equals(Object obj) {
+	if (!(obj instanceof CyclicList)) {
+	    return false;
+	}
+
+	CyclicList<E> other = (CyclicList<E>)obj;
+	return this.asList().equals(other.asList());
+    }
+
+    /**
+     * Compares the specified object with this cyclic list for equality. 
+     * Returns <code>true</code> 
      * if and only if the specified object is also a cyclic list, 
      * both lists have the same size, 
      * and, up to a cyclic permutation, 
      * all corresponding pairs of elements the two lists are <i>equal</i>. 
-     * (Two elements <tt>e1</tt> and <tt>e2</tt> are <i>equal</i> 
-     * if <tt>(e1==null ? e2==null : e1.equals(e2))</tt>.) 
+     * (Two elements <code>e1</code> and <code>e2</code> are <i>equal</i> 
+     * if <code>(e1==null ? e2==null : e1.equals(e2))</code>.) 
      * In other words, two lists are defined to be 
      * equal if they contain the same elements in the same order 
      * up to a cyclic permutation. 
      * This definition ensures that the equals method works properly 
      * across different implementations 
-     * of the <tt>CyclicList</tt> interface. 
+     * of the <code>CyclicList</code> interface. 
      *
      * @param obj 
      *    the object to be compared for equality with this list. 
      * @return 
-     *    <tt>true</tt> if the specified object is equal to this list. 
+     *    <code>true</code> if the specified object is equal to this list. 
+     * @see #equals(Object)
      */
-    public boolean equals(Object obj) {
+    public boolean equalsCyclic(Object obj) {
 	//System.out.println("CyclicList.eq(:    ");
 
 	if (!(obj instanceof CyclicList)) {
@@ -1098,10 +1148,10 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      *      hashCode = 31*hashCode + (obj==null ? 0 : obj.hashCode());
      *  }
      * </pre>
-     * This ensures that <tt>list1.equals(list2)</tt> implies that 
-     * <tt>list1.hashCode()==list2.hashCode()</tt> for any two lists, 
-     * <tt>list1</tt> and <tt>list2</tt>, 
-     * as required by the general contract of <tt>Object.hashCode</tt>. 
+     * This ensures that <code>list1.equals(list2)</code> implies that 
+     * <code>list1.hashCode()==list2.hashCode()</code> for any two lists, 
+     * <code>list1</code> and <code>list2</code>, 
+     * as required by the general contract of <code>Object.hashCode</code>. 
      *
      * @return the hash code value for this list.
      * @see Object#hashCode()
@@ -1111,8 +1161,16 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
     public int hashCode() {
 	int hashCode = 1;
 	for (int i = 0; i < this.size(); i++) {
-	    Object obj = this.list.get(i);
+	    E obj = this.list.get(i);
 	    hashCode = 31 * hashCode + (obj == null ? 0 : obj.hashCode());
+	}
+	return hashCode;
+    }
+
+    public int hashCodeCyclic() {
+	int hashCode = 0;
+	for (E element : this.list) {
+	    hashCode += (element == null ? 0 : element.hashCode());
 	}
 	return hashCode;
     }
@@ -1137,11 +1195,19 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
     public int shiftIndex(int index) throws EmptyCyclicListException {
 	return shiftIndex(index,size());
     }
+
+
     public int shiftIndex(int index,int size) throws EmptyCyclicListException {
 	if (size == 0) {
 	    throw new EmptyCyclicListException();
 	}
-	return index >= 0 ? index%size : (index%size+size)%size;
+	index %= size;
+	if (index < 0) {
+	    index += size;
+	}
+	assert 0 <= index && index < size;
+
+	return index;
     }
 
     /**
@@ -1179,10 +1245,8 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      * @throws EmptyCyclicListException 
      *    if this list is empty. 
      */
-    public E set(int index, 
-		 E element) throws EmptyCyclicListException {
+    public E set(int index, E element) throws EmptyCyclicListException {
 	index = shiftIndex(index);
-	//Object ret = this.list.get(index);
 	return this.list.set(index,element);
     }
 
@@ -1202,7 +1266,8 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      * @throws IllegalArgumentException 
      *    if the specified iterator is empty. 
      */
-    public void replace(int index, CyclicIterator<E> iter) {
+    public void replace(int index, Iterator<E> iter) {
+	// *** why not simply leave unchanged? 
 	if (!iter.hasNext()) {
 	    throw new IllegalArgumentException
 		("Could not replace " + index + 
@@ -1225,7 +1290,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
     /**
      * Inserts the cyclic list of the specified iterator 
      * at the specified position in this list (optional operation). 
-     * In contrast to {@link #replace(int, CyclicIterator)}, 
+     * In contrast to {@link #replace(int, Iterator)}, 
      * the element currently at the specified position is not lost. 
      *
      * @param index 
@@ -1235,7 +1300,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      * @param iter 
      *    iterator delivering the elements to be inserted.
      */
-    public void addAll(int index, CyclicIterator<E> iter) {
+    public void addAll(int index, Iterator<E> iter) {
 	// ***** very bad implementation. **** 
 	while (iter.hasNext()) {
 	    add(index++, iter.next());
@@ -1259,9 +1324,9 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      * Contract: 
      * <code>list.addAll(i,l);
      * return list.get(i+k)</code> yields <code>list.get(k)</code>, 
-     * for all <tt>k</tt> in <tt>0,..,l.size()-1</tt>. 
+     * for all <code>k</code> in <code>0,..,l.size()-1</code>. 
      * <p>
-     * Note that for <tt>l</tt> containing a single element <tt>e</tt>, 
+     * Note that for <code>l</code> containing a single element <code>e</code>, 
      * <code>list.addAll(i,l)</code> 
      * is equivalent with <code>list.add(i,e)</code>. 
      *
@@ -1274,7 +1339,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      * **** this is much more complicated! **** 
      */
     public void addAll(int index, List<? extends E> addList) {
-
+//	this.list.addAll(shiftIndex(index,size()+1), addList);
 
 	if (addList.isEmpty()) {
 	    // nothing to do. 
@@ -1283,15 +1348,16 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	// Here, addList is not empty. 
 
 
-	List<E> oldList = this.list;
-	this.list = new ArrayList<E>(size()+addList.size());
-//System.out.println("oldList[0]: "+oldList[0]);
+	List<E> oldList = new ArrayList<E>(this.list);
+	this.list.clear();
+//	this.list = new ArrayList<E>(size()+addList.size());
+	//System.out.println("oldList[0]: "+oldList[0]);
 	// since addList is not empty, size() != 0 
 	// and so shiftIndex is defined. 
 	int newSize = oldList.size()+addList.size();
 	index = shiftIndex(index,newSize);
-System.out.println("newSize: "+newSize);
-System.out.println("index: "+index);
+	System.out.println("newSize: "+newSize);
+	System.out.println("index: "+index);
 
 	// Two cases: 
 	//
@@ -1311,16 +1377,16 @@ System.out.println("index: "+index);
 	    this.list.addAll(oldList.subList(0,index));
 	    this.list.addAll(addList);
 	    this.list.addAll(oldList.subList(index,newSize-addList.size()));
-/*
-	    System.arraycopy(oldList,  0,    this.list, 0,    index);
-	    // copy indices index-1,...,index+addList.length-1 
-	    // (addList.length entries). 
-	    System.arraycopy(addList, 0,    this.list, index, addList.size());
-	    // copy indices the rest of the old entries 
-	    // (this.list.size()-index entries). 
-	    System.arraycopy(oldList, index, this.list, index+addList.size(),
-			     size()-index-addList.length);
-*/
+	    /*
+	      System.arraycopy(oldList,  0,    this.list, 0,    index);
+	      // copy indices index-1,...,index+addList.length-1 
+	      // (addList.length entries). 
+	      System.arraycopy(addList, 0,    this.list, index, addList.size());
+	      // copy indices the rest of the old entries 
+	      // (this.list.size()-index entries). 
+	      System.arraycopy(oldList, index, this.list, index+addList.size(),
+	      size()-index-addList.length);
+	    */
 	} else {
 	    // | list part 2 | cyclic list | list part 1 
 	    //                 ind1          index
@@ -1330,11 +1396,11 @@ System.out.println("index: "+index);
 	    this.list.addAll(addList.subList(addLen1,addLen1+ind1));
 	    this.list.addAll(oldList);
 	    this.list.addAll(addList.subList(0,addLen1));
-/*
-	    System.arraycopy(oldList,  0,      this.list, ind1,  oldList.length);
-	    System.arraycopy(addList, 0,       this.list, index, addLen1);
-	    System.arraycopy(addList, addLen1, this.list, 0,     ind1);
-*/
+	    /*
+	      System.arraycopy(oldList,  0,      this.list, ind1,  oldList.length);
+	      System.arraycopy(addList, 0,       this.list, index, addLen1);
+	      System.arraycopy(addList, addLen1, this.list, 0,     ind1);
+	    */
 	}
     }
 
@@ -1361,27 +1427,11 @@ System.out.println("index: "+index);
      *    element to be inserted. 
      */
     public void add(int index, E element) {
-	List<E> oldList = this.list;
-	this.list = new ArrayList<E>(this.list.size()+1);
-	index = shiftIndex(index,oldList.size()+1);
-	
-	// Copy the elements which remain unchanged. 
-	this.list.addAll(oldList.subList(0,index));
-	this.list.add(element);
-	this.list.addAll(oldList.subList(index,oldList.size()));
-/*
-	System.arraycopy(oldList,0,    this.list,0,      index);
-	System.arraycopy(oldList,index,this.list,index+1,size()-index-1);
-	// Add the new element. 
-	this.list.set(index,element);
-*/
-    }
+	this.list.add(shiftIndex(index,size()+1), element);
+   }
 
-    // **** there is no end of list. 
     public boolean add(E element) {
-	//throw new UnsupportedOperationException();
-	add(size(),element);
-	return true;
+	return this.list.add(element);// always returns true. 
     }
 
     /**
@@ -1402,34 +1452,16 @@ System.out.println("index: "+index);
      *    if this list is empty. 
      */
     public E remove(int index) throws EmptyCyclicListException {
-	// Determine the proper index and allocate the new list. 
-	index = shiftIndex(index);
-	return this.list.remove(index);
-/*
-	List<E> newList = new ArrayList<E>(size()-1);
-	// Copy the elements which remain unchanged. 
-	System.arraycopy(this.list,0,      newList,0,    index);
-	System.arraycopy(this.list,index+1,newList,index,size()-index-1);
-	this.list = newList;
-	return ret;
-*/
+	return this.list.remove(shiftIndex(index));
     }
 
     public boolean remove(Object obj) {
-	throw new UnsupportedOperationException();
-	/*
-	int index = getIndexOf(obj);
-	if (index < 0) {
-	    return false;
-	}
-	remove(index);
-	return true;
-	*/
+	return this.list.remove(obj);
     }
 
     public boolean removeAll(Collection<?> coll) {
 	boolean result = false;
-	Iterator iter = coll.iterator();
+	Iterator<?> iter = coll.iterator();
 	while (iter.hasNext()) {
 	    result |= remove(iter.next());
 	}
@@ -1439,7 +1471,7 @@ System.out.println("index: "+index);
 
     public boolean retainAll(Collection<?> coll) {
 	boolean result = false;
-	Iterator iter = this.iterator();
+	Iterator<?> iter = this.iterator();
 	Object cand;
 	while (iter.hasNext()) {
 	    cand = iter.next();
@@ -1454,28 +1486,29 @@ System.out.println("index: "+index);
     /**
      * Returns the non-negative index in this cyclic list 
      * of the first occurrence of the specified element, 
-     * or some negative index 
-     * if this cyclic list does not contain this element. 
-     * More formally, returns the lowest index <tt>i</tt> such that 
-     * <tt>(o==null ? get(i)==null : o.equals(get(i)))</tt>, 
+     * or <code>-1</code> if this cyclic list does not contain this element. 
+     * More formally, returns the lowest index <code>i</code> such that 
+     * <code>(o==null ? get(i)==null : o.equals(get(i)))</code>, 
      * or some negative index if there is no such index. 
      * <p>
-     * This negative index may be e.g. <tt>-insertion point-1</tt> 
-     * for binary searches. 
      * Note that this specification slightly differs from 
-     * {@link java.util.List#indexOf}. 
+     * {@link java.util.List#indexOf(Object)}. 
      * 
+     * @param idx
+     *    the index to start search with. 
+     *    Independently of this, 
+     *    the search comprises all entries of this cyclic list. 
      * @param obj 
-     *    element to search for. 
+     *    element to search for or <code>null</code>. 
      * @return 
      *    the index in this cyclic list 
      *    of the first occurrence of the specified
-     *    element, or some negative index 
+     *    element, or <code>-1</code> 
      *    if this list does not contain this element.
      */
-    public int getIndexOf(E obj) {
-	for (int i = 0; i < this.list.size(); i++) {
-	    if (this.list.get(i).equals(obj)) {
+    public int getIndexOf(int idx, Object obj) {
+	for (int i = idx; i < this.list.size()+idx; i++) {
+	    if (Objects.equals(this.list.get(i), obj)) {
 		return i;
 	    }
 	}
@@ -1485,17 +1518,21 @@ System.out.println("index: "+index);
 
     /**
      * Returns a <code>CyclicList</code> 
-     * which is by copying this list n times 
-     * to obtain a list of length <code>n</code>. 
+     * which is by copying this list step by step 
+     * such that the length of the result is <code>len</code>. 
+     * For example <code>len == size()*n</code> 
+     * yields an n-fold copy of this cyclic list. 
      *
      * @param len 
      *    a non-negative <code>int</code> value. 
      * @return 
-     *    a <code>CyclicList</code> which is by copying this list n times. 
+     *    a <code>CyclicList</code> 
+     *    which is by copying this list step by step 
+     *    such that the length of the result is as specified. 
      * @throws IllegalArgumentException
-     *    if n is negative. 
+     *    if <code>len</code> is negative. 
      * @throws EmptyCyclicListException
-     *    if this list is empty and <code>len != 0</code>. 
+     *    if this list is empty and <code>len > 0</code>. 
      */
     public CyclicList<E> getCopy(int len) {
 
@@ -1518,10 +1555,8 @@ System.out.println("index: "+index);
 	    //System.arraycopy(this.list, 0, newList, i*size(), size());
 	}
 	newList.addAll(this.list.subList(0,len%size()));
-	// System.arraycopy(this.list, 0, newList, len/size()*size(), len%size());
 	return new CyclicArrayList<E>(newList);
     }
-
 
     public String toString() {
 	StringBuffer res = new StringBuffer(30);
@@ -1547,9 +1582,10 @@ System.out.println("index: "+index);
      */
     public Object clone() /* NOPMD */ throws CloneNotSupportedException {
 	CyclicArrayList<E> res = (CyclicArrayList<E>)super.clone();
-	res.list = (List<E>)((ArrayList<E>)this.list).clone();
+	res.list.clear();// = (List<E>)((ArrayList<E>)this.list).clone();
+	res.list.addAll((List<E>)((ArrayList<E>)this.list).clone());
 	return res;
-	    // return new CyclicArrayList<E>
-	    // 	((List<E>) ((ArrayList<E>)this.list).clone());
+	// return new CyclicArrayList<E>
+	// 	((List<E>) ((ArrayList<E>)this.list).clone());
     }
 }

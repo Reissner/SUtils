@@ -14,7 +14,7 @@ import java.util.Comparator;
  * @author <a href="mailto:ernst@rig29.rose.de">Ernst Reissner</a>
  * @version 1.0
  */
-public class AddArrays<E> {
+public class ArraysExt<E> {
 
     /* -------------------------------------------------------------------- *
      * class constants.                                                     *
@@ -36,7 +36,7 @@ public class AddArrays<E> {
      * constructors.                                                        *
      * -------------------------------------------------------------------- */
 
-    private AddArrays() {
+    private ArraysExt() {
     }
 
     /* -------------------------------------------------------------------- *
@@ -645,7 +645,7 @@ public class AddArrays<E> {
 	/**
 	 * A <code>Comparator</code> for components of an array. 
 	 * This is allocated by the constructor 
-	 * {@link #AddArrays.ArrayComparator}. 
+	 * {@link #ArraysExt.ArrayComparator}. 
 	 */
 	Comparator<Object> atomic;
 

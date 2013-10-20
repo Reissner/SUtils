@@ -51,9 +51,9 @@ public abstract class Caster {
      * is assignment compatibility 
      * up to wrapping and unwrapping of primitive types. 
      * Used to implement 
-     * {@link CollectionsAdd#recToArray(Object,Class)} 
+     * {@link CollectionsExt#recToArray(Object,Class)} 
      * as a special case of 
-     * {@link CollectionsAdd#recToArray(Object,Class,Caster)}. 
+     * {@link CollectionsExt#recToArray(Object,Class,Caster)}. 
      */
     public final static Caster BASIC_TYPES = new Trivial() {
 

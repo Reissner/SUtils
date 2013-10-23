@@ -52,7 +52,7 @@ public enum DetOs {
      * of the operating system currently running 
      * as given by property <code>os.name</code> in lower case. 
      *
-     * @see System.getProperty(String)
+     * @see System#getProperty(String)
      */
     private static String osString() {
 	return  System.getProperty("os.name").toLowerCase();

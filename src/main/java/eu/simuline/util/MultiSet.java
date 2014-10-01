@@ -8,21 +8,26 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.Comparator;
+import java.util.Collections;
 
 /**
  * Represents a set with multiplicities. 
  * Mathematically this is something between a set and a family. 
  * Note that this kind of set does not support <code>null</code> elements. 
  * <p>
+ * Allows also to create an immutable <code>MultiSet</code> 
+ * either from a set or as a copy of another <code>MultiSet</code>. 
+ * <p>
  * Note that this should implement Collection, but still does not *****. 
  * addAll's implementation seems strange, 
  * add seems to be buggy, 
- * One should not require a TreeMap Alternative: HashMap. 
+ * One should not require a TreeMap alternative: HashMap. 
+ * Problem with overflow of multiplicities. 
  *
  * @author <a href="mailto:ereissner@rig35.rose.de">Ernst Reissner</a>
  * @version 1.0
  */
-public class MultiSet<T> {
+public class MultiSet<T> implements Iterable<T> {
 
     /* -------------------------------------------------------------------- *
      * inner classes.                                                       *
@@ -34,6 +39,9 @@ public class MultiSet<T> {
      * which can be stored in a map, e.g. {@link MultiSet#obj2mult} 
      * and unlike <code>Integer</code>s these objects are mutable. 
      */
+    // **** this implementation is not optimal: 
+    // better would be immutable multiplicities 
+    // or just using Integers with checks moved towards enclosing class 
     private static class Multiplicity implements Comparable<Multiplicity> {
 
 	/**
@@ -178,7 +186,7 @@ public class MultiSet<T> {
      * Represents immutable <code>MultiSet</code>s 
      * as e.g. the one given by {@link MultiSet#emptyMultiSet()}. 
      */
-    public final static class Immutable<T> extends MultiSet<T> {
+    final static class Immutable<T> extends MultiSet<T> {
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
@@ -193,7 +201,8 @@ public class MultiSet<T> {
 
 	/**
 	 * Copy constructor. 
-	 * Wrapps another multiset in an equivalent but immutable one. 
+	 * Wrapps another <code>MultiSet</code> 
+	 * in an equivalent but immutable one. 
 	 *
 	 * @param other 
 	 *    another <code>MultiSet</code> instance. 
@@ -201,6 +210,17 @@ public class MultiSet<T> {
 	public Immutable(MultiSet<T> other) {
 	    super(other);
 	}
+
+	/**
+	 * Creates an immutable <code>MultiSet</code> 
+	 * with the elements of <code>sSet</code> 
+	 * and all elements with multiplicity <code>1</code>. 
+	 */
+	public Immutable(Set<? extends T> sSet) {
+	    this();
+	    super.addAll(sSet);
+	}
+
 
 	/* ---------------------------------------------------------------- *
 	 * methods.                                                         *
@@ -211,9 +231,12 @@ public class MultiSet<T> {
 	    return new Immutable<T>();
 	}
 
-	/*
-	 * This is not only not necessary; 
-	 * the default constructor would become invalid with this definition. 
+	// api-docs inherited from base class 
+	public MultiSet<T> immutable() {
+	    return this;
+	}
+
+	/**
 	 * @throws UnsupportedOperationException
 	 */
 	public void clear() {
@@ -255,6 +278,9 @@ public class MultiSet<T> {
 	    throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * @throws UnsupportedOperationException
+	 */
 	public boolean remove(Object obj) {
 	    throw new UnsupportedOperationException();
 	}
@@ -276,6 +302,13 @@ public class MultiSet<T> {
 	/**
 	 * @throws UnsupportedOperationException
 	 */
+	public boolean addAll(Set<? extends T> set) {
+	    throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * @throws UnsupportedOperationException
+	 */
 	public boolean removeAll(Collection<?> coll) {
 	    throw new UnsupportedOperationException();
 	}
@@ -285,6 +318,13 @@ public class MultiSet<T> {
 	 */
 	public boolean retainAll(Collection<?> coll) {
 	    throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Returns an unmodifyable view of the underlying set. 
+	 */
+	public Set<T> getSet() {
+	    return Collections.unmodifiableSet(super.getSet());
 	}
 
     } // class Immutable 
@@ -339,13 +379,40 @@ public class MultiSet<T> {
     }
 
     /**
-     * Returns an <em>immutable</em> empty set. 
+     * Creates a multi set with the elements of <code>sSet</code> 
+     * and all elements with multiplicity <code>1</code>. 
+     *
+     * @param  sSet
+     *    some instance of a sorted set. 
+     */
+    public MultiSet(Set<? extends T> sSet) {
+	this();
+	addAll(sSet);
+    }
+
+    /**
+     * Returns an <em>immutable</em> empty <code>MultiSet</code>. 
      * @see MultiSet.Immutable
      */
     public static <T> MultiSet<T> emptyMultiSet() {
 	return Immutable.createEmpty();
     }
 
+    /**
+     * Returns an immutable copy of this <code>MultiSet</code>. 
+     */
+    public MultiSet<T> immutable() {
+	return new Immutable<T>(this);
+    }
+
+    /**
+     * Returns an immutable <code>MultiSet</code> 
+     * with the elements of <code>sSet</code> 
+     * and all elements with multiplicity <code>1</code>. 
+     */
+    public static <T> MultiSet<T> immutable(Set<? extends T> sSet) {
+	return new Immutable<T>(sSet);
+    }
 
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
@@ -380,7 +447,9 @@ public class MultiSet<T> {
      * 
      * @return 
      *    the number of elements in this <code>MultiSet</code> 
-     *    counted with multiplicities. 
+     *    counted with multiplicities, 
+     *    provided this does not exceed {@link Integer#MAX_VALUE}; 
+     *    otherwise just {@link Integer#MAX_VALUE}. 
      * @see #size()
      */
     public int sizeWithMult() {
@@ -526,7 +595,7 @@ public class MultiSet<T> {
 	    throw new NullPointerException();// NOPMD 
 	}
 	// Here, obj != null. 
-	return  this.obj2mult.get(obj);
+	return this.obj2mult.get(obj);
     }
 
     /**
@@ -558,10 +627,13 @@ public class MultiSet<T> {
      * in which the elements are returned
      * (unless this collection is an instance of some class 
      * that provides a guarantee). -->
+     * For certain implementations, the iterator returned 
+     * does not allow modifications of the underlying (multi-)set. 
      * 
      * @return 
      *    an <tt>Iterator</tt> over the elements in this collection 
      *    considering each element exactly once ignoring its multiplicity. 
+     * @see MultiSet.Immutable
      */
     public Iterator<T> iterator() {
 	return getSet().iterator();
@@ -613,8 +685,9 @@ public class MultiSet<T> {
      * not contain any <tt>null</tt> elements. 
      * <p>
      * <!--
-     * If this <code>MultiSet</code> makes any guarantees as to what order its elements
-     * are returned by its iterator, this method must return the elements in
+     * If this <code>MultiSet</code> makes any guarantees 
+     * as to what order its elements are returned by its iterator, 
+     * this method must return the elements in
      * the same order. 
      * -->
      * <!--
@@ -669,6 +742,8 @@ public class MultiSet<T> {
      *    the new multiplicity of <code>obj</code>. 
      * @throws NullPointerException 
      *    if the specified element is null. 
+     * @throws UnsupportedOperationException
+     *    if this <code>MultiSet</code> does not support this method. 
      */
     public int addWithMult(T obj) {
 	// throws NullPointerException for obj==null 
@@ -693,6 +768,8 @@ public class MultiSet<T> {
      *    for <code>addMult &lt; 0</code>. 
      * @throws NullPointerException 
      *    for <code>obj==null</code> provided <code>addMult &ge; 0</code>. 
+     * @throws UnsupportedOperationException
+     *    if this <code>MultiSet</code> does not support this method. 
      */
     public int addWithMult(T obj, int addMult) {
 
@@ -755,6 +832,8 @@ public class MultiSet<T> {
      *    was <code>0</code> before the call of this method. 
      * @throws NullPointerException 
      *    if the specified element is <code>null</code>. 
+     * @throws UnsupportedOperationException
+     *    if this <code>MultiSet</code> does not support this method. 
      */
     public boolean add(T obj) {
 	// throws NullPointerException for obj==null 
@@ -784,6 +863,8 @@ public class MultiSet<T> {
      *    before a potential modification of this <code>MultiSet</code>. 
      * @throws NullPointerException 
      *    if the specified element is null. 
+     * @throws UnsupportedOperationException
+     *    if this <code>MultiSet</code> does not support this method. 
      */
     public int removeWithMult(Object obj) {
 	// throws NullPointerException for obj==null 
@@ -810,6 +891,8 @@ public class MultiSet<T> {
      * @throws IllegalArgumentException 
      *    for <code>removeMult &lt; 0</code> and also if 
      *    <code>removeMult - obj.getMultiplicity() &lt; 0</code>. 
+     * @throws UnsupportedOperationException
+     *    if this <code>MultiSet</code> does not support this method. 
      */
     public int removeWithMult(Object obj,int removeMult) {
 	if (removeMult < 0) {
@@ -817,7 +900,6 @@ public class MultiSet<T> {
 		("Expected non-negative multiplicity; found " + 
 		 removeMult + ". ");
 	}
-	// Here, removeMult >= 0. 
 
 	// throws NullPointerException for obj==null 
 	Multiplicity mult = getMultiplicityObj(obj);
@@ -857,6 +939,8 @@ public class MultiSet<T> {
      *    as a result of the call. 
      * @throws NullPointerException 
      *    if the specified element is <code>null</code>. 
+     * @throws UnsupportedOperationException
+     *    if this <code>MultiSet</code> does not support this method. 
      */
     public boolean remove(Object obj) {
 	if (obj == null) {
@@ -880,6 +964,8 @@ public class MultiSet<T> {
      *    as a non-negative <code>int</code> value. 
      * @throws IllegalArgumentException 
      *   if either <code>obj == null</code> or <code>mult &le; 0</code>. 
+     * @throws UnsupportedOperationException
+     *    if this <code>MultiSet</code> does not support this method. 
      * @see #getMultiplicity(Object)
      */
     public int setMultiplicity(T obj,int newMult) {
@@ -928,15 +1014,19 @@ public class MultiSet<T> {
     }
 
     /**
-     * Adds <code>mvs</code> elementwise to this set 
-     * and returns whether this caused a change. 
+     * Adds <code>mvs</code> elementwise to this multi set 
+     * increasing multiplicities 
+     * and returns whether this caused a change 
+     * of the underlying set. 
      * **** strange implementation; also: change 
      *
      * @param mvs 
      *    a <code>MultiSet</code> object. 
      * @return 
-     *    returns whether adding changed this MultiSet 
+     *    returns whether adding changed this <code>MultiSet</code> 
      *    interpreted as a set. 
+     * @throws UnsupportedOperationException
+     *    if this <code>MultiSet</code> does not support this method. 
      */
     public boolean addAll(MultiSet<? extends T> mvs) {
 
@@ -947,10 +1037,43 @@ public class MultiSet<T> {
 	    assert mvsMult > 0;
 	    Multiplicity mult = this.obj2mult.get(cand);
 	    if (mult == null) {
+		// Here, cand has not been in this multi-set 
 		this.obj2mult.put(cand, Multiplicity.create(mvsMult));
 		added = true;
 	    } else {
+		// Here, cand has been in this multi-set 
 		mult.add(mvsMult);
+	    }
+	} // for 
+	return added;
+    }
+
+    /**
+     * Adds <code>set</code> elementwise to this multi set 
+     * increasing multiplicities 
+     * and returns whether this caused a change 
+     * of the underlying set. 
+     * **** strange implementation; also: change 
+     *
+     * @param set 
+     *    a <code>Set</code> object. 
+     * @return 
+     *    returns whether adding changed this <code>MultiSet</code> 
+     *    interpreted as a set. 
+     * @throws UnsupportedOperationException
+     *    if this <code>MultiSet</code> does not support this method. 
+     */
+    public boolean addAll(Set<? extends T> set) {
+	boolean added = false;
+	for (T cand : set) {
+	    Multiplicity mult = this.obj2mult.get(cand);
+	    if (mult == null) {
+		// Here, cand has not been in this multi-set 
+		this.obj2mult.put(cand, Multiplicity.create(1));
+		added = true;
+	    } else {
+		// Here, cand has been in this multi-set 
+		mult.add(1);
 	    }
 	} // for 
 	return added;
@@ -969,6 +1092,8 @@ public class MultiSet<T> {
      *    changed as a result of the call. 
      * @throws NullPointerException 
      *    if the specified collection is <code>null</code>. 
+     * @throws UnsupportedOperationException
+     *    if this <code>MultiSet</code> does not support this method. 
      * @see #remove(Object)
      * @see #contains(Object)
      */
@@ -995,6 +1120,8 @@ public class MultiSet<T> {
      *    as a result of the call. 
      * @throws NullPointerException 
      *    if the specified collection is <tt>null</tt>.
+     * @throws UnsupportedOperationException
+     *    if this <code>MultiSet</code> does not support this method. 
      * @see #remove(Object)
      * @see #contains(Object)
      */
@@ -1016,17 +1143,23 @@ public class MultiSet<T> {
     /**
      * Removes all of the elements from this <code>MultiSet</code>. 
      * This <code>MultiSet</code> will be empty after this method returns. 
+     *
+     * @throws UnsupportedOperationException
+     *    if this <code>MultiSet</code> does not support this method. 
      */
     public void clear() {
 	this.obj2mult.clear();
     }
 
     /**
-     * Returns the underlying set of this <code>MultiSet</code>. 
+     * Returns a view of the underlying set of this <code>MultiSet</code>. 
+     * For certain implementations, this set is immutable 
+     * to prevent implicit modification of this <code>MultiSet</code>. 
      *
      * @return 
      *    the <code>Set</code> containing exactly the objects 
      *    with strictly positive multiplicity in this <code>MultiSet</code>. 
+     * @see MultiSet.Immutable#getSet()
      */
     public Set<T> getSet() {
 	return this.obj2mult.keySet();

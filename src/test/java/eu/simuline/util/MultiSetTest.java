@@ -20,6 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import junit.framework.JUnit4TestAdapter;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RunWith(Suite.class)
 @SuiteClasses({MultiSetTest.TestAll.class})
@@ -36,7 +37,8 @@ public class MultiSetTest {
     @SuiteClasses({
 	MultiSetTest.TestBase.class,
 	MultiSetTest.TestQueries.class,
-	MultiSetTest.TestModifications.class
+	MultiSetTest.TestModifications.class,
+	MultiSetTest.TestIterator.class
     })
     public static class TestAll {
     } // class TestAll 
@@ -78,10 +80,28 @@ public class MultiSetTest {
 	@Test public void testAddAll() {
 	    MultiSetTest.TEST.testAddAll();	    
 	}
-    } // class TestAll
+    } // class TestModifications
 
 
+    public static class TestIterator {
 
+	@Test public void testHasNextNext() {
+	    MultiSetTest.TEST.testHasNextNext();	    
+	}
+
+	@Test public void testRemoveIter() {
+	    MultiSetTest.TEST.testRemoveIter();	    
+	}
+
+	@Test public void testSetMultIter() {
+	    MultiSetTest.TEST.testSetMultIter();	    
+	}
+
+	@Test public void testRemoveMultIter() {
+	    MultiSetTest.TEST.testRemoveMultIter();	    
+	}
+
+    } // class TestIterator 
 
     @Before public void setUp() {
 	testcase = 1;
@@ -447,7 +467,7 @@ public class MultiSetTest {
 	    assertEquals((Object)new IllegalArgumentException
 			 ("Resulting multiplicity " + 
 			  1 + " + " + (-2) + 
-			  " should be strictly positive. ")
+			  " should be non-negative. ")
 			 .getMessage(),
 			 e.getMessage());
 	    // everything as expected. 
@@ -654,6 +674,198 @@ public class MultiSetTest {
 	assertEquals(cmp.hashCode(),result.hashCode());
 
     } // testHashCode
+
+
+    void testHasNextNext() {
+	MultiSet<String> ms1;
+	MultiSetIterator<String> iter;
+	String str;
+
+ 	ms1 = new MultiSet<String>();
+	ms1.add("Element1");
+	ms1.add("Element1");
+	ms1.add("Element1");
+	ms1.add("Element2");
+	ms1.add("Element2");
+
+	iter = ms1.iterator();
+
+	assertTrue(iter.hasNext());
+	str = iter.next();
+	assertEquals("Element1", str);
+	assertEquals(3, iter.getMult());
+	assertEquals(3, iter.getMult());
+
+	assertTrue(iter.hasNext());
+	str = iter.next();
+	assertEquals("Element2", str);
+	assertEquals(2, iter.getMult());
+	assertEquals(2, iter.getMult());
+
+	assertTrue(!iter.hasNext());
+
+	try {
+	    iter.next();
+	    fail("exception expected");
+	} catch (NoSuchElementException e) {
+
+	}
+
+   } // testHasNextNext() 
+
+   void testRemoveIter() {
+	MultiSet<String> ms1;
+	MultiSetIterator<String> iter;
+	String str;
+
+ 	ms1 = new MultiSet<String>();
+	ms1.add("Element1");
+	ms1.add("Element1");
+	ms1.add("Element1");
+	ms1.add("Element2");
+	ms1.add("Element2");
+
+	iter = ms1.iterator();
+	try {
+	    iter.remove();
+	    fail("exception expected");
+	} catch (IllegalStateException e) {
+
+	}
+
+	assertTrue(iter.hasNext());
+	str = iter.next();
+	assertEquals("Element1", str);
+	assertEquals(3, iter.getMult());
+
+	iter.remove();
+	try {
+	    iter.remove();
+	    fail("exception expected");
+	} catch (IllegalStateException e) {
+
+	}
+
+	try {
+	    iter.getMult();
+	    fail("exception expected");
+	} catch (IllegalStateException e) {
+
+	}
+
+	assertEquals(2, ms1.getMultiplicity("Element2"));
+	assertTrue(!ms1.contains("Element1"));
+
+   } // testRemoveIter() 
+
+   void testSetMultIter() {
+	MultiSet<String> ms1;
+	MultiSetIterator<String> iter;
+	String str;
+
+ 	ms1 = new MultiSet<String>();
+	ms1.add("Element1");
+	ms1.add("Element1");
+	ms1.add("Element1");
+	ms1.add("Element2");
+	ms1.add("Element2");
+
+	iter = ms1.iterator();
+	try {
+	    iter.setMult(4);
+	    fail("exception expected");
+	} catch (IllegalStateException e) {
+
+	}
+
+	assertTrue(iter.hasNext());
+	str = iter.next();
+	assertEquals("Element1", str);
+	assertEquals(3, iter.getMult());
+
+	try {
+	    iter.setMult(-1);
+	    fail("exception expected");
+	} catch (IllegalArgumentException e) {
+
+	}
+
+	assertEquals(3, iter.setMult(4));
+	assertEquals(4, iter.getMult());
+	assertEquals(4, iter.setMult(0));
+	try {
+	    iter.getMult();
+	    fail("exception expected");
+	} catch (IllegalStateException e) {
+
+	}
+	try {
+	    iter.setMult(3);
+	    fail("exception expected");
+	} catch (IllegalStateException e) {
+
+	}
+
+
+	assertEquals(2, ms1.getMultiplicity("Element2"));
+	assertTrue(!ms1.contains("Element1"));
+
+   } // testSetMultIter() 
+
+   void testRemoveMultIter() {
+	MultiSet<String> ms1;
+	MultiSetIterator<String> iter;
+	String str;
+
+ 	ms1 = new MultiSet<String>();
+	ms1.add("Element1");
+	ms1.add("Element1");
+	ms1.add("Element1");
+	ms1.add("Element2");
+	ms1.add("Element2");
+
+	iter = ms1.iterator();
+	try {
+	    iter.removeMult(4);
+	    fail("exception expected");
+	} catch (IllegalStateException e) {
+
+	}
+
+	assertTrue(iter.hasNext());
+	str = iter.next();
+	assertEquals("Element1", str);
+	assertEquals(3, iter.getMult());
+
+	try {
+	    iter.removeMult(-1);
+	    fail("exception expected");
+	} catch (IllegalArgumentException e) {
+
+	}
+
+	try {
+	    iter.removeMult(4);
+	    fail("exception expected");
+	} catch (IllegalArgumentException e) {
+
+	}
+
+	assertEquals(3, iter.removeMult(1));
+	assertEquals(2, iter.getMult());
+	assertEquals(2, iter.removeMult(2));
+	try {
+	    iter.getMult();
+	    fail("exception expected");
+	} catch (IllegalStateException e) {
+
+	}
+
+
+	assertEquals(2, ms1.getMultiplicity("Element2"));
+	assertTrue(!ms1.contains("Element1"));
+
+   } // testRemoveMultIter() 
 
     /* -------------------------------------------------------------------- *
      * framework.                                                           *

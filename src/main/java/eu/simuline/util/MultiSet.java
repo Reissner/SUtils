@@ -42,7 +42,7 @@ public class MultiSet<T> implements Iterable<T> {
     // **** this implementation is not optimal: 
     // better would be immutable multiplicities 
     // or just using Integers with checks moved towards enclosing class 
-    private static class Multiplicity implements Comparable<Multiplicity> {
+    public static class Multiplicity implements Comparable<Multiplicity> {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -90,7 +90,7 @@ public class MultiSet<T> implements Iterable<T> {
 	 * @throws IllegalArgumentException 
 	 *    if <code>mult</code> is not strictly positive. 
 	 */
-	int set(int mult) {
+	public int set(int mult) {
 	    if (mult <= 0) {
 		throw new IllegalArgumentException
 		    ("Multiplicity " + mult + 
@@ -116,7 +116,7 @@ public class MultiSet<T> implements Iterable<T> {
 	 *    if <code>this.mult + mult == 0</code> holds. 
 	 *    This cannot occur: if it does this is a bug within this class. 
 	 */
-	int add(int mult) {
+	public int add(int mult) {
 	    this.mult += mult;
 	    if (this.mult <= 0) {
 		if (this.mult == 0) {
@@ -139,7 +139,7 @@ public class MultiSet<T> implements Iterable<T> {
 	 * @return 
 	 *    {@link #mult}. 
 	 */
-	int get() {
+	public int get() {
 	    return this.mult;
 	}
 
@@ -779,7 +779,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    for <code>obj==null</code>. 
      * @see #getMultiplicity(Object)
      */
-    private Multiplicity getMultiplicityObj(Object obj) {
+    public Multiplicity getMultiplicityObj(Object obj) {
 	if (obj == null) {
 	    throw new NullPointerException();// NOPMD 
 	}

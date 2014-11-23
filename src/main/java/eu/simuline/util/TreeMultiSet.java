@@ -1520,7 +1520,7 @@ public class TreeMultiSet<T> implements MultiSet<T> {
 	return this.obj2mult.navigableKeySet();
     }
 
-   /**
+    /**
      * Returns a view of the underlying set of this <code>MultiSet</code> 
      * as a map mapping each entry to its multiplicity. 
      */

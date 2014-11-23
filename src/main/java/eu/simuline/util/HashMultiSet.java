@@ -7,13 +7,13 @@ import java.util.SortedSet;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.NavigableMap;
-import java.util.TreeMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Comparator;
 import java.util.Collections;
 
 /**
- * Represents a sorted set with multiplicities. 
+ * Represents a set with multiplicities. 
  * Mathematically this is something between a set and a family. 
  * Note that this kind of set does not support <code>null</code> elements. 
  * <p>
@@ -21,18 +21,15 @@ import java.util.Collections;
  * either from a set or as a copy of another <code>MultiSet</code>. 
  * <p>
  * Note that this should implement Collection, but still does not *****. 
- * maybe it should even implement Set or SortedSet. 
+ * maybe it should even implement Set. 
  * addAll's implementation seems strange, 
  * add seems to be buggy, 
- * One should not require a TreeMap alternative: HashMap. 
- * So one should distinguish SortedMultiSet and MultiSet 
- * and both should be interfaces. 
  * Problem with overflow of multiplicities. 
  *
  * @author <a href="mailto:ereissner@rig35.rose.de">Ernst Reissner</a>
  * @version 1.0
  */
-public class TreeMultiSet<T> implements SortedMultiSet<T> {
+public class HashMultiSet<T> implements MultiSet<T> {
 
     /* -------------------------------------------------------------------- *
      * inner classes.                                                       *
@@ -233,7 +230,7 @@ public class TreeMultiSet<T> implements SortedMultiSet<T> {
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	MultiSetIteratorImpl(TreeMultiSet<T> multiSet) {
+	MultiSetIteratorImpl(HashMultiSet<T> multiSet) {
 	    this.entrySetIter = multiSet.getSetWithMults().iterator();
 	    this.last = null;
 	}
@@ -338,7 +335,7 @@ public class TreeMultiSet<T> implements SortedMultiSet<T> {
      * **** Idea: use {@link Collections#unmodifiableMap(Map)} 
      * but still modifications of multiplicities must be handled. 
      */
-    final static class Immutable<T> extends TreeMultiSet<T> {
+    final static class Immutable<T> extends HashMultiSet<T> {
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
@@ -359,7 +356,7 @@ public class TreeMultiSet<T> implements SortedMultiSet<T> {
 	 * @param other 
 	 *    another <code>MultiSet</code> instance. 
 	 */
-	public Immutable(TreeMultiSet<T> other) {
+	public Immutable(HashMultiSet<T> other) {
 	    super(other);
 	}
 
@@ -475,8 +472,8 @@ public class TreeMultiSet<T> implements SortedMultiSet<T> {
 	/**
 	 * Returns an unmodifyable view of the underlying set. 
 	 */
-	public SortedSet<T> getSet() {
-	    return Collections.unmodifiableSortedSet(super.getSet());
+	public Set<T> getSet() {
+	    return Collections.unmodifiableSet(super.getSet());
 	}
 
 	/**
@@ -537,29 +534,22 @@ public class TreeMultiSet<T> implements SortedMultiSet<T> {
      * **** maybe even: object not in keyset. 
      * In the key set no <code>null</code> values may occur. 
      */
-    protected final NavigableMap<T, Multiplicity> obj2mult;
+    protected final Map<T, Multiplicity> obj2mult;
 
     /* -------------------------------------------------------------------- *
      * constructors and creator methods.                                    *
      * -------------------------------------------------------------------- */
 
 
-    private TreeMultiSet(NavigableMap<T,Multiplicity> t2mult) {
+    private HashMultiSet(Map<T,Multiplicity> t2mult) {
 	this.obj2mult = t2mult;
     }
 
     /**
      * Creates a new, empty <code>MultiSet</code>. 
      */
-    public TreeMultiSet() {
-	this(new TreeMap<T,Multiplicity>());
-    }
-
-    /**
-     * Creates a new, empty <code>MultiSet</code>. 
-     */
-    public TreeMultiSet(Comparator<? super T> comp) {
-	this(new TreeMap<T,Multiplicity>(comp));
+    public HashMultiSet() {
+	this(new HashMap<T,Multiplicity>());
     }
 
     /**
@@ -568,8 +558,8 @@ public class TreeMultiSet<T> implements SortedMultiSet<T> {
      * @param other 
      *    another <code>MultiSet</code> instance. 
      */
-    public TreeMultiSet(MultiSet<? extends T> other) {
-	this(new TreeMap<T,Multiplicity>(other.getMap()));
+    public HashMultiSet(MultiSet<? extends T> other) {
+	this(new HashMap<T,Multiplicity>(other.getMap()));
     }
 
     /**
@@ -579,7 +569,7 @@ public class TreeMultiSet<T> implements SortedMultiSet<T> {
      * @param  sSet
      *    some instance of a sorted set. 
      */
-    public TreeMultiSet(Set<? extends T> sSet) {
+    public HashMultiSet(Set<? extends T> sSet) {
 	this();
 	addAll(sSet);
     }
@@ -811,167 +801,6 @@ public class TreeMultiSet<T> implements SortedMultiSet<T> {
     public boolean contains(Object obj) {
 	// throws NullPointerException for obj==null 
 	return getMultiplicityObj(obj) != null;
-    }
-
-    /**
-     * Returns the comparator used to order the elements in this set, 
-     * or <code>null</code> 
-     * if this set uses the natural ordering of its elements. 
-     *
-     * @return
-     *    the comparator used to order the elements in this set, 
-     *    or <code>null</code> 
-     *    if this set uses the natural ordering of its elements. 
-     */
-    Comparator<? super T> comparator() {
-	return this.obj2mult.comparator();
-    }
-
-    /**
-     * Returns the first (lowest) element currently in this set.
-     *
-     * @return
-     *    the first (lowest) element currently in this set
-     * @throws NoSuchElementException
-     *    if this set is empty. 
-     */
-    public T first() {
-	return this.obj2mult.firstKey();
-    }
-
-    /**
-     * Returns the last (highest) element currently in this set.
-     *
-     * @return
-     *    the last (highest) element currently in this set. 
-     * @throws NoSuchElementException
-     *    if this set is empty. 
-     */
-    public T last() {
-	return this.obj2mult.lastKey();
-    }
-
-    /**
-     * Returns a view of the portion of this multi-set 
-     * whose elements are strictly less than <code>toElement</code>. 
-     * The returned multi-set is backed by this multi-set, 
-     * so changes in the returned set are reflected in this multi-set, 
-     * and vice-versa. 
-     * The returned multi-set supports all optional multi-set operations 
-     * that this multi-set supports.
-     * <p>
-     * The returned multi-set 
-     * will throw an <code>IllegalArgumentException</code> 
-     * on an attempt to insert an element outside its range. 
-     *
-     * @param toElement
-     *    high endpoint (exclusive) of the returned multi-set. 
-     * @return
-     *    a view of the portion of this multi-set 
-     *    whose elements are strictly less than <code>toElement</code>. 
-     * @throws ClassCastException
-     *    if <code>toElement</code> is not compatible 
-     *    with this multi-set's comparator 
-     *    (or, if the set has no comparator, 
-     *    if <code>toElement</code> does not implement {@link Comparable}). 
-     *    Implementations may, but are not required to, 
-     *    throw this exception if <code>toElement</code> cannot be compared 
-     *    to elements currently in this multi-set. 
-     * @throws NullPointerException
-     *    if <code>toElement</code> is <code>null</code> 
-     *    and this multi-set does not permit <code>null</code> elements. 
-     * @throws IllegalArgumentException
-     *    if this multi-set itself has a restricted range, 
-     *    and <code>toElement</code> lies outside the bounds of the range. 
-     */
-    public MultiSet<T> headSet(T toElement) {
-	return new TreeMultiSet<T>(this.obj2mult.headMap(toElement, false));
-    }
-
-    /**
-     * Returns a view of the portion of this multi-set 
-     * whose elements are greater than or equal to <code>fromElement</code>. 
-     * The returned multi-set is backed by this multi-set, 
-     * so changes in the returned set are reflected in this multi-set, 
-     * and vice-versa. 
-     * The returned multi-set supports all optional multi-set operations 
-     * that this multi-set supports.
-     * <p>
-     * The returned multi-set 
-     * will throw an <code>IllegalArgumentException</code> 
-     * on an attempt to insert an element outside its range. 
-     *
-     * @param fromElement
-     *    low endpoint (inclusive) of the returned multi-set. 
-     * @return
-     *    a view of the portion of this multi-set 
-     *    whose elements are greater than or equal to <code>fromElement</code>. 
-     * @throws ClassCastException
-     *    if <code>fromElement</code> is not compatible 
-     *    with this multi-set's comparator 
-     *    (or, if the set has no comparator, 
-     *    if <code>fromElement</code> does not implement {@link Comparable}). 
-     *    Implementations may, but are not required to, 
-     *    throw this exception if <code>fromElement</code> cannot be compared 
-     *    to elements currently in this multi-set. 
-     * @throws NullPointerException
-     *    if <code>fromElement</code> is <code>null</code> 
-     *    and this multi-set does not permit <code>null</code> elements. 
-     * @throws IllegalArgumentException
-     *    if this multi-set itself has a restricted range, 
-     *    and <code>fromElement</code> lies outside the bounds of the range. 
-     */
-    public MultiSet<T> tailSet(T fromElement) {
-	return new TreeMultiSet<T>(this.obj2mult.tailMap(fromElement, true));
-    }
-
-    /**
-     * Returns a view of the portion of this multi-set 
-     * whose elements range from <code>fromElement</code> inclusively 
-     * to <code>toElement</code> exclusively. 
-     * The returned multi-set is backed by this multi-set, 
-     * so changes in the returned set are reflected in this multi-set, 
-     * and vice-versa. 
-     * The returned multi-set supports all optional multi-set operations 
-     * that this multi-set supports.
-     * <p>
-     * The returned multi-set 
-     * will throw an <code>IllegalArgumentException</code> 
-     * on an attempt to insert an element outside its range. 
-     *
-     * @param fromElement
-     *    low endpoint (inclusive) of the returned multi-set. 
-     * @param toElement
-     *    high endpoint (exclusive) of the returned multi-set. 
-     * @return
-     *    a view of the portion of this multi-set 
-     *    from <code>fromElement</code> inclusively 
-     *    to <code>toElement</code> exclusively. 
-     * @throws ClassCastException **** maybe original documentation wrong. **** 
-     *    if <code>fromElement</code> and <code>toElement</code> 
-     *    cannot be compared to one another using this set's comparator 
-     *    (or, if the set has no comparator, using natural ordering). 
-     *    or if <code>fromElement</code> is not compatible 
-     *    with this multi-set's comparator 
-     *    (or, if the set has no comparator, 
-     *    if <code>fromElement</code> does not implement {@link Comparable}). 
-     *    Implementations may, but are not required to, 
-     *    throw this exception 
-     *    if <code>fromElement</code> or <code>toElement</code> 
-     *    cannot be compared to elements currently in this multi-set. 
-     * @throws NullPointerException
-     *    if <code>fromElement</code> or <code>toElement</code> 
-     *    is <code>null</code> 
-     *    and this multi-set does not permit <code>null</code> elements. 
-     * @throws IllegalArgumentException
-     *    if <code>fromElement</code> is greater than <code>toElement</code> 
-     *    or if this multi-set itself has a restricted range, 
-     *    and <code>fromElement</code> or <code>toElement</code> 
-     *    lies outside the bounds of the range. 
-     */
-    public MultiSet<T> subSet(T fromElement, T toElement) {
-	return new TreeMultiSet<T>(this.obj2mult.subMap(fromElement, true, 
-						    toElement, false));
     }
 
     /**
@@ -1516,12 +1345,12 @@ public class TreeMultiSet<T> implements SortedMultiSet<T> {
      *    with strictly positive multiplicity in this <code>MultiSet</code>. 
      * @see MultiSet.Immutable#getSet()
      */
-    public SortedSet<T> getSet() {
-	return this.obj2mult.navigableKeySet();
+    public Set<T> getSet() {
+	return this.obj2mult.keySet();
     }
 
     /**
-     * Returns a view of the underlying set of this <code>MultiSet</code> 
+     * Returns a view of the underlying map of this <code>MultiSet</code> 
      * as a map mapping each entry to its multiplicity. 
      */
      public Map<T, Multiplicity> getMap() {
@@ -1552,8 +1381,7 @@ public class TreeMultiSet<T> implements SortedMultiSet<T> {
     }
 
     public String toString() {
-	return "<MultiSet comparator=\"" + this.obj2mult.comparator() + 
-	    "\">" + this.obj2mult + "</MultiSet>";
+	return "<MultiSet>" + this.obj2mult + "</MultiSet>";
     }
 
     /**

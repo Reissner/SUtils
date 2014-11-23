@@ -17,16 +17,13 @@ import java.util.Collections;
  * Mathematically this is something between a set and a family. 
  * Note that this kind of set does not support <code>null</code> elements. 
  * <p>
- * Allows also to create an immutable <code>MultiSet</code> 
- * either from a set or as a copy of another <code>MultiSet</code>. 
+ * Allows also to create an immutable <code>SortedMultiSet</code> 
+ * either from a set or as a copy of another <code>SortedMultiSet</code>. 
  * <p>
  * Note that this should implement Collection, but still does not *****. 
- * maybe it should even implement Set or SortedSet. 
+ * maybe it should even implement SortedSet. 
  * addAll's implementation seems strange, 
  * add seems to be buggy, 
- * One should not require a TreeMap alternative: HashMap. 
- * So one should distinguish SortedMultiSet and MultiSet 
- * and both should be interfaces. 
  * Problem with overflow of multiplicities. 
  *
  * @author <a href="mailto:ereissner@rig35.rose.de">Ernst Reissner</a>
@@ -823,7 +820,7 @@ public class TreeMultiSet<T> implements SortedMultiSet<T> {
      *    or <code>null</code> 
      *    if this set uses the natural ordering of its elements. 
      */
-    Comparator<? super T> comparator() {
+    public Comparator<? super T> comparator() {
 	return this.obj2mult.comparator();
     }
 
@@ -1521,10 +1518,10 @@ public class TreeMultiSet<T> implements SortedMultiSet<T> {
     }
 
     /**
-     * Returns a view of the underlying set of this <code>MultiSet</code> 
+     * Returns a view of the underlying map of this <code>SortedMultiSet</code> 
      * as a map mapping each entry to its multiplicity. 
      */
-     public Map<T, Multiplicity> getMap() {
+     public NavigableMap<T, Multiplicity> getMap() {
 	return this.obj2mult;
     }
 

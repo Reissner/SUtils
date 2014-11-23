@@ -628,10 +628,10 @@ public interface MultiSet<T> extends Iterable<T> {
      *    with strictly positive multiplicity in this <code>MultiSet</code>. 
      * @see MultiSet.Immutable#getSet()
      */
-    public SortedSet<T> getSet();
+    public Set<T> getSet();
 
     /**
-     * Returns a view of the underlying set of this <code>MultiSet</code> 
+     * Returns a view of the underlying map of this <code>MultiSet</code> 
      * as a map mapping each entry to its multiplicity. 
      */
     public Map<T, Multiplicity> getMap();

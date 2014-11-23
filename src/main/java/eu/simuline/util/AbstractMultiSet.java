@@ -15,7 +15,7 @@ import java.util.Iterator;
  * @author <a href="mailto:ernst@">Ernst Reissner</a>
  * @version 1.0
  */
-public class AbstractMultiSet<T> {
+public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T> {
 
     /* -------------------------------------------------------------------- *
      * inner classes.                                                       *
@@ -314,6 +314,22 @@ public class AbstractMultiSet<T> {
 
     } // class MultiSetIteratorImpl 
 
+    /* -------------------------------------------------------------------- *
+     * fields.                                                              *
+     * -------------------------------------------------------------------- */
+
+    /**
+     * Maps objects to its multiplicities. 
+     * The keys are objects whereas the corresponding values 
+     * are strictly positive <code>Integer</code>s 
+     * representing the corresponding multiplicities. 
+     * If an object is not within this set, 
+     * the corresponding value is <code>null</code>. 
+     * **** maybe even: object not in keyset. 
+     * In the key set no <code>null</code> values may occur. 
+     */
+    protected final MAP obj2mult;
+
 
 
 
@@ -321,8 +337,8 @@ public class AbstractMultiSet<T> {
      * constructors and creator methods.                                    *
      * -------------------------------------------------------------------- */
 
-    public AbstractMultiSet() {
-
+    public AbstractMultiSet(MAP t2mult) {
+	this.obj2mult = t2mult;
     }
 
 }

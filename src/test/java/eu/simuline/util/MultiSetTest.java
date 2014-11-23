@@ -128,15 +128,15 @@ public class MultiSetTest {
 	//
 	// The default constructor
 	//
-	assertTrue(new MultiSet<String>().isEmpty());
+	assertTrue(new TreeMultiSet<String>().isEmpty());
 
 
 	// testcase 2
 	//
 	// copy constructor applied to empty set 
 	//
-	cmp = new MultiSet<String>();
-	result = new MultiSet<String>(cmp);
+	cmp = new TreeMultiSet<String>();
+	result = new TreeMultiSet<String>(cmp);
 	assertEquals(cmp,result);
 
 
@@ -144,13 +144,13 @@ public class MultiSetTest {
 	//
 	// copy constructor applied to non-empty set 
 	//
-	cmp = new MultiSet<String>();
+	cmp = new TreeMultiSet<String>();
 	cmp.add("Element1");
 	cmp.add("Element1");
 	cmp.add("Element1");
 	cmp.add("Element2");
 	cmp.add("Element2");
-	result = new MultiSet<String>(cmp);
+	result = new TreeMultiSet<String>(cmp);
 	assertEquals(cmp,result);
 
     } // testConstructors 
@@ -163,7 +163,7 @@ public class MultiSetTest {
 	//
 	// empty set 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	assertEquals(0,result.sizeWithMult());
 
 
@@ -171,7 +171,7 @@ public class MultiSetTest {
 	//
 	// non-empty set 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	assertEquals(0,result.sizeWithMult());
 	assertTrue( result.add("Element1"));
 	assertEquals(1,result.sizeWithMult());
@@ -192,14 +192,14 @@ public class MultiSetTest {
 	//
 	// The empty set
 	//
-	assertTrue(MultiSet.emptyMultiSet().isEmpty());
+	assertTrue(TreeMultiSet.emptyMultiSet().isEmpty());
 
 
 	// testcase 2
 	//
 	// The empty set
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	assertTrue(result.isEmpty());
 
 
@@ -207,7 +207,7 @@ public class MultiSetTest {
 	//
 	// The empty set
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.add("anElement");
 	assertTrue(!result.isEmpty());
 
@@ -223,7 +223,7 @@ public class MultiSetTest {
 	//
 	// empty set 
 	//
-	mset = new MultiSet<String>();
+	mset = new TreeMultiSet<String>();
 	result = (Map.Entry)Accessor.invoke(mset,
 					    "getMaxObjWithMult");
 	assertNull(result);
@@ -233,7 +233,7 @@ public class MultiSetTest {
 	//
 	// non-empty set 
 	//
-	mset = new MultiSet<String>();
+	mset = new TreeMultiSet<String>();
 	mset.add("Element1");
 	mset.add("Element1");
 	mset.add("Element1");
@@ -251,7 +251,7 @@ public class MultiSetTest {
 	MultiSet<String> result;
 	MultiSet<String> cmp;
 
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.add("Element1");
 	result.add("Element1");
 	result.add("Element1");
@@ -289,7 +289,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	try {
 	    result.addWithMult(null);
 	    fail("NullPointerException expected. ");
@@ -302,7 +302,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	obj = "Element1";
 	assertEquals(1,result.addWithMult(obj));
 	assertEquals(1,result.getMultiplicity(obj));
@@ -312,7 +312,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	obj = "Element1";
 	result.add(obj);
 	assertEquals(2,result.addWithMult(obj));
@@ -323,7 +323,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	try {
 	    result.addWithMult(null,0);
 	    fail("NullPointerException expected. ");
@@ -336,7 +336,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	try {
 	    result.addWithMult("",-1);
 	    fail("IllegalArgumentException expected. ");
@@ -353,7 +353,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	assertEquals(0,result.addWithMult("Element1",0));
 	assertEquals(0,result.getMultiplicity(obj));
 
@@ -362,7 +362,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.addWithMult("Element1",3);
 	assertEquals(3,result.getMultiplicity(obj));
 	result.addWithMult("Element1",2);
@@ -378,7 +378,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	try {
 	    result.removeWithMult(null);
 	    fail("NullPointerException expected. ");
@@ -391,7 +391,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	try {
 	    result.removeWithMult ("Element1");
 	} catch (IllegalArgumentException e) {
@@ -405,7 +405,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.add("Element1");
 	assertEquals(1,result.removeWithMult ("Element1"));
 	assertEquals(0,result.getMultiplicity("Element1"));
@@ -415,7 +415,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.add("Element1");
 	result.add("Element1");
 	result.add("Element1");
@@ -428,7 +428,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	try {
 	    result.removeWithMult(null,0);
 	    fail("NullPointerException expected. ");
@@ -441,7 +441,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	try {
 	    result.removeWithMult("Element1",-1);
 	    fail("IllegalArgumentException expected. ");
@@ -458,7 +458,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.add("Element1");
 	try {
 	    result.removeWithMult("Element1",2);
@@ -478,7 +478,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.add("Element1");
 	result.add("Element1");
 	assertEquals(2,result.removeWithMult ("Element1",2));
@@ -489,7 +489,7 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.add("Element1");
 	result.add("Element1");
 	result.add("Element1");
@@ -508,15 +508,15 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	ms1 = new MultiSet<String>();
+	ms1 = new TreeMultiSet<String>();
 	ms1.add("Element1");
 	ms1.add("Element1");
 	ms1.add("Element1");
 	ms1.add("Element2");
 	ms1.add("Element2");
-	ms2 = new MultiSet<String>();
+	ms2 = new TreeMultiSet<String>();
 	assertTrue(!ms1.addAll(ms2));
-	cmp = new MultiSet<String>();
+	cmp = new TreeMultiSet<String>();
 	cmp.add("Element1");
 	cmp.add("Element1");
 	cmp.add("Element1");
@@ -529,15 +529,15 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	ms1 = new MultiSet<String>();
+	ms1 = new TreeMultiSet<String>();
 	ms1.add("Element1");
 	ms1.add("Element1");
 	ms1.add("Element1");
 	ms1.add("Element2");
 	ms1.add("Element2");
-	ms2 = new MultiSet<String>();
+	ms2 = new TreeMultiSet<String>();
 	assertTrue(ms2.addAll(ms1));
-	cmp = new MultiSet<String>();
+	cmp = new TreeMultiSet<String>();
 	cmp.add("Element1");
 	cmp.add("Element1");
 	cmp.add("Element1");
@@ -550,14 +550,14 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	ms1 = new MultiSet<String>();
+	ms1 = new TreeMultiSet<String>();
 	ms1.addWithMult("Element1",3);
 	ms1.addWithMult("Element2",2);
-	ms2 = new MultiSet<String>();
+	ms2 = new TreeMultiSet<String>();
 	ms2.addWithMult("Element2",3);
 	ms2.addWithMult("Element3",1);
 	assertTrue(ms1.addAll(ms2));
-	cmp = new MultiSet<String>();
+	cmp = new TreeMultiSet<String>();
 	cmp.addWithMult("Element1",3);
 	cmp.addWithMult("Element2",5);
 	cmp.addWithMult("Element3",1);
@@ -573,13 +573,13 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.add("Element1");
 	result.add("Element1");
 	result.add("Element1");
 	result.add("Element2");
 	result.add("Element2");
-	cmp = new MultiSet<String>();
+	cmp = new TreeMultiSet<String>();
 	cmp.add("Element1");
 	cmp.add("Element1");
 	cmp.add("Element1");
@@ -592,13 +592,13 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.add("Element1");
 	result.add("Element1");
 	result.add("Element1");
 	result.add("Element2");
 	result.add("Element2");
-	cmp = new MultiSet<String>();
+	cmp = new TreeMultiSet<String>();
 	cmp.add("Element1");
 	cmp.add("Element2");
 	assertTrue(!result.equals(cmp));
@@ -608,13 +608,13 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.add("Element1");
 	result.add("Element1");
 	result.add("Element1");
 	result.add("Element2");
 	result.add("Element2");
-	cmp = new MultiSet<String>();
+	cmp = new TreeMultiSet<String>();
 	cmp.add("Element1");
 	cmp.add("Element2");
 	assertTrue(!cmp.equals(result));
@@ -624,11 +624,11 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.add("Element1");
 	result.add("Element2");
 	result.add("Element3");
-	cmp = new MultiSet<String>();
+	cmp = new TreeMultiSet<String>();
 	cmp.add("Element1");
 	cmp.add("Element2");
 	assertTrue(!result.equals(cmp));
@@ -638,11 +638,11 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.add("Element1");
 	result.add("Element2");
 	result.add("Element3");
-	cmp = new MultiSet<String>();
+	cmp = new TreeMultiSet<String>();
 	cmp.add("Element1");
 	cmp.add("Element2");
 	assertTrue(!cmp.equals(result));
@@ -659,13 +659,13 @@ public class MultiSetTest {
 	//
 	// 
 	//
-	result = new MultiSet<String>();
+	result = new TreeMultiSet<String>();
 	result.add("Element1");
 	result.add("Element1");
 	result.add("Element1");
 	result.add("Element2");
 	result.add("Element2");
-	cmp = new MultiSet<String>();
+	cmp = new TreeMultiSet<String>();
 	cmp.add("Element1");
 	cmp.add("Element1");
 	cmp.add("Element1");
@@ -681,7 +681,7 @@ public class MultiSetTest {
 	MultiSetIterator<String> iter;
 	String str;
 
- 	ms1 = new MultiSet<String>();
+ 	ms1 = new TreeMultiSet<String>();
 	ms1.add("Element1");
 	ms1.add("Element1");
 	ms1.add("Element1");
@@ -718,7 +718,7 @@ public class MultiSetTest {
 	MultiSetIterator<String> iter;
 	String str;
 
- 	ms1 = new MultiSet<String>();
+ 	ms1 = new TreeMultiSet<String>();
 	ms1.add("Element1");
 	ms1.add("Element1");
 	ms1.add("Element1");
@@ -763,7 +763,7 @@ public class MultiSetTest {
 	MultiSetIterator<String> iter;
 	String str;
 
- 	ms1 = new MultiSet<String>();
+ 	ms1 = new TreeMultiSet<String>();
 	ms1.add("Element1");
 	ms1.add("Element1");
 	ms1.add("Element1");
@@ -817,7 +817,7 @@ public class MultiSetTest {
 	MultiSetIterator<String> iter;
 	String str;
 
- 	ms1 = new MultiSet<String>();
+ 	ms1 = new TreeMultiSet<String>();
 	ms1.add("Element1");
 	ms1.add("Element1");
 	ms1.add("Element1");

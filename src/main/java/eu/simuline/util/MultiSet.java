@@ -32,58 +32,13 @@ import java.util.Collections;
  * @author <a href="mailto:ereissner@rig35.rose.de">Ernst Reissner</a>
  * @version 1.0
  */
-public class MultiSet<T> implements Iterable<T> {
+public interface MultiSet<T> extends Iterable<T> {
 
     /* -------------------------------------------------------------------- *
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
-    /**
-     * Serves as a wrapper object for a multiplicity {@link #mult}. 
-     * Unlike <code>int</code>s we have real <code>Object</code>s 
-     * which can be stored in a map, e.g. {@link MultiSet#obj2mult} 
-     * and unlike <code>Integer</code>s these objects are mutable. 
-     */
-    // **** this implementation is not optimal: 
-    // better would be immutable multiplicities 
-    // or just using Integers with checks moved towards enclosing class 
-    public static class Multiplicity implements Comparable<Multiplicity> {
-
-	/* ---------------------------------------------------------------- *
-	 * fields.                                                          *
-	 * ---------------------------------------------------------------- */
-
-	/**
-	 * A positive integer representing a multiplicity. 
-	 */
-	private int mult;
-
-	/* ---------------------------------------------------------------- *
-	 * constructors.                                                    *
-	 * ---------------------------------------------------------------- */
-
-	/**
-	 * Creates a new <code>Multiplicity</code> instance 
-	 * representing a <em>positive</em> multiplicity. 
-	 *
-	 * @param mult 
-	 *    a strictly positive <code>int</code> value 
-	 *    representing a multiplicity. 
-	 * @throws IllegalArgumentException 
-	 *    if <code>mult</code> is not strictly positive. 
-	 * @see #set(int)
-	 */
-	private Multiplicity(int mult) {
-	    set(mult);
-	}
-
-	/* ---------------------------------------------------------------- *
-	 * methods.                                                         *
-	 * ---------------------------------------------------------------- */
-
-	private static Multiplicity create(int mult) {
-	    return new Multiplicity(mult);
-	}
+    public interface Multiplicity extends Comparable<Multiplicity> {
 
 	/**
 	 * Sets the multiplicity wrapped by this object 
@@ -95,16 +50,7 @@ public class MultiSet<T> implements Iterable<T> {
 	 * @throws IllegalArgumentException 
 	 *    if <code>mult</code> is not strictly positive. 
 	 */
-	public int set(int mult) {
-	    if (mult <= 0) {
-		throw new IllegalArgumentException
-		    ("Multiplicity " + mult + 
-		     " should be strictly positive. ");
-	    }
-	    int oldMult = this.mult;
-	    this.mult = mult;
-	    return oldMult;
-	}
+	public int set(int mult);
 
 	/**
 	 * Adds the specified multiplicity (which may well be negative) 
@@ -121,22 +67,7 @@ public class MultiSet<T> implements Iterable<T> {
 	 *    if <code>this.mult + mult == 0</code> holds. 
 	 *    This cannot occur: if it does this is a bug within this class. 
 	 */
-	public int add(int mult) {
-	    this.mult += mult;
-	    if (this.mult <= 0) {
-		if (this.mult == 0) {
-		    throw new IllegalStateException
-			("should not occur: removed element implicitely. " );
-		}
-
-		this.mult -= mult;
-		throw new IllegalArgumentException
-		    ("Resulting multiplicity " + 
-		     this.mult + " + " + mult + 
-		     " should be non-negative. ");
-	    }
-	    return this.mult;
-	}
+	public int add(int mult);
 
 	/**
 	 * Returns the wrapped multiplicity. 
@@ -144,10 +75,7 @@ public class MultiSet<T> implements Iterable<T> {
 	 * @return 
 	 *    {@link #mult}. 
 	 */
-	public int get() {
-	    return this.mult;
-	}
-
+	public int get();
 	/**
 	 * Defines the natural ordering on natural numbers. 
 	 *
@@ -162,361 +90,11 @@ public class MultiSet<T> implements Iterable<T> {
 	 *    if <code>mult</code> is neither <code>null</code> 
 	 *    nor an instance of {@link MultiSet.Multiplicity}. 
 	 */
-	public int compareTo(Multiplicity mult) {
-	    return this.get()-mult.get();
-	}
+	public int compareTo(Multiplicity mult);
 
-	// api-docs provided by javadoc. 
-	public String toString() {
-	    return "Multiplicity " + get();
-	}
 
-	/**
-	 * Returns <code>true</code> if and only if 
-	 * <code>obj</code> is also an instance of <code>Multiplicity></code> 
-	 * and if the wrapped multiplicities coincide. 
-	 *
-	 * @param obj 
-	 *    an <code>Object</code> value 
-	 *    which may well be <code>null</code>. 
-	 * @return 
-	 *    a <code>boolean</code> value which indicates 
-	 *    whether <code>obj</code> is also an instance 
-	 *    of <code>Multiplicity></code> 
-	 *    and whether the wrapped multiplicity coincides with this one. 
-	 * @see #compareTo
-	 */
-	public boolean equals(Object obj) {
-	    if (!(obj instanceof Multiplicity)) {
-		return false;
-	    }
-	    return ((Multiplicity)obj).get() == this.get();
-	}
 
-	// api-docs provided by javadoc. 
-	public int hashCode() {
-	    return this.mult;
-	}
     } // class Multiplicity 
-
-    /**
-     * A canonical implementation of {@link MultiSetIterator} 
-     * defining also the methods modifying the underlying {@link MultiSet}, 
-     * namely {@link #remove()}, {@link #setMult(int)} 
-     * and {@link #removeMult(int)}. 
-     */
-    private static class MultiSetIteratorImpl<T> 
-	implements MultiSetIterator<T> {
-
-	/* ---------------------------------------------------------------- *
-	 * fields.                                                          *
-	 * ---------------------------------------------------------------- */
-
-	/**
-	 * An iterator on the entries of the map {@link MultiSet#obj2mult} 
-	 * associating each element of the underlying {@link MultiSet} 
-	 * with its multiplicity. 
-	 */
-	private final Iterator<Map.Entry<T,Multiplicity>> entrySetIter;
-
-	/**
-	 * The element returned last by invoking {@link #next()} 
-	 * in the iterator {@link #entrySetIter} 
-	 * or <code>null</code> if {@link #next()} has not yet been invoked 
-	 * or the element returned by the last invocation of {@link #next()} 
-	 * has been removed in the meantime 
-	 * invoking a method of this iterator (instance). 
-	 */
-	private Map.Entry<T,Multiplicity> last;
-
-	/* ---------------------------------------------------------------- *
-	 * constructors.                                                    *
-	 * ---------------------------------------------------------------- */
-
-	MultiSetIteratorImpl(MultiSet<T> multiSet) {
-	    this.entrySetIter = multiSet.getSetWithMults().iterator();
-	    this.last = null;
-	}
-
-	/* ---------------------------------------------------------------- *
-	 * methods.                                                         *
-	 * ---------------------------------------------------------------- */
-
-	public boolean hasNext() {
-	    return this.entrySetIter.hasNext();
-	}
-
-	/**
-	 * Returns the next element in the iteration 
-	 * and, as a side effect, sets {@link #last} 
-	 * with the mapping of that element to its current multiplicity. 
-	 */
-	public T next() {
-	    return (this.last = this.entrySetIter.next()).getKey();
-	}
-
-	/**
-	 * Removes from the underlying {@link MultiSet} 
-	 * the last element returned by {@link #next()}, 
-	 * provided that element was not removed in the meantime 
-	 * and this method is supported by this iterator. 
-	 * As a side effect, sets {@link #last} to <code>null</code> 
-	 * indicating that this element has been removed. 
-	 */
-	public void remove()  {
-	    // throws IllegalStateException if no longer present 
-	    this.entrySetIter.remove();
-	    this.last = null;
-	}
-
-	/**
-	 * Returns the current multiplicity of the element 
-	 * last read by {@link #next()}, 
-	 * provided that element was not removed in the meantime. 
-	 */
-	public int getMult() {
-	    if (this.last == null) {
-		// no message as for method remove() 
-		throw new IllegalStateException();
-	    }
-	    assert this.last != null;
-	    return this.last.getValue().get();
-	}
-
-	public int setMult(int setMult) {
-	    if (this.last == null) {
-		// no message as for method remove() 
-		throw new IllegalStateException();
-	    }
-	    assert this.last != null;
-	    if (setMult < 0) {
-		throw new IllegalArgumentException
-		    ("Expected non-negative multiplicity; found " + 
-		     setMult + ". ");
-	    }
-
-	    if (setMult == 0) {
-		int res = this.last.getValue().get();
-		remove();
-		return res;
-	    }
-	    assert setMult > 0;
-	    // thus set(...) does not throw an exception. 
-	    return this.last.getValue().set(setMult);
-	}
-
-	public int removeMult(int removeMult)  {
-	    if (this.last == null) {
-		// no message as for method remove() 
-		throw new IllegalStateException();
-	    }
-	    assert this.last != null;
-	    if (removeMult < 0) {
-		throw new IllegalArgumentException
-		    ("Expected non-negative multiplicity; found " + 
-		     removeMult + ". ");
-	    }
-
-	    // return value is old multiplicity 
-	    int oldMult = this.last.getValue().get();
-	    if (removeMult == oldMult) {
-		remove();
-	    } else {
-		// throws an IllegalArgumentException if resulting 
-		this.last.getValue().add(-removeMult);
-	    }
-
-	    return oldMult;
-	}
-
-    } // class MultiSetIteratorImpl 
-
-
-    /**
-     * Represents immutable <code>MultiSet</code>s 
-     * as e.g. the one given by {@link MultiSet#emptyMultiSet()}. 
-     * **** Idea: use {@link Collections#unmodifiableMap(Map)} 
-     * but still modifications of multiplicities must be handled. 
-     */
-    final static class Immutable<T> extends MultiSet<T> {
-
-	/* ---------------------------------------------------------------- *
-	 * constructors.                                                    *
-	 * ---------------------------------------------------------------- */
-
-	/**
-	 * Creates a new, empty <code>Immutable</code>. 
-	 */
-	private Immutable() {
-	    super();
-	}
-
-	/**
-	 * Copy constructor. 
-	 * Wrapps another <code>MultiSet</code> 
-	 * in an equivalent but immutable one. 
-	 *
-	 * @param other 
-	 *    another <code>MultiSet</code> instance. 
-	 */
-	public Immutable(MultiSet<T> other) {
-	    super(other);
-	}
-
-	/**
-	 * Creates an immutable <code>MultiSet</code> 
-	 * with the elements of <code>sSet</code> 
-	 * and all elements with multiplicity <code>1</code>. 
-	 */
-	public Immutable(Set<? extends T> sSet) {
-	    this();
-	    super.addAll(sSet);
-	}
-
-
-	/* ---------------------------------------------------------------- *
-	 * methods.                                                         *
-	 * ---------------------------------------------------------------- */
-
-
-	private static <T> Immutable<T> createEmpty() {
-	    return new Immutable<T>();
-	}
-
-	// api-docs inherited from base class 
-	public MultiSet<T> immutable() {
-	    return this;
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public void clear() {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public int addWithMult(T obj) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public int addWithMult(T obj, int addMult) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean add(T obj) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public int removeWithMult(Object obj) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public int removeWithMult(Object obj,int removeMult) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean remove(Object obj) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public int setMultiplicity(T obj,int newMult) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean addAll(MultiSet<? extends T> mvs) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean addAll(Set<? extends T> set) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean removeAll(Collection<?> coll) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean retainAll(Collection<?> coll) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Returns an unmodifyable view of the underlying set. 
-	 */
-	public SortedSet<T> getSet() {
-	    return Collections.unmodifiableSortedSet(super.getSet());
-	}
-
-	/**
-	 * Returns an unmodifyable Set view of the mapping 
-	 * from the element of this <code>MultiSet</code> 
-	 * to the according multiplicities. 
-	 */
-	public Set<Map.Entry<T,Multiplicity>> getSetWithMults() {
-	    return Collections.unmodifiableSet(super.getSetWithMults());
-	}
-
-	/**
-	 * Returns an iterator which does not allow modifications 
-	 * of this underlying {@link MultiSet}. 
-	 */
-	public MultiSetIterator<T> iterator() {
-	    return new MultiSetIteratorImpl<T>(this) {
-		/**
-		 * @throws UnsupportedOperationException
-		 */
-		public void remove()  {
-		    throw new UnsupportedOperationException();
-		}
-		/**
-		 * @throws UnsupportedOperationException
-		 */
-		public int setMult(int setMult) {
-		    throw new UnsupportedOperationException();
-		}
-		/**
-		 * @throws UnsupportedOperationException
-		 */
-		public int removeMult(int removeMult)  {
-		    throw new UnsupportedOperationException();
-		}
-	    };
-	}
-
-
-    } // class Immutable 
 
     /* -------------------------------------------------------------------- *
      * class constants.                                                     *
@@ -527,86 +105,16 @@ public class MultiSet<T> implements Iterable<T> {
      * fields.                                                              *
      * -------------------------------------------------------------------- */
 
-    /**
-     * Maps objects to its multiplicities. 
-     * The keys are objects whereas the corresponding values 
-     * are strictly positive <code>Integer</code>s 
-     * representing the corresponding multiplicities. 
-     * If an object is not within this set, 
-     * the corresponding value is <code>null</code>. 
-     * **** maybe even: object not in keyset. 
-     * In the key set no <code>null</code> values may occur. 
-     */
-    protected final NavigableMap<T, Multiplicity> obj2mult;
 
     /* -------------------------------------------------------------------- *
      * constructors and creator methods.                                    *
      * -------------------------------------------------------------------- */
 
 
-    private MultiSet(NavigableMap<T,Multiplicity> t2mult) {
-	this.obj2mult = t2mult;
-    }
-
-    /**
-     * Creates a new, empty <code>MultiSet</code>. 
-     */
-    public MultiSet() {
-	this(new TreeMap<T,Multiplicity>());
-    }
-
-    /**
-     * Creates a new, empty <code>MultiSet</code>. 
-     */
-    public MultiSet(Comparator<? super T> comp) {
-	this(new TreeMap<T,Multiplicity>(comp));
-    }
-
-    /**
-     * Copy constructor. 
-     *
-     * @param other 
-     *    another <code>MultiSet</code> instance. 
-     */
-    public MultiSet(MultiSet<? extends T> other) {
-	this(new TreeMap<T,Multiplicity>(other.obj2mult));
-    }
-
-    /**
-     * Creates a multi set with the elements of <code>sSet</code> 
-     * and all elements with multiplicity <code>1</code>. 
-     *
-     * @param  sSet
-     *    some instance of a sorted set. 
-     */
-    public MultiSet(Set<? extends T> sSet) {
-	this();
-	addAll(sSet);
-    }
-
-    /**
-     * Returns an <em>immutable</em> empty <code>MultiSet</code>. 
-     * @see MultiSet.Immutable
-     */
-    public static <T> MultiSet<T> emptyMultiSet() {
-	return Immutable.createEmpty();
-    }
-
     /**
      * Returns an immutable copy of this <code>MultiSet</code>. 
      */
-    public MultiSet<T> immutable() {
-	return new Immutable<T>(this);
-    }
-
-    /**
-     * Returns an immutable <code>MultiSet</code> 
-     * with the elements of <code>sSet</code> 
-     * and all elements with multiplicity <code>1</code>. 
-     */
-    public static <T> MultiSet<T> immutable(Set<? extends T> sSet) {
-	return new Immutable<T>(sSet);
-    }
+    MultiSet<T> immutable();
 
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
@@ -626,11 +134,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    each multiple element counted as a single one. 
      * @see #sizeWithMult()
      */
-    public int size() {
-	// works only, since multiplicities 0 are not allowed 
-	// (null-elements in turn would still work here) 
-	return this.obj2mult.size();
-    }
+    int size();
 
     /**
      * Returns the number of elements 
@@ -646,18 +150,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    otherwise just {@link Integer#MAX_VALUE}. 
      * @see #size()
      */
-    public int sizeWithMult() {
-	int result = 0;
-	for (Multiplicity mult : this.obj2mult.values()) {
-	    result += mult.get();
-	    if (result < 0) {
-		return Integer.MAX_VALUE;
-	    }
-	}
-	assert result >= 0;
-	
-	return result;
-    }
+    int sizeWithMult();
 
     /**
      * Returns whether this multiple set contains no element. 
@@ -665,52 +158,8 @@ public class MultiSet<T> implements Iterable<T> {
      * @return 
      *    whether this multiple set contains no element. 
      */
-    public boolean isEmpty() {
-	return this.obj2mult.isEmpty();
-    }
+    public boolean isEmpty();
 
-    /**
-     * Returns a Map.Entry 
-     * representing an element in this <code>MultiSet</code> 
-     * with maximal multiplicity together with this multiplicity, 
-     * except if this set is empty. 
-     * For empty sets, <code>null</code> is returned. 
-     *
-     * @return 
-     *    <ul>
-     *    <li> if this <code>MultiSet</code> is not empty, 
-     *    a <code>Map.Entry</code> object <code>em</code> is returned: 
-     *    <code>em.getKey()</code> is an element of this <code>MultiSet</code> 
-     *    and <code>em.getValue()</code> is a <code>Multiplicity</code> 
-     *    wrapping its multiplicity <code>m = em.getValue().get()</code>. 
-     *    This multiplicity is maximal 
-     *    but if there is more than one such maximal multiplicity, 
-     *    it is not specified which <code>Map.Entry</code> is returned. 
-     *    <p>
-     *    Note that <code>em.getKey()</code> may never be <code>null</code>
-     *
-     *    <li> if this <code>MultiSet</code> is empty, 
-     *    <code>null</code> is returned. 
-     *    </ul>
-     * @see #getObjWithMaxMult()
-     * @see #getMaxMult()
-     */
-    private Map.Entry<T,Multiplicity> getMaxObjWithMult() {
-	// return value for empty set.
-	Map.Entry<T,Multiplicity> maxCand = null;
-
-	// search for greater value than maxVal
-	int maxVal = 0;
-	int cmpVal;
-	for (Map.Entry<T,Multiplicity> cand : this.obj2mult.entrySet()) {
-	    cmpVal = cand.getValue().get();
-	    if (maxVal < cmpVal) {
-		maxCand = cand;
-		maxVal = cmpVal;
-	    }
-	}
-	return maxCand;
-    }
 
     /**
      * Returns one of the elements in this multiple set 
@@ -723,12 +172,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    or <code>null</code> if this multiple set is empty. 
      * @see #isEmpty
      */
-    public Object getObjWithMaxMult() {
-	if (isEmpty()) {
-	    return null;
-	}
-	return getMaxObjWithMult().getKey();
-    }
+    public Object getObjWithMaxMult();
 
     /**
      * Returns the maximal multiplicity of an element in this set. 
@@ -740,12 +184,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    In particular this is <code>0</code> 
      *    if and only if this set is empty. 
      */
-    public int getMaxMult() {
-	if (isEmpty()) {
-	    return 0;
-	}
-	return getMaxObjWithMult().getValue().get();
-    }
+    public int getMaxMult();
 
     /**
      * Returns the multiplicity 
@@ -763,11 +202,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @see #setMultiplicity(Object, int)
      * @see #getMultiplicityObj(Object)
      */
-    public int getMultiplicity(Object obj) {
-	// throws NullPointerException for obj==null 
-	Multiplicity result = getMultiplicityObj(obj);
-	return result == null ? 0 : result.get();
-    }
+    public int getMultiplicity(Object obj);
 
     /**
      * Returns the multiplicity object of the given object in this set 
@@ -784,13 +219,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    for <code>obj==null</code>. 
      * @see #getMultiplicity(Object)
      */
-    public Multiplicity getMultiplicityObj(Object obj) {
-	if (obj == null) {
-	    throw new NullPointerException();// NOPMD 
-	}
-	// Here, obj != null. 
-	return this.obj2mult.get(obj);
-    }
+    public Multiplicity getMultiplicityObj(Object obj);
 
     /**
      * Returns <tt>true</tt> if this <code>MultiSet</code> 
@@ -808,24 +237,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @throws NullPointerException
      *    for <code>obj==null</code>. 
      */
-    public boolean contains(Object obj) {
-	// throws NullPointerException for obj==null 
-	return getMultiplicityObj(obj) != null;
-    }
-
-    /**
-     * Returns the comparator used to order the elements in this set, 
-     * or <code>null</code> 
-     * if this set uses the natural ordering of its elements. 
-     *
-     * @return
-     *    the comparator used to order the elements in this set, 
-     *    or <code>null</code> 
-     *    if this set uses the natural ordering of its elements. 
-     */
-    Comparator<? super T> comparator() {
-	return this.obj2mult.comparator();
-    }
+    public boolean contains(Object obj);
 
     /**
      * Returns the first (lowest) element currently in this set.
@@ -835,9 +247,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @throws NoSuchElementException
      *    if this set is empty. 
      */
-    public T first() {
-	return this.obj2mult.firstKey();
-    }
+    public T first();
 
     /**
      * Returns the last (highest) element currently in this set.
@@ -847,9 +257,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @throws NoSuchElementException
      *    if this set is empty. 
      */
-    public T last() {
-	return this.obj2mult.lastKey();
-    }
+    public T last();
 
     /**
      * Returns a view of the portion of this multi-set 
@@ -884,9 +292,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    if this multi-set itself has a restricted range, 
      *    and <code>toElement</code> lies outside the bounds of the range. 
      */
-    public MultiSet<T> headSet(T toElement) {
-	return new MultiSet<T>(this.obj2mult.headMap(toElement, false));
-    }
+    public MultiSet<T> headSet(T toElement);
 
     /**
      * Returns a view of the portion of this multi-set 
@@ -921,9 +327,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    if this multi-set itself has a restricted range, 
      *    and <code>fromElement</code> lies outside the bounds of the range. 
      */
-    public MultiSet<T> tailSet(T fromElement) {
-	return new MultiSet<T>(this.obj2mult.tailMap(fromElement, true));
-    }
+    public MultiSet<T> tailSet(T fromElement);
 
     /**
      * Returns a view of the portion of this multi-set 
@@ -969,10 +373,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    and <code>fromElement</code> or <code>toElement</code> 
      *    lies outside the bounds of the range. 
      */
-    public MultiSet<T> subSet(T fromElement, T toElement) {
-	return new MultiSet<T>(this.obj2mult.subMap(fromElement, true, 
-						    toElement, false));
-    }
+    public MultiSet<T> subSet(T fromElement, T toElement);
 
     /**
      * Returns an iterator over the elements in this collection 
@@ -990,9 +391,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    considering each element exactly once ignoring its multiplicity. 
      * @see MultiSet.Immutable
      */
-    public MultiSetIterator<T> iterator() {
-	return new MultiSetIteratorImpl<T>(this);
-    }
+    public MultiSetIterator<T> iterator();
 
     /**
      * Returns an array containing all of the elements 
@@ -1016,9 +415,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    an array containing all of the elements in this collection 
      * @see #iterator
      */
-    public Object[] toArray() {
-	return getSet().toArray(new Object[0]);
-    }
+    public Object[] toArray();
 
     /**
      * Returns an array containing all of the elements 
@@ -1078,10 +475,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @throws NullPointerException 
      *    if the specified array is <tt>null</tt>. 
      */
-    public T[] toArray(T[] arr) {
-	return getSet().toArray(arr);
-    }
-
+    public T[] toArray(T[] arr);
     // Modification Operations
 
     /**
@@ -1100,10 +494,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public int addWithMult(T obj) {
-	// throws NullPointerException for obj==null 
-	return addWithMult(obj, 1);
-    }
+    public int addWithMult(T obj);
 
     /**
      * Increases the multiplicity of <code>obj</code> 
@@ -1126,28 +517,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public int addWithMult(T obj, int addMult) {
-
-	if (addMult < 0) {
-	    throw new IllegalArgumentException
-		("Expected non-negative multiplicity; found " + 
-		 addMult + ". ");
-	}
-	// throws NullPointerException for obj==null 
-	Multiplicity mult = getMultiplicityObj(obj);
-
-	if (mult == null) {
-	    // Here, this element is not in this set 
-	    if (addMult != 0) {
-		assert addMult > 0;
-		mult = Multiplicity.create(addMult);
-		this.obj2mult.put(obj,mult);
-	    }
-	    return addMult;
-	}
-	// Here, obj is already in this set. 
-	return mult.add(addMult);
-    }
+    public int addWithMult(T obj, int addMult);
 
     /**
      * Adds <code>obj</code> to this <code>MultiSet</code>. 
@@ -1190,17 +560,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public boolean add(T obj) {
-	// throws NullPointerException for obj==null 
-	Multiplicity mult = getMultiplicityObj(obj);
-	if (mult == null) {
-	    mult = Multiplicity.create(1);
-	    this.obj2mult.put(obj,mult);
-	    return true;
-	}
-	mult.add(1);
-	return false;
-   }
+    public boolean add(T obj);
 
     /**
      * Decrements the multiplicity of <code>obj</code> 
@@ -1221,10 +581,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public int removeWithMult(Object obj) {
-	// throws NullPointerException for obj==null 
-	return removeWithMult(obj,1);
-   }
+    public int removeWithMult(Object obj);
 
     /**
      * Decreases the multiplicity of <code>obj</code> 
@@ -1249,32 +606,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public int removeWithMult(Object obj,int removeMult) {
-	if (removeMult < 0) {
-	    throw new IllegalArgumentException
-		("Expected non-negative multiplicity; found " + 
-		 removeMult + ". ");
-	}
-
-	// throws NullPointerException for obj==null 
-	Multiplicity mult = getMultiplicityObj(obj);
-	if (mult == null) {
-	    if (removeMult != 0) {
-		throw new IllegalArgumentException
-		    ("Tried to remove object " + obj + 
-		     " which is not in this MultiSet. ");
-	    }
-	    return 0;
-	}
-	// return value is old multiplicity 
-	int ret = mult.get();
-	if (ret == removeMult) {
-	    this.obj2mult.remove(obj);
-	} else {
-	    mult.add(-removeMult);
-	}
-	return ret;
-    }
+    public int removeWithMult(Object obj,int removeMult);
 
     /**
      * Removes <em>all</em> instances of the specified element from this 
@@ -1297,14 +629,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public boolean remove(Object obj) {
-	if (obj == null) {
-	    throw new NullPointerException();// NOPMD
-	}
-	// Here, obj != null. 
-
-	return this.obj2mult.remove(obj) != null;
-    }
+    public boolean remove(Object obj);
 
     /**
      * Sets the multiplicity of <code>obj</code> to the value 
@@ -1323,21 +648,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    if this <code>MultiSet</code> does not support this method. 
      * @see #getMultiplicity(Object)
      */
-    public int setMultiplicity(T obj,int newMult) {
-	if (obj == null) {
-	    throw new IllegalArgumentException
-		("Found null element. ");
-	}
-	if (newMult < 0) {
-	    throw new IllegalArgumentException
-		("Found negative multiplicity " + newMult + ". ");
-	}
-
-	Multiplicity oldMult = newMult == 0 
-	    ? this.obj2mult.remove(obj)
-	    : this.obj2mult.put(obj,Multiplicity.create(newMult));
-	return oldMult == null ? 0 : oldMult.get();
-    }
+    public int setMultiplicity(T obj,int newMult);
 
     // Bulk Operations
 
@@ -1358,15 +669,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    if the specified collection is <tt>null</tt>.
      * @see #contains(Object)
      */
-    public boolean containsAll(Collection<?> coll) {
-	for (Object cand : coll) {
-	    // throws NullPointerException if cand == null
-	    if (!contains(cand)) {
-		return false;
-	    }
-	}
-	return true;
-    }
+    public boolean containsAll(Collection<?> coll);
 
     /**
      * Adds <code>mvs</code> elementwise to this multi set 
@@ -1383,25 +686,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public boolean addAll(MultiSet<? extends T> mvs) {
-
-	int mvsMult;
-	boolean added = false;
-	for (T cand : mvs.obj2mult.keySet()) {
-	    mvsMult = mvs.getMultiplicity(cand);
-	    assert mvsMult > 0;
-	    Multiplicity mult = this.obj2mult.get(cand);
-	    if (mult == null) {
-		// Here, cand has not been in this multi-set 
-		this.obj2mult.put(cand, Multiplicity.create(mvsMult));
-		added = true;
-	    } else {
-		// Here, cand has been in this multi-set 
-		mult.add(mvsMult);
-	    }
-	} // for 
-	return added;
-    }
+    public boolean addAll(MultiSet<? extends T> mvs);
 
     /**
      * Adds <code>set</code> elementwise to this multi set 
@@ -1418,21 +703,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public boolean addAll(Set<? extends T> set) {
-	boolean added = false;
-	for (T cand : set) {
-	    Multiplicity mult = this.obj2mult.get(cand);
-	    if (mult == null) {
-		// Here, cand has not been in this multi-set 
-		this.obj2mult.put(cand, Multiplicity.create(1));
-		added = true;
-	    } else {
-		// Here, cand has been in this multi-set 
-		mult.add(1);
-	    }
-	} // for 
-	return added;
-    }
+    public boolean addAll(Set<? extends T> set);
 
     /**
      * Removes all this <code>MultiSet</code>'s elements 
@@ -1452,14 +723,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @see #remove(Object)
      * @see #contains(Object)
      */
-    public boolean removeAll(Collection<?> coll) {
-	boolean thisChanged = false;
-	for (Object cand : coll) {
-	    // throws NullPointerException if cand == null 
-	    thisChanged |= remove(cand);
-	}
-	return thisChanged;
-    }
+    public boolean removeAll(Collection<?> coll);
 
     /**
      * Retains only the elements in this <code>MultiSet</code> 
@@ -1480,21 +744,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @see #remove(Object)
      * @see #contains(Object)
      */
-    public boolean retainAll(Collection<?> coll) {
-	boolean result = false;
-
-	Iterator<T> iter = iterator();
-	T cand;
-	while (iter.hasNext()) {
-	    cand = iter.next();
-	    if (!coll.contains(cand)) {
-		iter.remove();
-		result = true;
-	    }
-	}
-	return result;
-    }
-
+    public boolean retainAll(Collection<?> coll);
     /**
      * Removes all of the elements from this <code>MultiSet</code>. 
      * This <code>MultiSet</code> will be empty after this method returns. 
@@ -1502,9 +752,7 @@ public class MultiSet<T> implements Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public void clear() {
-	this.obj2mult.clear();
-    }
+    public void clear();
 
     /**
      * Returns a view of the underlying set of this <code>MultiSet</code>. 
@@ -1516,9 +764,13 @@ public class MultiSet<T> implements Iterable<T> {
      *    with strictly positive multiplicity in this <code>MultiSet</code>. 
      * @see MultiSet.Immutable#getSet()
      */
-    public SortedSet<T> getSet() {
-	return this.obj2mult.navigableKeySet();
-    }
+    public SortedSet<T> getSet();
+
+    /**
+     * Returns a view of the underlying set of this <code>MultiSet</code> 
+     * as a map mapping each entry to its multiplicity. 
+     */
+    public Map<T, Multiplicity> getMap();
 
     /**
      * Returns a Set view of the mapping 
@@ -1539,14 +791,9 @@ public class MultiSet<T> implements Iterable<T> {
      * It does not support the methods 
      * {@link #add(Object)} or {@link Set#addAll(Collection)}. 
      */
-    public Set<Map.Entry<T,Multiplicity>> getSetWithMults() {
-	return this.obj2mult.entrySet();
-    }
+    public Set<Map.Entry<T,Multiplicity>> getSetWithMults();
 
-    public String toString() {
-	return "<MultiSet comparator=\"" + this.obj2mult.comparator() + 
-	    "\">" + this.obj2mult + "</MultiSet>";
-    }
+    public String toString();
 
     /**
      * Returns <code>true</code> if and only if <code>obj</code> 
@@ -1562,27 +809,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    and contains the same elements with the same multiplicities 
      *    as this one. 
      */
-    public boolean equals(Object obj) {
-	if (!(obj instanceof MultiSet)) {
-	    return false;
-	}
-	MultiSet<?> other = (MultiSet)obj;
-	return this.obj2mult.equals(other.obj2mult);
-    }
+    public boolean equals(Object obj);
 
-    public int hashCode() {
-	int result = 0;
-	for (T cand : getSet()) {
-	    result += cand.hashCode()*getMultiplicity(cand);
-	}
-	return result;
-    }
-
-    // public static void main(String[] args) {
-    // 	java.util.List list = new java.util.ArrayList();
-    // 	list.add(1);
-    // 	Iterator iter = list.iterator();
-    // 	iter.remove();
-
-    // }
+    public int hashCode();
 }

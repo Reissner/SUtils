@@ -32,7 +32,7 @@ import java.util.Collections;
  * @author <a href="mailto:ereissner@rig35.rose.de">Ernst Reissner</a>
  * @version 1.0
  */
-public class TreeMultiSet<T> implements MultiSet<T> {
+public class TreeMultiSet<T> implements SortedMultiSet<T> {
 
     /* -------------------------------------------------------------------- *
      * inner classes.                                                       *

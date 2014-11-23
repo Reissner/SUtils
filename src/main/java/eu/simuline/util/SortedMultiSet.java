@@ -1,5 +1,9 @@
 package eu.simuline.util;
 
+import java.util.SortedSet;
+import java.util.NavigableMap;
+import java.util.Comparator;
+
 /**
  * Describe interface SortedMultiSet here.
  *
@@ -10,6 +14,39 @@ package eu.simuline.util;
  * @version 1.0
  */
 public interface SortedMultiSet<T> extends MultiSet<T> {
+
+    /**
+     * Returns a view of the underlying sorted set 
+     * of this <code>SortedMultiSet</code>. 
+     * For certain implementations, this set is immutable 
+     * to prevent implicit modification of this <code>SortedMultiSet</code>. 
+     *
+     * @return 
+     *    the <code>SortedSet</code> containing exactly the objects 
+     *    with strictly positive multiplicity 
+     *    in this <code>SortedMultiSet</code>. 
+     * @see MultiSet.Immutable#getSet()
+     */
+    public SortedSet<T> getSet();
+
+    /**
+     * Returns a view of the underlying map of this <code>MultiSet</code> 
+     * as a map mapping each entry to its multiplicity. 
+     */
+    public NavigableMap<T, Multiplicity> getMap();
+
+
+    /**
+     * Returns the comparator used to order the elements in this set, 
+     * or <code>null</code> 
+     * if this set uses the natural ordering of its elements. 
+     *
+     * @return
+     *    the comparator used to order the elements in this set, 
+     *    or <code>null</code> 
+     *    if this set uses the natural ordering of its elements. 
+     */
+    public Comparator<? super T> comparator();
 
     /**
      * Returns the first (lowest) element currently in this set.
@@ -65,6 +102,7 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      *    and <code>toElement</code> lies outside the bounds of the range. 
      */
     public MultiSet<T> headSet(T toElement);
+
     /**
      * Returns a view of the portion of this multi-set 
      * whose elements are greater than or equal to <code>fromElement</code>. 

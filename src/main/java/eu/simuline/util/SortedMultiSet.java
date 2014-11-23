@@ -146,5 +146,4 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      */
     public MultiSet<T> subSet(T fromElement, T toElement);
 
-
 }

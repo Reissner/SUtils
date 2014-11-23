@@ -3,8 +3,10 @@ package eu.simuline.util;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.Iterator;
 import java.util.Comparator;
@@ -473,8 +475,8 @@ public class MultiSet<T> implements Iterable<T> {
 	/**
 	 * Returns an unmodifyable view of the underlying set. 
 	 */
-	public Set<T> getSet() {
-	    return Collections.unmodifiableSet(super.getSet());
+	public SortedSet<T> getSet() {
+	    return Collections.unmodifiableSortedSet(super.getSet());
 	}
 
 	/**
@@ -535,14 +537,14 @@ public class MultiSet<T> implements Iterable<T> {
      * **** maybe even: object not in keyset. 
      * In the key set no <code>null</code> values may occur. 
      */
-    protected final SortedMap<T, Multiplicity> obj2mult;
+    protected final NavigableMap<T, Multiplicity> obj2mult;
 
     /* -------------------------------------------------------------------- *
      * constructors and creator methods.                                    *
      * -------------------------------------------------------------------- */
 
 
-    private MultiSet(SortedMap<T,Multiplicity> t2mult) {
+    private MultiSet(NavigableMap<T,Multiplicity> t2mult) {
 	this.obj2mult = t2mult;
     }
 
@@ -883,7 +885,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    and <code>toElement</code> lies outside the bounds of the range. 
      */
     public MultiSet<T> headSet(T toElement) {
-	return new MultiSet<T>(this.obj2mult.headMap(toElement));
+	return new MultiSet<T>(this.obj2mult.headMap(toElement, false));
     }
 
     /**
@@ -920,7 +922,7 @@ public class MultiSet<T> implements Iterable<T> {
      *    and <code>fromElement</code> lies outside the bounds of the range. 
      */
     public MultiSet<T> tailSet(T fromElement) {
-	return new MultiSet<T>(this.obj2mult.tailMap(fromElement));
+	return new MultiSet<T>(this.obj2mult.tailMap(fromElement, true));
     }
 
     /**
@@ -968,11 +970,9 @@ public class MultiSet<T> implements Iterable<T> {
      *    lies outside the bounds of the range. 
      */
     public MultiSet<T> subSet(T fromElement, T toElement) {
-	return new MultiSet<T>(this.obj2mult.subMap(fromElement, toElement));
+	return new MultiSet<T>(this.obj2mult.subMap(fromElement, true, 
+						    toElement, false));
     }
-
-
-
 
     /**
      * Returns an iterator over the elements in this collection 
@@ -1516,8 +1516,8 @@ public class MultiSet<T> implements Iterable<T> {
      *    with strictly positive multiplicity in this <code>MultiSet</code>. 
      * @see MultiSet.Immutable#getSet()
      */
-    public Set<T> getSet() {
-	return this.obj2mult.keySet();
+    public SortedSet<T> getSet() {
+	return this.obj2mult.navigableKeySet();
     }
 
     /**

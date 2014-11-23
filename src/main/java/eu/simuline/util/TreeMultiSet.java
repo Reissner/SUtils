@@ -29,7 +29,8 @@ import java.util.Collections;
  * @author <a href="mailto:ereissner@rig35.rose.de">Ernst Reissner</a>
  * @version 1.0
  */
-public class TreeMultiSet<T> extends AbstractMultiSet<T> 
+public class TreeMultiSet<T> 
+    extends AbstractMultiSet<NavigableMap<T,MultiSet.Multiplicity>,T> 
     implements SortedMultiSet<T> {
 
     /* -------------------------------------------------------------------- *
@@ -232,25 +233,13 @@ public class TreeMultiSet<T> extends AbstractMultiSet<T>
      * fields.                                                              *
      * -------------------------------------------------------------------- */
 
-    /**
-     * Maps objects to its multiplicities. 
-     * The keys are objects whereas the corresponding values 
-     * are strictly positive <code>Integer</code>s 
-     * representing the corresponding multiplicities. 
-     * If an object is not within this set, 
-     * the corresponding value is <code>null</code>. 
-     * **** maybe even: object not in keyset. 
-     * In the key set no <code>null</code> values may occur. 
-     */
-    protected final NavigableMap<T, Multiplicity> obj2mult;
-
     /* -------------------------------------------------------------------- *
      * constructors and creator methods.                                    *
      * -------------------------------------------------------------------- */
 
 
     private TreeMultiSet(NavigableMap<T,Multiplicity> t2mult) {
-	this.obj2mult = t2mult;
+	super(t2mult);
     }
 
     /**

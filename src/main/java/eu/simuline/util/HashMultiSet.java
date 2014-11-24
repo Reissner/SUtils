@@ -3,28 +3,14 @@ package eu.simuline.util;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.NavigableMap;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Comparator;
 import java.util.Collections;
 
 /**
- * Represents a set with multiplicities. 
+ * Represents a set with multiplicities based on a {@link HashMap}. 
  * Mathematically this is something between a set and a family. 
- * Note that this kind of set does not support <code>null</code> elements. 
- * <p>
- * Allows also to create an immutable <code>MultiSet</code> 
- * either from a set or as a copy of another <code>MultiSet</code>. 
- * <p>
- * Note that this should implement Collection, but still does not *****. 
- * maybe it should even implement Set. 
- * addAll's implementation seems strange, 
- * add seems to be buggy, 
- * Problem with overflow of multiplicities. 
+ * Note that this kind of set does support <code>null</code> elements. 
  *
  * @author <a href="mailto:ereissner@rig35.rose.de">Ernst Reissner</a>
  * @version 1.0
@@ -271,7 +257,7 @@ public class HashMultiSet<T>
 
     /**
      * Returns an <em>immutable</em> empty <code>MultiSet</code>. 
-     * @see MultiSet.Immutable
+     * @see HashMultiSet.Immutable
      */
     public static <T> MultiSet<T> emptyMultiSet() {
 	return Immutable.createEmpty();
@@ -305,7 +291,7 @@ public class HashMultiSet<T>
      * @return 
      *    the <code>Set</code> containing exactly the objects 
      *    with strictly positive multiplicity in this <code>MultiSet</code>. 
-     * @see MultiSet.Immutable#getSet()
+     * @see HashMultiSet.Immutable#getSet()
      */
     public Set<T> getSet() {
 	return this.obj2mult.keySet();

@@ -5,26 +5,15 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.NavigableMap;
 import java.util.TreeMap;
-import java.util.Iterator;
 import java.util.Comparator;
 import java.util.Collections;
 
 /**
- * Represents a sorted set with multiplicities. 
+ * Represents a sorted set with multiplicities based on a {@link TreeMap}. 
  * Mathematically this is something between a set and a family. 
  * Note that this kind of set does not support <code>null</code> elements. 
- * <p>
- * Allows also to create an immutable <code>SortedMultiSet</code> 
- * either from a set or as a copy of another <code>SortedMultiSet</code>. 
- * <p>
- * Note that this should implement Collection, but still does not *****. 
- * maybe it should even implement SortedSet. 
- * addAll's implementation seems strange, 
- * add seems to be buggy, 
- * Problem with overflow of multiplicities. 
  *
  * @author <a href="mailto:ereissner@rig35.rose.de">Ernst Reissner</a>
  * @version 1.0

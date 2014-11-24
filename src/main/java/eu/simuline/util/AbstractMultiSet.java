@@ -9,7 +9,13 @@ import java.util.Map;
 import java.util.Iterator;
 
 /**
- * Describe class AbstractMultiSet here.
+ * Represents an abstract MultiSet based on a {@link Map}. 
+ * 
+ * <p>
+ * addAll's implementation seems strange, 
+ * add seems to be buggy, 
+ * Problem with overflow of multiplicities. 
+
  *
  *
  * Created: Sun Nov 23 23:32:06 2014
@@ -27,7 +33,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
     /**
      * Serves as a wrapper object for a multiplicity {@link #mult}. 
      * Unlike <code>int</code>s we have real <code>Object</code>s 
-     * which can be stored in a map, e.g. {@link MultiSet#obj2mult} 
+     * which can be stored in a map, e.g. {@link AbstractMultiSet#obj2mult} 
      * and unlike <code>Integer</code>s these objects are mutable. 
      */
     // **** this implementation is not optimal: 
@@ -199,7 +205,8 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	 * ---------------------------------------------------------------- */
 
 	/**
-	 * An iterator on the entries of the map {@link MultiSet#obj2mult} 
+	 * An iterator on the entries 
+	 * of the map {@link AbstractMultiSet#obj2mult} 
 	 * associating each element of the underlying {@link MultiSet} 
 	 * with its multiplicity. 
 	 */
@@ -563,7 +570,6 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      * @return 
      *    an <tt>Iterator</tt> over the elements in this collection 
      *    considering each element exactly once ignoring its multiplicity. 
-     * @see MultiSet.Immutable
      */
     public MultiSetIterator<T> iterator() {
 	return new MultiSetIteratorImpl<T>(this);

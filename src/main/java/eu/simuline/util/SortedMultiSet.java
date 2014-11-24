@@ -5,7 +5,9 @@ import java.util.NavigableMap;
 import java.util.Comparator;
 
 /**
- * Describe interface SortedMultiSet here.
+ * Represents a sorted set with multiplicities. 
+ *
+ * If MultiSet extend Set, SortedMultiSet shall extend SortedSet
  *
  *
  * Created: Sun Nov 23 22:36:30 2014
@@ -14,6 +16,11 @@ import java.util.Comparator;
  * @version 1.0
  */
 public interface SortedMultiSet<T> extends MultiSet<T> {
+
+    /**
+     * Returns an immutable copy of this <code>SortedMultiSet</code>. 
+     */
+    SortedMultiSet<T> immutable();
 
     /**
      * Returns a view of the underlying sorted set 

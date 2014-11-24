@@ -3,31 +3,19 @@ package eu.simuline.util;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.NavigableMap;
-import java.util.TreeMap;
-import java.util.Iterator;
-import java.util.Comparator;
-import java.util.Collections;
 
 /**
- * Represents a sorted set with multiplicities. 
+ * Represents a set with multiplicities. 
  * Mathematically this is something between a set and a family. 
- * Note that this kind of set does not support <code>null</code> elements. 
+ * Note that implementations of this kind of set 
+ * need not support <code>null</code> elements. 
  * <p>
  * Allows also to create an immutable <code>MultiSet</code> 
  * either from a set or as a copy of another <code>MultiSet</code>. 
  * <p>
- * Note that this should implement Collection, but still does not *****. 
- * maybe it should even implement Set or SortedSet. 
- * addAll's implementation seems strange, 
- * add seems to be buggy, 
- * One should not require a TreeMap alternative: HashMap. 
- * So one should distinguish SortedMultiSet and MultiSet 
- * and both should be interfaces. 
- * Problem with overflow of multiplicities. 
+ * Note that this should extend Collection, but still does not *****. 
+ * maybe it should even extend Set. 
  *
  * @author <a href="mailto:ereissner@rig35.rose.de">Ernst Reissner</a>
  * @version 1.0
@@ -253,7 +241,6 @@ public interface MultiSet<T> extends Iterable<T> {
      * @return 
      *    an <tt>Iterator</tt> over the elements in this collection 
      *    considering each element exactly once ignoring its multiplicity. 
-     * @see MultiSet.Immutable
      */
     public MultiSetIterator<T> iterator();
 
@@ -626,7 +613,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @return 
      *    the <code>Set</code> containing exactly the objects 
      *    with strictly positive multiplicity in this <code>MultiSet</code>. 
-     * @see MultiSet.Immutable#getSet()
+     * @see HashMultiSet.Immutable#getSet()
      */
     public Set<T> getSet();
 

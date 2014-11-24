@@ -29,7 +29,7 @@ public class TreeMultiSet<T>
 
     /**
      * Represents immutable <code>MultiSet</code>s 
-     * as e.g. the one given by {@link MultiSet#emptyMultiSet()}. 
+     * as e.g. the one given by {@link TreeMultiSet#emptyMultiSet()}. 
      * **** Idea: use {@link Collections#unmodifiableMap(Map)} 
      * but still modifications of multiplicities must be handled. 
      */
@@ -269,7 +269,7 @@ public class TreeMultiSet<T>
 
     /**
      * Returns an <em>immutable</em> empty <code>MultiSet</code>. 
-     * @see MultiSet.Immutable
+     * @see TreeMultiSet.Immutable
      */
     public static <T> MultiSet<T> emptyMultiSet() {
 	return Immutable.createEmpty();
@@ -460,7 +460,7 @@ public class TreeMultiSet<T>
      * @return 
      *    the <code>Set</code> containing exactly the objects 
      *    with strictly positive multiplicity in this <code>MultiSet</code>. 
-     * @see MultiSet.Immutable#getSet()
+     * @see TreeMultiSet.Immutable#getSet()
      */
     public SortedSet<T> getSet() {
 	return this.obj2mult.navigableKeySet();

@@ -32,7 +32,7 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      *    the <code>SortedSet</code> containing exactly the objects 
      *    with strictly positive multiplicity 
      *    in this <code>SortedMultiSet</code>. 
-     * @see MultiSet.Immutable#getSet()
+     * @see HashMultiSet.Immutable#getSet()
      */
     public SortedSet<T> getSet();
 
@@ -41,7 +41,6 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      * as a map mapping each entry to its multiplicity. 
      */
     public NavigableMap<T, Multiplicity> getMap();
-
 
     /**
      * Returns the comparator used to order the elements in this set, 

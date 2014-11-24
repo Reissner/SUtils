@@ -4,6 +4,7 @@ package eu.simuline.util;
 import java.util.Collection;
 import java.util.Set;
 import java.util.Map;
+import java.util.Iterator;// for docs only 
 
 /**
  * Represents a set with multiplicities. 
@@ -42,7 +43,7 @@ public interface MultiSet<T> extends Iterable<T> {
 
 	/**
 	 * Adds the specified multiplicity (which may well be negative) 
-	 * to the wrapped multiplicity {@link #mult} which is thus modified. 
+	 * to the wrapped multiplicity which is thus modified. 
 	 *
 	 * @param mult 
 	 *    an <code>int</code> such that <code>this.mult + mult > 0</code> 
@@ -59,11 +60,9 @@ public interface MultiSet<T> extends Iterable<T> {
 
 	/**
 	 * Returns the wrapped multiplicity. 
-	 *
-	 * @return 
-	 *    {@link #mult}. 
 	 */
 	public int get();
+
 	/**
 	 * Defines the natural ordering on natural numbers. 
 	 *
@@ -71,7 +70,7 @@ public interface MultiSet<T> extends Iterable<T> {
 	 *    a <code>Multiplicity</code> which should in fact 
 	 *    be another {@link MultiSet.Multiplicity}. 
 	 * @return 
-	 *    the difference of the wrapped {@link #mult}-values. 
+	 *    the difference of the wrapped multiplicities. 
 	 * @throws NullPointerException 
 	 *    for <code>mult == null</code>. 
 	 * @throws ClassCastException 

@@ -25,7 +25,7 @@ public class HashMultiSet<T>
 
     /**
      * Represents immutable <code>MultiSet</code>s 
-     * as e.g. the one given by {@link MultiSet#emptyMultiSet()}. 
+     * as e.g. the one given by {@link HashMultiSet#emptyMultiSet()}. 
      * **** Idea: use {@link Collections#unmodifiableMap(Map)} 
      * but still modifications of multiplicities must be handled. 
      */

@@ -28,7 +28,11 @@ public enum DataModel {
      * Represents a data model with unknown number of bits or data model 
      * representable neither by {@link #Bits64} nor by {@link #Bits32}. 
      */
-    Unknown("unknown");
+    Unknown("unknown") {
+	public boolean isKnown() {
+	    return false;
+	}
+    };
 
     /*----------------------------------------------------------------------*
      * fields                                                               *
@@ -48,7 +52,7 @@ public enum DataModel {
      * methods                                                              *
      *----------------------------------------------------------------------*/
 
-    public static DataModel getDataModel() {
+    public static DataModel getDataModel(boolean retNull) {
 	String code = System.getProperty("sun.arch.data.model");
 	DataModel dataModel = null;
 	for (DataModel cand : DataModel.values()) {
@@ -56,9 +60,18 @@ public enum DataModel {
 		return cand;
 	    } // if 
 	} // for 
-
+	if (retNull) {
+	    return null;
+	}
 	throw new IllegalStateException
 	    ("Unknown data model: " + code + ". ");
     }
 
+    public String getCode() {
+	return this.code;
+    }
+
+    public boolean isKnown() {
+	return true;
+    }
 }

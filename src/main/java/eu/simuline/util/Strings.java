@@ -1,7 +1,10 @@
 
-
 package eu.simuline.util;
 
+/**
+ * Collection of static methods related to strings. 
+ * This class is required because class {@link String} is declared final. 
+ */
 public abstract class Strings {
 
     /* -------------------------------------------------------------------- *

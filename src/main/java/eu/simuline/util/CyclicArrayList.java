@@ -78,6 +78,9 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
     /* Inner classes                                                        */
     /*----------------------------------------------------------------------*/
 
+    /**
+     * Enumeration of the state of an iterator. 
+     */
     enum StateIter {
 
 	/**

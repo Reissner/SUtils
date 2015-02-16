@@ -27,6 +27,9 @@ public interface MultiSet<T> extends Iterable<T> {
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
+    /**
+     * Represents the multiplicity of an entry of the enclosing multi-set. 
+     */
     public interface Multiplicity extends Comparable<Multiplicity> {
 
 	/**

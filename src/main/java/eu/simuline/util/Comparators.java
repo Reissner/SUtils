@@ -20,7 +20,11 @@ public abstract class Comparators {// NOPMD
      * inner classes.                                                       *
      * -------------------------------------------------------------------- */
 
- 
+    /**
+     * Represents a comparator which is a cascade of comparators: 
+     * Starting with the first comparator in {@link #seq} 
+     * asks the next comparator if the current one detects equality. 
+     */
     private static class Cascade<E> implements Comparator<E> {
 	private final Collection<Comparator<E>> seq;
 	Cascade(Collection<Comparator<E>> seq) {

@@ -1218,6 +1218,7 @@ this.handler.processingInstruction(null, null);
 			    this.parseExceptionHandler
 				.foundCharAfterEndOfEndTag
 				((char) this.currChar);
+			    break;
 		    } // switch
 		}
 		

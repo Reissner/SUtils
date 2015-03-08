@@ -78,6 +78,13 @@ public abstract class Finder {
 	    this.files.push(file);
 	}
 
+	Primary(File[] path) {
+	    this.files = new Stack<File>();
+	    for (int i = 0; i < path.length; i++) {
+		this.files.push(path[i]);
+	    }
+	}
+
 	/* ---------------------------------------------------------------- *
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */

@@ -526,7 +526,7 @@ public interface MultiSet<T> extends Iterable<T> {
 
     /**
      * Adds <code>mvs</code> elementwise to this multi set 
-     * increasing multiplicities 
+     * taking multiplicities into account 
      * and returns whether this caused a change 
      * of the underlying set. 
      * **** strange implementation; also: change 

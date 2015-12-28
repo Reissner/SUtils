@@ -185,11 +185,11 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
 	return hashCode;
     }
 
-/*
+
     public boolean equals(Object other) {// NOPMD
 	return super.equals(other);
     }
-*/
+
 
 /*
     public boolean equals(Object o) {

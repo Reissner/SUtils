@@ -514,12 +514,9 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	    return false;
 	}
 	SortedSet<?> sSet = (SortedSet)coll;
-	if (sSet.comparator() == this.comparator() || 
+	return  sSet.comparator() == this.comparator() || 
 	    (this.comparator() != null && 
-	     this.comparator().equals(sSet.comparator()))) {
-	    return true;
-	}
-	return false;
+	     this.comparator().equals(sSet.comparator()));
     }
 
     /**

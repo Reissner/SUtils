@@ -109,19 +109,13 @@ public abstract class BasicTypesCompatibilityChecker {
 	    }
 	    // Here, obj != null. 
 	    Class<?> basicType = getWrappedCls(obj.getClass());
-	    if (cls.equals(basicType)) {
-		// includes basicType != null. 
-		return true;
-	    }
-	    return false;
+	    // return true includes basicType != null. 
+	    return cls.equals(basicType);
 	}
 	// Here, cls represents a non-primitive class. 
 
 	// Test whether obj may be casted to cls. 
-	if (obj == null || cls.isInstance(obj)) {
-	    return true;
-	}
-	return false;
+	return obj == null || cls.isInstance(obj);
     }
 
     /**

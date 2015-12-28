@@ -638,12 +638,13 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 		return false; 
 	    }
 	    CyclicIterator<E> otherIter = (CyclicIterator<E>)other;
-	    if (this.cal.equals(otherIter.getCyclicList()) && 
+	    return  this.cal.equals(otherIter.getCyclicList()) && 
 		this.getFirstIndex() == otherIter.getFirstIndex() &&
-		this.getIndex()      == otherIter.getIndex()) {
-		return true;
-	    }
-	    return false;
+		this.getIndex()      == otherIter.getIndex();
+	}
+
+	public int hashCode() {
+	    return this.cal.hashCode()+getIndex()+getFirstIndex();
 	}
 
 	/**
@@ -682,7 +683,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	    } // while 
 	    // Here, !this.hasNext() || !other.hasNext(). 
 
-	    if (this.hasNext() ^ other.hasNext()) {
+	    if (this.hasNext() ^ other.hasNext()) {// nopmd
 		// Here, exactly one ot the iterators has a next element. 
 		// Thus the number of elements is not equal. 
 		//System.out.println("!eq len:    ");

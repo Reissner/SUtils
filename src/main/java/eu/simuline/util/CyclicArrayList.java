@@ -683,7 +683,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	    } // while 
 	    // Here, !this.hasNext() || !other.hasNext(). 
 
-	    if (this.hasNext() ^ other.hasNext()) {// nopmd
+	    if (this.hasNext() ^ other.hasNext()) {// NOPMD
 		// Here, exactly one ot the iterators has a next element. 
 		// Thus the number of elements is not equal. 
 		//System.out.println("!eq len:    ");

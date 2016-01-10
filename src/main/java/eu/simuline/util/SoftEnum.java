@@ -190,9 +190,10 @@ public abstract class SoftEnum<E extends SoftEnum<E>>
     public final int compareTo(E o) {
         SoftEnum other = (SoftEnum)o;
         SoftEnum self = this;
-        if (self.getClass() != other.getClass() && // optimization
-            self.getDeclaringClass() != other.getDeclaringClass())
+        if (self.getClass()          != other.getClass() && // optimization
+            self.getDeclaringClass() != other.getDeclaringClass()) {
             throw new ClassCastException();
+	}
         return self.ordinal - other.ordinal;
     }
 
@@ -255,7 +256,7 @@ public abstract class SoftEnum<E extends SoftEnum<E>>
     /**
      * enum classes cannot have finalize methods.
      */
-    protected final void finalize() { }
+    protected final void finalize() { }// NOPMD
 
     /**
      * prevent default deserialization

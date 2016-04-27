@@ -52,13 +52,13 @@ public class JavaPath {
      * The entry of property <code>file.separator</code> as a char. 
      */
     private final static char FILE_SEP = 
-    System.getProperty("file.separator").charAt(0);//
+	System.getProperty("file.separator").charAt(0);//
 
     /**
      * The entry of property <code>path.separator</code>. 
      */
     private final static String PATH_SEP = 
-    System.getProperty("path.separator");
+	System.getProperty("path.separator");
 
     /**
      * Java's class separator <code>.</code> 
@@ -139,8 +139,11 @@ public class JavaPath {
     /**
      * Wrapps a file directly found within a directory 
      * or within a zip-archive which also includes jar-archives. 
+     * Accordingly, there are two implementations, 
+     * {@link JavaPath.OrdFileWrapper} and {@link JavaPath.ZipEntryWrapper}. 
      */
     static interface FileWrapper {
+
 	/**
 	 * Returns whether the wrapped file is within a zip-archive. 
 	 * If this is the case, the file wrapped was created newly. 
@@ -174,17 +177,28 @@ public class JavaPath {
 	InputStream getInputStream() throws IOException;
     } // interface FileWrapper 
 
+    /**
+     * Represents an ordinary file {@link #file} on a file system. 
+     */
     static class OrdFileWrapper implements FileWrapper {
+
 	private final File file;
+
 	OrdFileWrapper(File file) {
 	    this.file = file;
 	}
+
+	// api-docs inherited from interface FileWrapper 
 	public boolean coversZip() {
 	    return false;
 	}
+
+	// api-docs inherited from interface FileWrapper 
 	public File getFile() {
 	    return this.file;
 	}
+
+	// api-docs inherited from interface FileWrapper 
 	public InputStream getInputStream() throws IOException {
 	    return new FileInputStream(this.file);
 	}
@@ -192,6 +206,13 @@ public class JavaPath {
 
     // **** missing: closing of InputStream: 
     // both stream and zipfile: zipFile.close();  stream.close();
+    /**
+     * Represents a file {@link #entry} 
+     * which is an entry in a zip-file {@link #zipFile}. 
+     * The zip-file may be in any zip format 
+     * and in particular a jar-archive 
+     * (which is the common application case). 
+     */
     static class ZipEntryWrapper implements FileWrapper {
 
 	class WrappedInputStream extends FilterInputStream {
@@ -211,9 +232,13 @@ public class JavaPath {
 	    this.zipFile = zipFile;
 	    this.entry = entry;
 	}
+
+	// api-docs inherited from interface FileWrapper 
 	public boolean coversZip() {
 	    return true;
 	}
+
+	// api-docs inherited from interface FileWrapper 
 	public File getFile() throws IOException {	    
 	    // by extraction. 
 	    File ret = File
@@ -234,9 +259,11 @@ public class JavaPath {
 	    return ret;
 	}
 
+	// api-docs inherited from interface FileWrapper 
 	public InputStream getInputStream() throws IOException {
 	    return this.zipFile.getInputStream(this.entry);
 	}
+
     } // class ZipEntryWrapper 
 
 
@@ -311,7 +338,7 @@ public class JavaPath {
      *    Note that this is no absolute pathname of course: 
      *    {@link #roots} is not read. 
      */
-    private String cls2locFile(String clsName,ClsSrc clsSrc) {
+    private String cls2locFile(String clsName, ClsSrc clsSrc) {
 /*
 	if (cls.isArray()) {
 	    throw new IllegalArgumentException
@@ -351,7 +378,7 @@ public class JavaPath {
      *    In any case, the file returned exists 
      *    unless <code>null</code> is returned. 
      */
-    public File getFile(String clsName,ClsSrc clsSrc) {
+    public File getFile(String clsName, ClsSrc clsSrc) {
 	return getFile(cls2locFile(clsName, clsSrc));
     }
 

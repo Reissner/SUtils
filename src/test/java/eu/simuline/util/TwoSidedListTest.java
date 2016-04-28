@@ -11,8 +11,6 @@ import org.junit.runner.JUnitCore;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import junit.framework.JUnit4TestAdapter;
-
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -500,11 +498,6 @@ public class TwoSidedListTest {
     /* -------------------------------------------------------------------- *
      * framework.                                                           *
      * -------------------------------------------------------------------- */
-
-    public static junit.framework.Test suite() {
-	return new JUnit4TestAdapter(TwoSidedListTest.class);
-    }
-
 
     /**
      * Runs the test case.

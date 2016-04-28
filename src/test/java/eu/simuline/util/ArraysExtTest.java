@@ -19,11 +19,6 @@ import org.junit.runner.JUnitCore;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import junit.framework.JUnit4TestAdapter;
-
-
-
-
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -623,10 +618,6 @@ public class ArraysExtTest {
     /* -------------------------------------------------------------------- *
      * framework.                                                           *
      * -------------------------------------------------------------------- */
-
-    public static junit.framework.Test suite() {
-	return new JUnit4TestAdapter(ArraysExtTest.class);
-    }
 
 
     /**

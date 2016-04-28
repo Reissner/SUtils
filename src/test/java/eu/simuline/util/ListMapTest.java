@@ -18,8 +18,6 @@ import org.junit.runner.JUnitCore;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import junit.framework.JUnit4TestAdapter;
-
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
@@ -214,11 +212,6 @@ public class ListMapTest {
     /* -------------------------------------------------------------------- *
      * framework.                                                           *
      * -------------------------------------------------------------------- */
-
-    public static junit.framework.Test suite() {
-	return new JUnit4TestAdapter(ListMapTest.class);
-    }
-
 
     /**
      * Runs the test case.

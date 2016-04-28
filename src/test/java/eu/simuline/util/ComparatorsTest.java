@@ -20,8 +20,6 @@ import org.junit.runner.JUnitCore;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import junit.framework.JUnit4TestAdapter;
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -100,10 +98,6 @@ public class ComparatorsTest {
     /* -------------------------------------------------------------------- *
      * framework.                                                           *
      * -------------------------------------------------------------------- */
-
-    public static junit.framework.Test suite() {
-	return new JUnit4TestAdapter(ComparatorsTest.class);
-    }
 
     /**
      * Runs the test case.

@@ -18,10 +18,6 @@ import org.junit.runner.JUnitCore;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import junit.framework.JUnit4TestAdapter;
-
-
-
 import java.util.Comparator;
 import static java.util.Arrays.asList;
 
@@ -229,11 +225,6 @@ public class ListSetTest {
     /* -------------------------------------------------------------------- *
      * framework.                                                           *
      * -------------------------------------------------------------------- */
-
-    public static junit.framework.Test suite() {
-	return new JUnit4TestAdapter(ListSetTest.class);
-    }
-
 
     /**
      * Runs the test case.

@@ -17,10 +17,6 @@ import org.junit.runner.JUnitCore;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import junit.framework.JUnit4TestAdapter;
-
-
-
 
 import org.xml.sax.SAXParseException;
 
@@ -568,20 +564,6 @@ public class SGMLParserTest {
      * framework.                                                           *
      * -------------------------------------------------------------------- */
 
-    public static junit.framework.Test suite() {
-	return new JUnit4TestAdapter(SGMLParserTest.class);
-    }
-/*
-
-	TestSuite testSGMLParser = new TestSuite("Parser");
-	TestSuite testBuffer = new TestSuite("Buffer");
-	testBuffer.addTest(new SGMLParserTest("testBufferBasics"));
-	testSGMLParser.addTest(testBuffer);
-
-	testSGMLParser.addTest(new SGMLParserTest("testParseTagOrPI"));
-	//testSGMLParser.addTest(new SGMLParserTest("testBasicsFraction"));
-	return testSGMLParser;
-*/
 
     /**
      * Runs the test case.

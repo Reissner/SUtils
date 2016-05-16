@@ -7,10 +7,20 @@ import java.net.MalformedURLException;
 
 import java.util.Map;
 import java.util.HashMap;
+import org.javalobby.icons20x20.Open;
+import org.javalobby.icons20x20.Hammer;
 
 /**
- * Describe class GifResource here.
- *
+ * Provides a single method only, {@link #getIcon(Class)}, 
+ * which returns the icon associated with the given class. 
+ * The class must be a subclass of {@link GifResource} as is {@link Open}. 
+ * That class is also an example for using {@link GifResource}s: 
+ * Just derive a class from {@link GifResource} 
+ * and put it into a package 
+ * (<code>org.javalobby.icons16x16</code> in this case) 
+ * pointing to the according gif-image 
+ * which can be found in this case 
+ * in <code>src/main/resources/org/javalobby/icons16x16/Open.gif</code>. 
  *
  * Created: Sun Jun  4 20:50:12 2006
  *
@@ -41,18 +51,20 @@ public class GifResource {
     private final static String GIF_END = "gif";
 
     /**
-     * <code>/cls/</code>: the directory of the classfiles 
-     * within simuline-developing environment. 
+     * <code>target/classes/</code>: the directory of the classfiles 
+     * within the simuline-developing environment. 
+     * **** bad: path is hardcoded **** 
      */
-    private final static String CLASS    = URL_SEP +"target"     
-	+ URL_SEP  +"classes"     + URL_SEP;
+    private final static String CLASS    = URL_SEP + "target" 
+	+ URL_SEP  + "classes" + URL_SEP;
 
     /**
-     * <code>/resource/</code>: the directory of the classfiles 
+     * <code>src/main/resource/</code>: the directory of the resources
      * within simuline-developing environment. 
+     * **** bad: path is hardcoded **** 
      */
     private final static String RESOURCE = 
-	URL_SEP +"src/main/resources" + URL_SEP;// **** URL_SEP and /
+	URL_SEP + "src/main/resources" + URL_SEP;// **** URL_SEP and /
 
     /**
      * A cache for gif-files represented by GifResources. 
@@ -119,38 +131,65 @@ public class GifResource {
 */
     /**
      * Converts a GifResource class into the corresponding icon. 
-     * Note that gif's are cached within {@link #gifs}. 
+     * This is done in the following steps: 
+     * If the image is cached in {@link #gifs}, take this one. 
+     * Else load it into {@link #gifs}as described below 
+     * before taking it from {@link #gifs}. 
+     * <p>
+     * Loading an image consists in 
+     * loading the class-file associated with the image, 
+     * determining the according gif-file 
+     * and creating the according ImageIcon. 
      * 
      * @param res
      *    a subclass of GifResource. 
      * @return
      *    the icon determined by the given class. 
+     *    <p>
+     *    CAUTION: Note that an icon is returned 
+     *    even if there is no according gif-image. 
+     *    This image can be identified by width <code>-1</code> 
+     *    which is an undocumented property. 
      */
     public static ImageIcon getIcon(Class<? extends GifResource> res) {
 	ImageIcon ret = gifs.get(res);
 	if (ret == null) {
-	    String path = res.getName().replace('.','/')+"."+CLASS_END;
-	
-	    //System.out.println("path: "+path);
+	    // Here the icon is not yet loaded. 
+
+	    // transform class into path of class file name... 
+	    String path = res.getName().replace('.','/') + "." + CLASS_END;
 	    //***NO PURE JAVA
+	    // ... and further into an URL (ensuring that this class exists) 
 	    URL url = ClassLoader.getSystemResource(path);
-	    //System.out.println("1url: "+url);
-	    path = url.toString().replaceAll(CLASS_END+"\\z",GIF_END);
+	    assert url != null;// because class exists 
+
+	    // The class URL into the gif-image url 
+	    path = url.toString().replaceAll(CLASS_END + "\\z", GIF_END);
 	    //System.out.println("path2: "+path);
-	    path = path.replace(CLASS,RESOURCE); /// **** a little weak
+	    path = path.replace(CLASS, RESOURCE); /// **** a little weak
 	    //System.out.println("path3: "+path);
 	    try {
 		url = new URL(path);
 	    } catch (MalformedURLException e) {
 		throw new UnsatisfiedLinkError// NOPMD
-		    ("Resource not found: "+path);
+		    ("Resource not found: " + path);
 	    }
 
-	    gifs.put(res,new ImageIcon(url));
+	    // **** the following works even 
+	    // if the url does not point to any file.
+	    gifs.put(res, new ImageIcon(url));
 	    ret = gifs.get(res);
 	}
+	assert ret == gifs.get(res);
 
 	return ret;
+    }
+
+    public final static void main(String[] args) {
+	ImageIcon icon = getIcon(Hammer.class);
+	System.out.println("icon: "+icon.getImage());
+	System.out.println("icon: "+icon.getIconWidth());
+	
     }
 
 }

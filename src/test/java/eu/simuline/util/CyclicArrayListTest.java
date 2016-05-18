@@ -1331,7 +1331,7 @@ public class CyclicArrayListTest {
      * Uncomment either the textual UI, Swing UI, or AWT UI.
      */
     public static void main(String args[]) {
- 	Actions.run(CyclicArrayListTest.class);
+	Actions.runFromMain();
    }
 
 }

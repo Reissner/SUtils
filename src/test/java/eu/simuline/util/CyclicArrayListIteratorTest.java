@@ -538,9 +538,9 @@ public class CyclicArrayListIteratorTest {
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
 	    cIter1 = cList1.cyclicIterator(0);
-	    obj0 = (Integer)cIter1.next();
-	    obj1 = (Integer)cIter1.next();
-	    obj2 = (Integer)cIter1.next();
+	    obj0 = cIter1.next();
+	    obj1 = cIter1.next();
+	    obj2 = cIter1.next();
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -594,9 +594,9 @@ public class CyclicArrayListIteratorTest {
 	    cIter1.next();
 	    cIter1.next();
 	    cIter1.next();
-	    obj2 = (Integer)cIter1.previous();
-	    obj1 = (Integer)cIter1.previous();
-	    obj0 = (Integer)cIter1.previous();
+	    obj2 = cIter1.previous();
+	    obj1 = cIter1.previous();
+	    obj0 = cIter1.previous();
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -1048,6 +1048,6 @@ public class CyclicArrayListIteratorTest {
      * Uncomment either the textual UI, Swing UI, or AWT UI.
      */
     public static void main(String args[]) {
- 	Actions.run(CyclicArrayListIteratorTest.class);
+	Actions.runFromMain();
     }
 }

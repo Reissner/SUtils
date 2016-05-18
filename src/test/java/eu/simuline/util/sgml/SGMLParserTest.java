@@ -571,8 +571,7 @@ public class SGMLParserTest {
      * Uncomment either the textual UI, Swing UI, or AWT UI.
      */
     public static void main(String args[]) {
- 	Actions.run(SGMLParserTest.class);
-
-    }
+	Actions.runFromMain();
+     }
 
 }

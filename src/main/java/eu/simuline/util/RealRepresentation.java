@@ -606,7 +606,7 @@ public class RealRepresentation {
 
     /**
      * The fractional part of the mantissa of the double value represented. 
-     * This may never be empty but it may be <code>0</code. 
+     * This may never be empty but it may be <code>0</code>. 
      */
     protected String fraction;
 

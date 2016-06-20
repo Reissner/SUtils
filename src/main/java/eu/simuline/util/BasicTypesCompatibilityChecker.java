@@ -9,7 +9,7 @@ import java.util.HashMap;
  * to map wrapper types to the corresponding basic types 
  * and for compatibility checks. 
  *
- * @author <a href="mailto:">Ernst Reissner</a>
+ * @author <a href="mailto:rei3ner@arcor.de">Ernst Reissner</a>
  * @version 1.0
  */
 public abstract class BasicTypesCompatibilityChecker {

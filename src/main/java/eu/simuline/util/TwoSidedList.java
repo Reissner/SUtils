@@ -49,7 +49,7 @@ import java.util.ArrayList;
  *
  * Created: Sun Aug 26 23:25:26 2007
  *
- * @author <a href="mailto:ernst@">Ernst Reissner</a>
+ * @author <a href="mailto:rei3ner@arcor.de">Ernst Reissner</a>
  * @version 1.0
  */
 public class TwoSidedList<E> implements List<E> {
@@ -114,7 +114,7 @@ public class TwoSidedList<E> implements List<E> {
 	 *    </ul>
 	 *    The message is always the same: 
 	 *    <code>
-	 * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
+	 * "Index: &lt;ind&gt; Range: &lt;firstIndex&gt; - &lt;minFreeIndex()&gt; exclusively. "
 	 *    </code>. 
 	 * @see #add   (int, Object,     Direction)
 	 * @see #addAll(int, Collection, Direction)
@@ -369,7 +369,7 @@ public class TwoSidedList<E> implements List<E> {
      *    </ul>
      *    The message is always the same: 
      *    <code>
-     * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
+     * "Index: &lt;ind&gt;Range:&lt;firstIndex&gt;-&lt;minFreeIndex()&gt;exclusively. "
      *    </code>. 
      * @see #add(int, Object, Direction)
      * @see #addAll(int, Collection, Direction)

@@ -182,7 +182,7 @@ public class SGMLParser {
     } // interface CharTester 
 
     /**
-     * Tests for blank, <code>/</code>, <code>></code>. 
+     * Tests for blank, <code>/</code>, <code>&gt;</code>. 
      */
     private static final CharTester TEST_BLANK_GT_SLASH = new CharTester() {
 	public boolean testChar(char chr) {
@@ -193,7 +193,7 @@ public class SGMLParser {
     };
 
     /**
-     * Tests for blank or <code>></code>. 
+     * Tests for blank or <code>&gt;</code>. 
      */
     private static final CharTester TEST_BLANK_GT = new CharTester() {
 	public boolean testChar(char chr) {
@@ -203,7 +203,7 @@ public class SGMLParser {
     };
 
     /*
-     * Tests for <code>/</code> or <code>></code>. 
+     * Tests for <code>/</code> or <code>&gt;</code>. 
      */
 /*
     private static final CharTester TEST_GT_SLASH = new CharTester() {
@@ -224,7 +224,7 @@ public class SGMLParser {
 	};
 
     /**
-     * Tests for <code>></code>. 
+     * Tests for <code>&gt;</code>. 
      */
     private static final CharTester TEST_GT = new CharTester() {
 	    public boolean testChar(char chr) {
@@ -233,7 +233,7 @@ public class SGMLParser {
 	};
 
     /**
-     * Tests for <code>=</code> and for <code>></code>. 
+     * Tests for <code>=</code> and for <code>&gt;</code>. 
      */
     private static final CharTester TEST_BLANK_EQUALS_GT = new CharTester() {
 	    public boolean testChar(char chr) {
@@ -1081,7 +1081,7 @@ public class SGMLParser {
 
     /**
      * Parses everything outside a tag, a processing instruction, ... 
-     * everything within brackets <code>&lt;</code> and <code>></code>. 
+     * everything within brackets <code>&lt;</code> and <code>&gt;</code>. 
      * ***** Missing: distinction between notification 
      * of characters and whitespace. ****
      *
@@ -1246,7 +1246,7 @@ this.handler.processingInstruction(null, null);
 
     /**
      * Parses everything within a tag, a processing instruction, ... 
-     * everything within brackets <code>&lt;</code> and <code>></code>. 
+     * everything within brackets <code>&lt;</code> and <code>&gt;</code>. 
      *
      * @see #parseText
      */

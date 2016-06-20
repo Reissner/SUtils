@@ -201,7 +201,7 @@ public abstract class Finder {
     } // class Secondary 
 
     /**
-     *  <code></code>
+     * A filter passing all information and printing it on {@link #str}. 
      */
     class PrintFilter extends Secondary {
 
@@ -209,9 +209,6 @@ public abstract class Finder {
 	 * fields.                                                          *
 	 * ---------------------------------------------------------------- */
 
-	/**
-	 *  <code></code>
-	 */
 	private final PrintStream str;
 	private int idx;
 

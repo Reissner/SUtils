@@ -43,7 +43,7 @@ import java.util.AbstractSet;
  * using the Collections.synchronizedSet method. 
  * This is best done at creation time, 
  * to prevent accidental unsynchronized access to the ListSet instance: 
- * <ore>Set s = Collections.synchronizedSet(new ListSet(...));</pre>
+ * <pre>Set s = Collections.synchronizedSet(new ListSet(...));</pre>
  * <p>
  * The iterators returned by this class's iterator method are fail-fast: 
  * if the set ismodified at any time after the iterator is created, 

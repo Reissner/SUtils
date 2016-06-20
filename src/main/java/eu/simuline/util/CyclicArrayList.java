@@ -183,7 +183,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	 * It also determines the end of this list implicitly: 
 	 * <code>this.hasNext() == false</code> 
 	 * iff <code>this.index &lt; this.startIndex+this.list.size()</code>. 
-	 * This is true also for <code>{@link #list}.isEmpty()<code>
+	 * This is true also for <code>{@link #list}.isEmpty()</code>. 
 	 *
 	 * @see #hasNext
 	 * @see #hasPrev
@@ -622,7 +622,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	 * and, if so, whether the underlying list and the indices coincide. 
 	 *
 	 * @param other 
-	 *    another <code>Object</code>; possibly <code>null<code>. 
+	 *    another <code>Object</code>; possibly <code>null</code>. 
 	 * @return 
 	 *    Returns <code>false</code> 
 	 *    if <code>other</code> is not an instance 

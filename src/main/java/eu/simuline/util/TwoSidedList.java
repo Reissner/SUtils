@@ -340,7 +340,7 @@ public class TwoSidedList<E> implements List<E> {
      *    if not <code>firstIndex() <= ind &lt; minFreeIndex()</code> 
      *    with message 
      *    <code>
-     * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
+     * "Index: &lt;ind&gt; Range: &lt;firstIndex&gt; - &lt;minFreeIndex()&gt; exclusively. "
      *    </code>. 
      * <!-- used by 
      * get(int), 
@@ -399,10 +399,10 @@ public class TwoSidedList<E> implements List<E> {
      * @param maxP
      *    <em>one plus</em> the maximal value for <code>ind</code> accepted. 
      * @throws IndexOutOfBoundsException
-     *    if not <code>min <= ind &lt; maxP</code>. 
+     *    if not <code>min &gt;= ind &lt; maxP</code>. 
      *    The message is 
      *    <code>
-     * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
+     * "Index: &lt;ind&gt; Range: &lt;firstIndex&gt; - &lt;minFreeIndex()&gt; exclusively. "
      *    </code> preceeded by <code>fromToNothing</code>. 
      *
      * <!--used by 
@@ -1246,7 +1246,7 @@ public class TwoSidedList<E> implements List<E> {
      *    if not <code>firstIndex() &lt;= ind &lt;= minFreeIndex()</code> 
      *    with message 
      *    <code>
-     * "Index: <ind> Range: <firstIndex> - <minFreeIndex()> exclusively. "
+     * "Index: &lt;ind&gt; Range: &lt;firstIndex&gt; - &lt;minFreeIndex()&gt; exclusively. "
      *    </code>. 
      */
     public final ListIterator<E> listIterator(final int ind) {

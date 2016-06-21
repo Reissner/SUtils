@@ -54,7 +54,7 @@ public class ArraysExtTest {
 
 
 
-    static Class getTestedClass() {
+    static Class<?> getTestedClass() {
 	return ArraysExt.class;
     }
 
@@ -70,7 +70,7 @@ public class ArraysExtTest {
 
     public void testGetArrayCls() {
 
-	Class result = null;
+	Class<?> result = null;
 
 	// testcase 1
 	//
@@ -119,7 +119,7 @@ public class ArraysExtTest {
      * Tests for methods {@link ArraysExt#createWrappedEmptyArray} 
      * and for {@link ArraysExt#createUnWrappedEmptyArray}. 
      *
-     * @exception Exception 
+     * @throws InvocationTargetException 
      *    because of invokcation via reflection. 
      */
     public void testCreateEmptyArray() throws InvocationTargetException {
@@ -630,3 +630,4 @@ public class ArraysExtTest {
     }
 
 }
+

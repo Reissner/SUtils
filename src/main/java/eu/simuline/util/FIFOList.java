@@ -87,11 +87,10 @@ public class FIFOList<E> extends Vector<E> implements Queue<E> {
 
     // api-docs provided by javadoc. 
     public E remove() {
-	try {
-	    return remove(0);
-	} catch (ArrayIndexOutOfBoundsException e) {
+	if (isEmpty()) {
 	    throw new NoSuchElementException();
 	}
+	return remove(0);
     }
 
     // api-docs provided by javadoc. 
@@ -101,10 +100,9 @@ public class FIFOList<E> extends Vector<E> implements Queue<E> {
 
     // api-docs provided by javadoc. 
     public E element() {
-	try {
-	    return get(0);
-	} catch (ArrayIndexOutOfBoundsException e) {
+	if (isEmpty()) {
 	    throw new NoSuchElementException();
 	}
+	return get(0);
     }
 } // FIFOList

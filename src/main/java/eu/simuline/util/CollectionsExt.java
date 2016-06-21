@@ -1183,11 +1183,12 @@ public class CollectionsExt<E> {
 	}
 	assert !coll.isEmpty();
 
-	for (T res : coll) {
-	    return res;
-	}
+	return coll.iterator().next();
+	// for (T res : coll) {
+	//     return res;
+	// }
 	// This place is never reached, because coll is not empty 
-	throw new IllegalStateException();
+	//throw new IllegalStateException();
     }
 
     /**

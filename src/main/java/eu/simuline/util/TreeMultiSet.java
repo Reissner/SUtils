@@ -9,6 +9,7 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.Comparator;
 import java.util.Collections;
+import java.util.NoSuchElementException;// for javadoc only 
 
 /**
  * Represents a sorted set with multiplicities based on a {@link TreeMap}. 

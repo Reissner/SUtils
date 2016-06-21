@@ -3,6 +3,7 @@ package eu.simuline.util;
 import java.util.SortedSet;
 import java.util.NavigableMap;
 import java.util.Comparator;
+import java.util.NoSuchElementException;// for javadoc only 
 
 /**
  * Represents a sorted set with multiplicities. 

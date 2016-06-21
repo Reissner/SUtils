@@ -387,7 +387,7 @@ public interface CyclicList<E> extends Collection<E> {
      * Places the elements of that list as returned by <code>iter.next</code> 
      * in this list. 
      *
-     * @param index index 
+     * @param index 
      *    index of element to replace. 
      * @param iter 
      *    a <code>CyclicIterator</code> which determines an index in a list 
@@ -403,7 +403,9 @@ public interface CyclicList<E> extends Collection<E> {
      *    prevents it from being added to this list. 
      * @throws EmptyCyclicListException 
      *    if this list is empty. 
-     * @see #replace(int, List)
+    * @throws IllegalArgumentException 
+     *    if the specified iterator is empty. 
+      * @see #replace(int, List)
      */
     void replace(int index, Iterator<E> iter);
 
@@ -413,10 +415,10 @@ public interface CyclicList<E> extends Collection<E> {
      * Places the elements of that list as returned by <code>iter.next</code> 
      * in this list. 
      *
-     * @param index index 
+     * @param index 
      *    index of element to replace. 
      * @param list 
-     *    a <code>CyclicIterator</code> which determines an index in a list 
+     *    a <code>List</code> which determines an index in a list 
      *    which replaces <code>this.get(i)</code>. 
      *
      * @throws UnsupportedOperationException 
@@ -429,8 +431,8 @@ public interface CyclicList<E> extends Collection<E> {
      *    prevents it from being added to this list. 
      * @throws EmptyCyclicListException 
      *    if this list is empty. 
-     * @throws EmptyCyclicIteratorException 
-     *    if the specified iterator is empty. 
+     * @throws IllegalArgumentException 
+     *    if the specified list is empty. 
      * @see #replace(int, Iterator)
      */
     void replace(int index, List<E> list);

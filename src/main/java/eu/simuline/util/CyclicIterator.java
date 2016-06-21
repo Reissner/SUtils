@@ -3,6 +3,7 @@ package eu.simuline.util;
 
 import java.util.List;
 import java.util.Iterator;
+import java.util.NoSuchElementException;// for javadoc only 
 
 /**
  * An iterator over a {@link CyclicList}. 
@@ -56,21 +57,21 @@ public interface CyclicIterator<E> extends Iterator<E> {
     CyclicList<E> getCyclicList();
 
     /**
-     * Returns <tt>true</tt> if the iteration has more elements. 
-     * (In other words, returns <tt>true</tt> 
-     * if <tt>next</tt> would return an element 
+     * Returns <code>true</code> if the iteration has more elements. 
+     * (In other words, returns <code>true</code> 
+     * if <code>next</code> would return an element 
      * rather than throwing an exception.)
      *
      * @return 
-     *    <tt>true</tt> if the iterator has more elements. 
+     *    <code>true</code> if the iterator has more elements. 
      */
     boolean hasNext();
  
     /**
      * Returns the next element in the interation.
      * This method may be called  repeatedly to iterate through the list, 
-     * or intermixed with calls to <tt>previous</tt> to go back and forth. 
-     * (Note that alternating calls to <tt>next</tt> and <tt>previous</tt> 
+     * or intermixed with calls to <code>previous</code> to go back and forth. 
+     * (Note that alternating calls to <code>next</code> and <code>previous</code> 
      * will return the same element repeatedly.)
      *
      * @return 
@@ -81,14 +82,14 @@ public interface CyclicIterator<E> extends Iterator<E> {
     E next();
 
     /**
-     * Returns <tt>true</tt> if this iterator has more elements when 
+     * Returns <code>true</code> if this iterator has more elements when 
      * traversing the cyclic list in the reverse direction. 
-     * (In other words, returns <tt>true</tt> 
-     * if <tt>previous</tt> would return an element 
+     * (In other words, returns <code>true</code> 
+     * if <code>previous</code> would return an element 
      * rather than throwing an exception.) 
      *
      * @return 
-     *    <tt>true</tt> if the list iterator has more elements 
+     *    <code>true</code> if the list iterator has more elements 
      *    when traversing the list in the reverse direction. 
      */
     boolean hasPrev();
@@ -97,36 +98,36 @@ public interface CyclicIterator<E> extends Iterator<E> {
      * Returns the previous element in the cyclic list. 
      * This method may be called repeatedly 
      * to iterate through the list backwards, 
-     * or intermixed with calls to <tt>next</tt> to go back and forth. 
-     * (Note that alternating calls to <tt>next</tt> and <tt>previous</tt> 
+     * or intermixed with calls to <code>next</code> to go back and forth. 
+     * (Note that alternating calls to <code>next</code> and <code>previous</code> 
      * will return the same element repeatedly.) 
      *
      * @return 
      *    the previous element in the list. 
-     * @exception NoSuchElementException 
+     * @throws NoSuchElementException 
      *    if the iteration has no previous element. 
      */
     E previous();
  
     /*
      * Returns the index of the element 
-     * that would be returned by a subsequent call to <tt>next</tt>.
+     * that would be returned by a subsequent call to <code>next</code>.
      *
      * @return 
      *    the index of the element 
-     *    that would be returned by a subsequent call to <tt>next</tt>. 
-     *    The range is <tt>0,...,size()-1</tt>. 
+     *    that would be returned by a subsequent call to <code>next</code>. 
+     *    The range is <code>0,...,size()-1</code>. 
      */
     //int nextIndex();
 
     /*
      * Returns the index of the element 
-     * that would be returned by a subsequent call to <tt>previous</tt>. 
+     * that would be returned by a subsequent call to <code>previous</code>. 
      *
      * @return 
      *    the index of the element 
-     *    that would be returned by a subsequent call to <tt>previous</tt>. 
-     *    The range is <tt>0,...,size()-1</tt>. 
+     *    that would be returned by a subsequent call to <code>previous</code>. 
+     *    The range is <code>0,...,size()-1</code>. 
      */
     //int previousIndex();
 
@@ -141,7 +142,7 @@ public interface CyclicIterator<E> extends Iterator<E> {
      * @return 
      *    <ul>
      *    <li> 
-     *    the index minimal index <tt>ind in {0,...,this.list.size()-1}</tt> 
+     *    the index minimal index <code>ind in {0,...,this.list.size()-1}</code> 
      *    satisfying <code>obj.equals(this.list.get(ind))</code> 
      *    if possible;
      *    <li>
@@ -175,23 +176,23 @@ public interface CyclicIterator<E> extends Iterator<E> {
      * Inserts the specified element into the underlying cyclic list 
      * (optional operation). 
      * The element is inserted immediately before the next element 
-     * that would be returned by <tt>next</tt>, if any, 
+     * that would be returned by <code>next</code>, if any, 
      * and after the next element 
-     * that would be returned by <tt>previous</tt>, if any. 
+     * that would be returned by <code>previous</code>, if any. 
      * (If the cyclic list is empty, 
      * the new element becomes the sole element on the cyclic list.) 
      * <p>
      * The new element is inserted before the implicit cursor: 
-     * a subsequent call to <tt>next</tt> would be unaffected, 
-     * and a subsequent call to <tt>previous</tt> 
+     * a subsequent call to <code>next</code> would be unaffected, 
+     * and a subsequent call to <code>previous</code> 
      * would return the new element. 
      * (This call increases by one the value that would be returned by a call 
-     * to <tt>nextIndex</tt> or <tt>previousIndex</tt>.) 
+     * to <code>nextIndex</code> or <code>previousIndex</code>.) 
      *
      * @param obj 
      *    the element to be inserted.
      * @exception UnsupportedOperationException 
-     *    if the <tt>add</tt> method is not supported by this iterator. 
+     *    if the <code>add</code> method is not supported by this iterator. 
      * @exception ClassCastException 
      *    if the class of the specified element 
      *    prevents it from being added to the underlying cyclic list. 
@@ -206,27 +207,27 @@ public interface CyclicIterator<E> extends Iterator<E> {
      * Inserts the specified list into the underlying cyclic list 
      * (optional operation). 
      * The list is inserted immediately before the next element 
-     * that would be returned by <tt>next</tt>, if any, 
+     * that would be returned by <code>next</code>, if any, 
      * and after the next element 
-     * that would be returned by <tt>previous</tt>, if any. 
+     * that would be returned by <code>previous</code>, if any. 
      * (If the cyclic list is empty, 
      * the new cyclic list comprises the given list.) 
      * <p>
      * The given list is inserted before the implicit cursor: 
-     * a subsequent call to <tt>next</tt> would be unaffected, 
-     * and a subsequent call to <tt>previous</tt> 
+     * a subsequent call to <code>next</code> would be unaffected, 
+     * and a subsequent call to <code>previous</code> 
      * would return the given list in reversed order. 
      * (This call increases by <code>list.size()</code> 
      * the value that would be returned by a call 
-     * to <tt>nextIndex</tt> or <tt>previousIndex</tt>.) 
+     * to <code>nextIndex</code> or <code>previousIndex</code>.) 
      * <p>
-     * If <code>list.size()</code> contains a single element <tt>e</tt>, 
+     * If <code>list.size()</code> contains a single element <code>e</code>, 
      * <code>addAll(list)</code> is equivalent with <code>add(e)</code>.
      *
      * @param list 
      *    the list to be inserted.
      * @throws UnsupportedOperationException 
-     *    if the <tt>add</tt> method is not supported by this iterator. 
+     *    if the <code>add</code> method is not supported by this iterator. 
      * @throws ClassCastException 
      *    if the class of the an element in the specified list 
      *    prevents it from being added to the underlying list. 
@@ -239,18 +240,18 @@ public interface CyclicIterator<E> extends Iterator<E> {
 
     /**
      * Replaces the last element 
-     * returned by <tt>next</tt> or <tt>previous</tt> 
+     * returned by <code>next</code> or <code>previous</code> 
      * with the specified element (optional operation).
      * This call can be made only 
-     * if neither <tt>ListIterator.remove</tt> nor <tt>add</tt> 
+     * if neither <code>ListIterator.remove</code> nor <code>add</code> 
      * have been called after the last call to 
-     * <tt>next</tt> or <tt>previous</tt>. 
+     * <code>next</code> or <code>previous</code>. 
      *
      * @param obj
      *    the element with which to replace the last element 
      *    returned by next or previous. 
      * @exception UnsupportedOperationException 
-     *    if the <tt>set</tt> operation 
+     *    if the <code>set</code> operation 
      *    is not supported by this iterator. 
      * @exception ClassCastException 
      *    if the class of the specified element 
@@ -259,28 +260,30 @@ public interface CyclicIterator<E> extends Iterator<E> {
      *    if some aspect of the specified element 
      *    prevents it from being added to this list.
      * @exception IllegalStateException 
-     *    if neither <tt>next</tt> nor <tt>previous</tt> have been called, 
-     *    or <tt>remove</tt> or <tt>add</tt> have been called 
-     *    after the last call to <tt>next</tt> or <tt>previous</tt>. 
+     *    if neither <code>next</code> nor <code>previous</code> 
+     *    have been called, 
+     *    or <code>remove</code> or <code>add</code> have been called 
+     *    after the last call to <code>next</code> or <code>previous</code>. 
      */
     void set(E obj);
 
     /**
      * Removes from the underlying <code>CyclicList</code> 
-     * the last element returned by <tt>next</tt> or <tt>previous</tt> 
+     * the last element returned by <code>next</code> or <code>previous</code> 
      * (optional operation). 
      * This method can be called only once 
-     * per call to <tt>next</tt> or <tt>previous</tt>. 
-     * It can be made only if <tt>add</tt> has not been called after 
-     * the last call to <tt>next</tt> or <tt>previous</tt>.          
+     * per call to <code>next</code> or <code>previous</code>. 
+     * It can be made only if <code>add</code> has not been called after 
+     * the last call to <code>next</code> or <code>previous</code>.          
      *
      * @exception UnsupportedOperationException 
-     *    if the <tt>remove</tt> operation 
+     *    if the <code>remove</code> operation 
      *    is not supported by this CyclicIterator. 
      * @exception IllegalStateException 
-     *    if neither <tt>next</tt> nor <tt>previous</tt> have been called, 
-     *    or <tt>remove</tt> or <tt>add</tt> have been called 
-     *    after the last call to <tt>next</tt> or <tt>previous</tt>.       
+     *    if neither <code>next</code> nor <code>previous</code> 
+     *    have been called, 
+     *    or <code>remove</code> or <code>add</code> have been called 
+     *    after the last call to <code>next</code> or <code>previous</code>. 
      */
     void remove();
 

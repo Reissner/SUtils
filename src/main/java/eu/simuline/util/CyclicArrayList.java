@@ -230,7 +230,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	 * with the same list and the same pointer 
 	 * as the <code>CyclicPtIterator</code> given. 
 	 * For the definition of "fresh" see 
-	 * {@link eu.simuline.graphDV.model.ClosedPolyline.CyclicPtIterator class}. 
+	 * {@link eu.simuline.graphDV.model.ClosedPolyline.CyclicPtIterator}. 
 	 *
 	 * @param iter 
 	 *    some <code>CyclicPtItererator</code>. 

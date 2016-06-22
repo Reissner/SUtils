@@ -23,12 +23,12 @@ public class ArraysExt<E> {
     /**
      * The class <code>double[]</code>. 
      */
-    public final static Class<?> DOUBLE_ARRAY1 = getArrayCls(Double.TYPE,1);
+    //public final static Class<?> DOUBLE_ARRAY1 = getArrayCls(Double.TYPE,1);
 
     /**
      * The class <code>double[][]</code>. 
      */
-    public final static Class<?> DOUBLE_ARRAY2 = getArrayCls(Double.TYPE,2);
+    //public final static Class<?> DOUBLE_ARRAY2 = getArrayCls(Double.TYPE,2);
 
     public final static Object[] EMPTY = new Object[] {};
 
@@ -69,7 +69,7 @@ public class ArraysExt<E> {
      * @param  obj 
      *    The element with which to fill the specified array. 
      */
-    public static void fill(Object[] array,Object obj) {
+    public static void fill(Object[] array, Object obj) {
 	for (int i = 0; i < array.length; i++) {
 	    array[i] = obj;
 	}
@@ -91,7 +91,7 @@ public class ArraysExt<E> {
      * @throws IllegalArgumentException 
      *    if n &lt; 0. 
      */
-    public static Object[] nCopies(int num,Object obj) {
+    public static Object[] nCopies(int num, Object obj) {
 	if (num < 0) {
 	     throw new IllegalArgumentException
 		 ("Requested negative number of copies: " + num + ". ");
@@ -118,7 +118,6 @@ public class ArraysExt<E> {
      * @see CollectionsExt#recToArray(List)
      */
     public static List<Object> recAsList(Object[] array) {
-
 	List<Object> result = new ArrayList<Object>();
 	for (int i = 0; i < array.length; i++) {
 	    if (array[i] instanceof Object[]) {
@@ -188,8 +187,8 @@ public class ArraysExt<E> {
      *    and this condition holds for some component. 
      *    This is a recursive definition. 
      */
-    public static Object recAsList(Object source,Class<?> cls) {
-	return recAsList(source,cls,Caster.BASIC_TYPES);
+    public static Object recAsList(Object source, Class<?> cls) {
+	return recAsList(source, cls, Caster.BASIC_TYPES);
     }
 
     /**
@@ -256,7 +255,7 @@ public class ArraysExt<E> {
      *    and this condition holds for some component. 
      *    This is a recursive definition. 
      */
-    public static Object recAsList(Object source,Class<?> cls,Caster caster) {
+    public static Object recAsList(Object source, Class<?> cls, Caster caster) {
 
 	/// ***** problem: 
 	// what about double[][][]? --- wrong caster?!? 
@@ -278,47 +277,49 @@ public class ArraysExt<E> {
 
 	for (int i = 0; i < Array.getLength(source); i++) {
 	    // automatic wrapping of primitive objects if needed. 
-	    result.add(recAsList(Array.get(source,i),cls,caster));
+	    result.add(recAsList(Array.get(source, i), 
+				 cls, 
+				 caster));
 	}
 	return result;
     }
 
-    /**
-     * Returns the class of an array with the given type of atomic entry 
-     * and with the given dimension (dimension in the mathematical sense). 
-     *
-     * @param elementCls 
-     *    The class of the element of the array class to be returned. 
-     * @param dim 
-     *    The dimension of the array; has to be non-negative. 
-     * @return 
-     *    The class of the array 
-     *    <code>new (elementCls)[]...dim...[]</code>. 
-     */
-    public static Class<?> getArrayCls(Class<?> elementCls, int dim) {
-	Class<?> result = elementCls;
-	for (int i = 0; i < dim; i++) {
-	    result = Array.newInstance(result,0).getClass();
-	}
-	return result;
-    }
+    // /**
+    //  * Returns the class of an array with the given type of atomic entry 
+    //  * and with the given dimension (dimension in the mathematical sense). 
+    //  *
+    //  * @param elementCls 
+    //  *    The class of the element of the array class to be returned. 
+    //  * @param dim 
+    //  *    The dimension of the array; has to be non-negative. 
+    //  * @return 
+    //  *    The class of the array 
+    //  *    <code>new (elementCls)[]...dim...[]</code>. 
+    //  */
+    // public static Class<?> getArrayCls(Class<?> elementCls, int dim) {
+    // 	Class<?> result = elementCls;
+    // 	for (int i = 0; i < dim; i++) {
+    // 	    result = Array.newInstance(result, 0).getClass();
+    // 	}
+    // 	return result;
+    // }
 
     // ***** not yet ok 
-    public static Class<?> getArrayWrapperCls(Class<?> cls) {
+    // public static Class<?> getArrayWrapperCls(Class<?> cls) {
 
-	if (cls.isArray()) {
-	    return getArrayWrapperCls(cls.getComponentType());
-	}
-	// Here, cls is no array class. 
-	return BasicTypesCompatibilityChecker.getWrapperCls(cls);
-    }
+    // 	if (cls.isArray()) {
+    // 	    return getArrayWrapperCls(cls.getComponentType());
+    // 	}
+    // 	// Here, cls is no array class. 
+    // 	return BasicTypesCompatibilityChecker.getWrapperCls(cls);
+    // }
 
     /**
      * Returns an empty array with type like <code>elemArray</code> 
      * with basic type replaced by its wrapper. 
      *
      * @param elemArray 
-     *    an array with elementary entry type 
+     *    a non-null array with elementary entry type 
      *    such as <code>double[][][]</code>. 
      * @return 
      *    an empty array with type like <code>elemArray</code> 
@@ -330,35 +331,32 @@ public class ArraysExt<E> {
      *    if <code>elemArray</code> is not an array 
      *    or if its entry type is not elementary 
      *    as e.g. for <code>new Integer(0)</code> 
-     *    or for <code>new Integer[][] {}</code>.  
+     *    or for <code>new Integer[][] {}</code>. 
+     * @throws NullPointerException 
+     *    if <code>elemArray</code> is <code>null</code>
      */
     private static Object[] createWrappedEmptyArray(Object elemArray) {
 
-	Object result;
 	int counter = 0;
 	Class<?> type = elemArray.getClass();
-	while (type.getComponentType() != null) {
+	while (type.isArray()) {
 	    counter++;
 	    type = type.getComponentType();
 	}
-	// Here, type is no longer an array type. 
+	assert !type.isArray();
+	assert type != null;
+	assert counter > 0;// if not, elemArray is no array or overflow 
 
-	try {
-	    result = Array
-	    .newInstance(BasicTypesCompatibilityChecker.getWrapperCls(type),
-			 0);
-	} catch (RuntimeException e) {// NOPMD
-	    if (BasicTypesCompatibilityChecker.getWrapperCls(type) == null ||
-		BasicTypesCompatibilityChecker.getWrapperCls(type) == Void.TYPE) {
-		 throw new IllegalArgumentException
-		     ("Expected array with basic type entries; found " + 
-		      elemArray + ". ");
-	    }
-	    throw e;
-	}
+	// throws IllegalArgumentException if type is not primitive or void 
+	Class<?> wrapperCls = BasicTypesCompatibilityChecker
+	    .getWrapperCls(type, false);
+	assert wrapperCls != null && wrapperCls != Void.TYPE;
+
+	Object result = Array.newInstance(wrapperCls, 0);
 	while (counter > 1) {
 	    counter--;
-	    result = Array.newInstance(result.getClass(),0);
+	    // no exception because class is neither null nor Void.TYPE 
+	    result = Array.newInstance(result.getClass(), 0);
 	}
 	return (Object[])result;
     }
@@ -368,7 +366,7 @@ public class ArraysExt<E> {
      * with basic type replaced by its wrapper. 
      *
      * @param wrappedArray 
-     *    an array with wrapper entry type 
+     *    a non-null array with wrapper entry type 
      *    such as <code>Double[][][]</code>. 
      * @return 
      *    an empty array with type like <code>wrapperArray</code> 
@@ -382,32 +380,27 @@ public class ArraysExt<E> {
      */
     private static Object createUnWrappedEmptyArray(Object[] wrappedArray) {
 
-	Object result;
 	int counter = 0;
 	Class<?> type = wrappedArray.getClass();
-	while (type.getComponentType() != null) {
+	while (type.isArray()) {
 	    counter++;
 	    type = type.getComponentType();
 	}
-	// Here, type is no longer an array type. 
+	assert !type.isArray();
+	assert type != null;
+	assert counter > 0;// except if overflow 
+	
+	// throws IllegalArgumentException 
+	// if type is void or doesn't wrap a primitive type
+	Class<?> wrappedCls = BasicTypesCompatibilityChecker
+	    .getWrappedCls(type, false);
+	assert wrappedCls != null && wrappedCls != Void.TYPE;
 
-	try {
-	    result = Array
-		.newInstance(BasicTypesCompatibilityChecker.getWrappedCls(type),
-			     0);
-	} catch (RuntimeException e) {// NOPMD
-	    if (BasicTypesCompatibilityChecker.getWrappedCls(type) == null ||
-		BasicTypesCompatibilityChecker.getWrapperCls(type) == Void.TYPE) {
-		 throw new IllegalArgumentException
-		     ("Expected array with wrapper type entries; found " + 
-		      wrappedArray + ". ");
-	    }
-	    throw e;
-	}
-
+	Object result = Array.newInstance(wrappedCls, 0);
 	while (counter > 1) {
 	    counter--;
-	    result = Array.newInstance(result.getClass(),0);
+	    // no exception because class is neither null or Void.TYPE 
+	    result = Array.newInstance(result.getClass(), 0);
 	}
 	return result;
     }
@@ -438,41 +431,46 @@ public class ArraysExt<E> {
 	if (elemArray == null) {
 	    return null;
 	}
-	
-	Object[] result;
-	// The following throws an exception, if elemArray is not an array. 
-	int len;
-	try {
-	    len = Array.getLength(elemArray);
-	} catch (IllegalArgumentException e) {
+
+	Class<?> arrCls = elemArray.getClass();
+	if (!arrCls.isArray()) {
 	    throw new IllegalArgumentException
 		("Required an array; found " + elemArray + ". ");
 	}
+
+	int len = Array.getLength(elemArray);
+
+
 	// Here, elemArray is an array and so compType is not null. 
-	Class<?> compType = elemArray.getClass().getComponentType();
-	Class<?> compWrapperType = BasicTypesCompatibilityChecker
-	    .getWrapperCls(compType);
-	if (compWrapperType == null) {
-	    // Here, the entry type is not elementary. 
+	Class<?> compType = arrCls.getComponentType();
+	if (compType.isPrimitive()) {
+	    // Here, the entry type of elemArray is primitive, 
+	    // e.g. elemArray has type int[]. 
+	    Class<?> compWrapperType = BasicTypesCompatibilityChecker
+		.getWrapperCls(compType, false);
+	    Object[] result = (Object[])Array.newInstance(compWrapperType,len);
+	    for (int i = 0; i < len; i++) {
+		// Automatically wrapped. 
+		result[i] = Array.get(elemArray, i);
+	    }
+	    return result;
+	} else {
+	    // Here, the entry type is not primitive. 
+	    assert compType.isArray();
+
 	    if (len == 0) {
 		return createWrappedEmptyArray(elemArray);
 	    }
-	    Object[] wrap0th = wrapArray(Array.get(elemArray,0));
-	    result = (Object[])Array.newInstance(wrap0th.getClass(),len);
+	    Object[] wrap0th = wrapArray(Array.get(elemArray, 0));
+	    Object[] result = (Object[])
+		Array.newInstance(wrap0th.getClass(), len);
 	    result[0] = wrap0th;
 	    for (int i = 1; i < len; i++) {
-		result[i] = wrapArray(Array.get(elemArray,i));
+		// wrapped recursively 
+		result[i] = wrapArray(Array.get(elemArray, i));
 	    }
-	} else {
-	    // Here, the entry type of elemArray is elementary, 
-	    // e.g. elemArray has type int[]. 
-	    result = (Object[])Array.newInstance(compWrapperType,len);
-	    for (int i = 0; i < len; i++) {
-		// Automatically wrapped. 
-		result[i] = Array.get(elemArray,i);
-	    }
+	    return result;
 	}
-	return result;
     }
 
     /**
@@ -599,9 +597,18 @@ public class ArraysExt<E> {
 	
 	int len = wrappedArray.length;
 	Class<?> compType = wrappedArray.getClass().getComponentType();
-	Class<?> compWrappedType = BasicTypesCompatibilityChecker
-	    .getWrappedCls(compType);
-	if (compWrappedType == null) {
+	if (BasicTypesCompatibilityChecker.wrapsPrimitive(compType)) {
+	    // Here, the entry type of elemArray is a wrapper, 
+	    // e.g. wrappedArray has type Integer[]. 
+	    Class<?> compWrappedType = BasicTypesCompatibilityChecker
+		.getWrappedCls(compType, false);
+	    Object result = Array.newInstance(compWrappedType, len);
+	    for (int i = 0; i < len; i++) {
+		// Automatically unwrapped. 
+		Array.set(result, i, wrappedArray[i]);
+	    }
+	    return result;
+	} else {
 	    // Here, the entry type is not a wrapper. 
 	    if (len == 0) {
 		// Here, elemArray is at least two dimensional, e.g. int[][0] 
@@ -620,15 +627,6 @@ public class ArraysExt<E> {
 	    result[0] = unWrap0th;
 	    for (int i = 1; i < len; i++) {
 		result[i] = unWrapArray((Object[])wrappedArray[i]);
-	    }
-	    return result;
-	} else {
-	    // Here, the entry type of elemArray is a wrapper, 
-	    // e.g. wrappedArray has type Integer[]. 
-	    Object result = Array.newInstance(compWrappedType,len);
-	    for (int i = 0; i < len; i++) {
-		// Automatically unwrapped. 
-		Array.set(result,i,wrappedArray[i]);
 	    }
 	    return result;
 	}

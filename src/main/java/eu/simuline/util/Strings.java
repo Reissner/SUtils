@@ -1,6 +1,8 @@
 
 package eu.simuline.util;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Collection of static methods related to strings. 
  * This class is required because class {@link String} is declared final. 
@@ -14,7 +16,8 @@ public abstract class Strings {
     /**
      * An ever growing buffer of blanks used by {@link #getBlanks(int)}. 
      */
-    private final static StringBuilder BLANKS = new StringBuilder();
+    private static WeakReference<StringBuilder> BLANKS = 
+	new WeakReference<StringBuilder>(new StringBuilder());
 
 
     /* -------------------------------------------------------------------- *
@@ -25,11 +28,17 @@ public abstract class Strings {
      * Returns a string consisting of the given number of blanks. 
      */
     public static String getBlanks(int num) {
-	while (BLANKS.length() < num) {
-	    BLANKS.append(' ');
+	StringBuilder blanks = BLANKS.get();
+	if (blanks == null) {
+	    blanks = new StringBuilder();
+	    BLANKS = new WeakReference<StringBuilder>(blanks);
 	}
-	assert BLANKS.length() >= num;
 
-	return BLANKS.substring(0,num);
+	while (blanks.length() < num) {
+	    blanks.append(' ');
+	}
+	assert blanks.length() >= num;
+
+	return blanks.substring(0, num);
     }
 }

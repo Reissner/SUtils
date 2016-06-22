@@ -6,8 +6,8 @@ package eu.simuline.util;
  * The core method is {@link #cast}: it performs the transformation. 
  * <p>
  * A simple example would be to transform {@link java.lang.Double}s 
- * into <code>rose.rodon.plugins.share.arithmetic.RealValue</code>s. 
- * Another example is given by {@link  #BASIC_TYPES}. 
+ * into <code>eu.simuline.arithmetics.left2right.FPNumber</code>s. 
+ * Another example is given by {@link #BASIC_TYPES}. 
  * It is the foundation to transform arrays of elementary types 
  * to arrays of their wrappers and the other way round 
  * such as <code>double[][]</code> and <code>Double[][]</code>. 
@@ -16,7 +16,7 @@ package eu.simuline.util;
  * A snippet of typical implementation for the {@link #cast}-method 
  * would be "<code>return new ExaClass(descriptor)</code>" in this case. 
  *
- * @author <a href="mailto:ernst@rig29.rose.de">Ernst Reissner</a>
+ * @author <a href="mailto:rei3ner@arcor.de">Ernst Reissner</a>
  * @version 1.0
  */
 public abstract class Caster {
@@ -118,9 +118,9 @@ public abstract class Caster {
      *    </ul>
      * @see BasicTypesCompatibilityChecker#areCompatible
      */
-    public abstract boolean areCompatible(Class<?> cls,Object obj);
+    public abstract boolean areCompatible(Class<?> cls, Object obj);
 
-    /**
+    /*
      * Provided the return value is not <code>null</code>, 
      * <code>cast(obj)</code> has to be either <code>null</code> 
      * or an instance of <code>targetClass(obj.getClass()))</code>. 

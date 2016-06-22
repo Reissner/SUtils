@@ -40,9 +40,9 @@ public class ArraysExtTest {
 	    testcase = 1;
 	    repetition = 1;
 	}
-	@Test public void testGetArrayCls() {
-	    ArraysExtTest.TEST.testGetArrayCls();	    
-	}
+	// @Test public void testGetArrayCls() {
+	//     ArraysExtTest.TEST.testGetArrayCls();	    
+	// }
 	@Test public void testCreateEmptyArray() 
 	    throws InvocationTargetException {
 	    ArraysExtTest.TEST.testCreateEmptyArray();	    
@@ -68,52 +68,52 @@ public class ArraysExtTest {
 
 
 
-    public void testGetArrayCls() {
+    // public void testGetArrayCls() {
 
-	Class<?> result = null;
+    // 	Class<?> result = null;
 
-	// testcase 1
-	//
-	// dim = 0 
-	//
-	step = System.currentTimeMillis();
-	for (int i = 0; i < repetition; i++) {
-	    result = ArraysExt.getArrayCls(Boolean.TYPE,0);
-	}
-	step = System.currentTimeMillis()-step;
+    // 	// testcase 1
+    // 	//
+    // 	// dim = 0 
+    // 	//
+    // 	step = System.currentTimeMillis();
+    // 	for (int i = 0; i < repetition; i++) {
+    // 	    result = ArraysExt.getArrayCls(Boolean.TYPE,0);
+    // 	}
+    // 	step = System.currentTimeMillis()-step;
 
-	assertEquals(Boolean.TYPE,result);
-	//reportTestCase(" getArrayCls:                 ");
-
-
-	// testcase 2
-	//
-	// dim = 0 
-	//
-	step = System.currentTimeMillis();
-	for (int i = 0; i < repetition; i++) {
-	    result = ArraysExt.getArrayCls(Boolean.TYPE,3);
-	}
-	step = System.currentTimeMillis()-step;
-
-	assertEquals(new boolean[][][] {}.getClass(),result);
-	//reportTestCase(" getArrayCls:                 ");
+    // 	assertEquals(Boolean.TYPE,result);
+    // 	//reportTestCase(" getArrayCls:                 ");
 
 
-	// testcase 3
-	//
-	// dim = 0 
-	//
-	step = System.currentTimeMillis();
-	for (int i = 0; i < repetition; i++) {
-	    result = ArraysExt.getArrayCls(Boolean.TYPE,2);
-	}
-	step = System.currentTimeMillis()-step;
+    // 	// testcase 2
+    // 	//
+    // 	// dim = 0 
+    // 	//
+    // 	step = System.currentTimeMillis();
+    // 	for (int i = 0; i < repetition; i++) {
+    // 	    result = ArraysExt.getArrayCls(Boolean.TYPE,3);
+    // 	}
+    // 	step = System.currentTimeMillis()-step;
 
-	assertEquals(new boolean[][] {}.getClass(),result);
-	//reportTestCase(" getArrayCls:                 ");
+    // 	assertEquals(new boolean[][][] {}.getClass(),result);
+    // 	//reportTestCase(" getArrayCls:                 ");
 
-    } // testGetArrayCls 
+
+    // 	// testcase 3
+    // 	//
+    // 	// dim = 0 
+    // 	//
+    // 	step = System.currentTimeMillis();
+    // 	for (int i = 0; i < repetition; i++) {
+    // 	    result = ArraysExt.getArrayCls(Boolean.TYPE,2);
+    // 	}
+    // 	step = System.currentTimeMillis()-step;
+
+    // 	assertEquals(new boolean[][] {}.getClass(),result);
+    // 	//reportTestCase(" getArrayCls:                 ");
+
+    // } // testGetArrayCls 
 
     /**
      * Tests for methods {@link ArraysExt#createWrappedEmptyArray} 
@@ -141,8 +141,8 @@ public class ArraysExtTest {
 	} catch(InvocationTargetException e) {
 	    step = System.currentTimeMillis()-step;
 	    assertEquals("java.lang.IllegalArgumentException: " + 
-			 "Expected array with basic type entries; found " + 
-			 emptyArray + ". ",
+			 "Expected primitive type but not void; " + 
+			 "found class java.lang.Integer. ",
 			 e.getCause().toString());
 	}
 	//reportTestCase(" createWrappedEmptyArray:     ");
@@ -161,10 +161,8 @@ public class ArraysExtTest {
 	    fail("exception expected. ");
 	} catch(InvocationTargetException e) {
 	    step = System.currentTimeMillis()-step;
-	    assertEquals("java.lang.IllegalArgumentException: " + 
-				"Expected array with basic type entries; found " + 
-				emptyArray + ". ",
-				e.getCause().toString());
+	    assertEquals("java.lang.AssertionError",
+			 e.getCause().toString());
 	}
 	//reportTestCase(" createWrappedEmptyArray:     ");
 
@@ -182,8 +180,7 @@ public class ArraysExtTest {
 	}
 	step = System.currentTimeMillis()-step;
 
-	assertArraysEquals(new Integer[] {},
-				  emptyArrayConv);
+	assertArraysEquals(new Integer[] {}, emptyArrayConv);
 	//reportTestCase(" createWrappedEmptyArray:  ");
 
 
@@ -200,8 +197,7 @@ public class ArraysExtTest {
 	}
 	step = System.currentTimeMillis()-step;
 
-	assertArraysEquals(new Integer[][][] {},
-				  emptyArrayConv);
+	assertArraysEquals(new Integer[][][] {}, emptyArrayConv);
 	//reportTestCase(" createWrappedEmptyArray:     ");
 
 
@@ -221,9 +217,9 @@ public class ArraysExtTest {
 	} catch(Exception e) {
 	    step = System.currentTimeMillis()-step;
 	    assertEquals("java.lang.IllegalArgumentException: " + 
-				"Expected array with wrapper type entries; found " + 
-				emptyArray + ". ",
-				e.getCause().toString());
+			 "Expected wrapper class of primitive type " + 
+			 "but not void; found class java.lang.Object. ",
+			 e.getCause().toString());
 	}
 	//reportTestCase(" createUnWrappedEmptyArray:   ");
 
@@ -309,8 +305,8 @@ public class ArraysExtTest {
 	} catch(Exception e) {
 	    step = System.currentTimeMillis()-step;
 	    assertEquals("java.lang.IllegalArgumentException: " + 
-			 "Expected array with basic type entries; found " + 
-			 dunWrapped + ". ",
+			 "Expected primitive type but not void; " + 
+			 "found class java.lang.Integer. ",
 			 e.toString());
 	}
 	//reportTestCase(" wrapArray:            ");
@@ -469,8 +465,8 @@ public class ArraysExtTest {
 	} catch(Exception e) {
 	    step = System.currentTimeMillis()-step;
 	    assertEquals("java.lang.IllegalArgumentException: " + 
-			 "Expected array with wrapper type entries; found " + 
-			 dwrapped + ". ",
+			 "Expected wrapper class of primitive type " + 
+			 "but not void; found int. ",
 			 e.toString());
 	}
 	//reportTestCase(" unWrapArray:          ");

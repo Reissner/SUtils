@@ -431,15 +431,16 @@ public class ArraysExt<E> {
 	if (elemArray == null) {
 	    return null;
 	}
+	assert elemArray != null;
 
 	Class<?> arrCls = elemArray.getClass();
 	if (!arrCls.isArray()) {
 	    throw new IllegalArgumentException
 		("Required an array; found " + elemArray + ". ");
 	}
+	assert arrCls.isArray();
 
-	int len = Array.getLength(elemArray);
-
+	int len = Array.getLength(elemArray);// no exception 
 
 	// Here, elemArray is an array and so compType is not null. 
 	Class<?> compType = arrCls.getComponentType();
@@ -456,8 +457,6 @@ public class ArraysExt<E> {
 	    return result;
 	} else {
 	    // Here, the entry type is not primitive. 
-	    assert compType.isArray();
-
 	    if (len == 0) {
 		return createWrappedEmptyArray(elemArray);
 	    }

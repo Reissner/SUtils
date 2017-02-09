@@ -22,7 +22,7 @@ import java.util.EnumSet;
  * @author <a href="mailto:ernst@local">Ernst Reissner</a>
  * @version 1.0
  */
-public class CollectionsExt<E> {
+public abstract class CollectionsExt<E> {
 
     /* -------------------------------------------------------------------- *
      * inner classes.                                                       *

@@ -763,7 +763,7 @@ public abstract class Finder {
      * printing their full names to <code>str</code>. 
      */
     public Finder print(PrintStream str) {
-	return new PrintFilter(Finder.this, str);
+	return new PrintFilter(this, str);
     }
 
     /**
@@ -771,7 +771,7 @@ public abstract class Finder {
      * For adding the most common filters, there are convenience methods. 
      */
     public Finder add(Filter filter) {
-	return new Secondary(Finder.this, filter);
+	return new Secondary(this, filter);
     }
 
     /**
@@ -780,7 +780,7 @@ public abstract class Finder {
      * @see #nameFilter(String)
      */
     public Finder name(String pattern) {
-	return Finder.this.add(nameFilter(pattern));
+	return add(nameFilter(pattern));
     }
 
     /**
@@ -792,7 +792,7 @@ public abstract class Finder {
      * @see #execFilter(String[])
      */
     public Finder exec(String[] cmd) {
-	return Finder.this.add(execFilter(cmd));
+	return add(execFilter(cmd));
     }
 
     /**
@@ -804,7 +804,7 @@ public abstract class Finder {
      * @see #execJavaFilter(Callable)
      */
     public Finder execJava(Callable callable) {
-	return Finder.this.add(execJavaFilter(callable));
+	return add(execJavaFilter(callable));
     }
 
     /**
@@ -816,7 +816,7 @@ public abstract class Finder {
      * @see Finder.Filter#not()
      */
     public Finder not(Filter filter) {
-	return Finder.this.add(filter.not());
+	return add(filter.not());
     }
 
     /**
@@ -828,7 +828,7 @@ public abstract class Finder {
      * @see Finder.Filter#and(Filter[])
      */
     public Finder and(Filter[] filters) {
-	return Finder.this.add(Filter.and(filters));
+	return add(Filter.and(filters));
     }
 
     /**
@@ -840,7 +840,7 @@ public abstract class Finder {
      * @see Finder.Filter#or(Filter[])
      */
     public Finder or(Filter[] filters) {
-	return Finder.this.add(Filter.or(filters));
+	return add(Filter.or(filters));
     }
 
     /* -------------------------------------------------------------------- *

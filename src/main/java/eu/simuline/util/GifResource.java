@@ -27,7 +27,7 @@ import org.javalobby.icons20x20.Hammer;
  * @author <a href="mailto:ernst@">Ernst Reissner</a>
  * @version 1.0
  */
-public class GifResource {
+public abstract class GifResource {
 
     /* -------------------------------------------------------------------- *
      * private class constants.                                             *

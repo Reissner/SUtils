@@ -1177,9 +1177,9 @@ this.handler.processingInstruction(null, null);
 	// Skip whitespaces 
 	this.currChar = this.buffer.readChar();
 	while (Character.isWhitespace((char) this.currChar)) {
-	    SGMLParser.this.buffer.
+	    this.buffer.
 		readStringBuffer(TEST_NO_WHITESPACE, WHITESP_IN_ATTR);
-	    SGMLParser.this.currChar = this.buffer.readChar();
+	    this.currChar = this.buffer.readChar();
 	}
 
 	AttributesWrapper attributesWrapper = new AttributesWrapper();
@@ -1191,9 +1191,9 @@ this.handler.processingInstruction(null, null);
 
 	    // Skip whitespaces 
 	    while (Character.isWhitespace((char) this.currChar)) {
-		SGMLParser.this.buffer
+		this.buffer
 		    .readStringBuffer(TEST_NO_WHITESPACE, WHITESP_IN_ATTR);
-		SGMLParser.this.currChar = this.buffer.readChar();
+		this.currChar = this.buffer.readChar();
 	    }
 	} // end parsing attribute list 
 //System.out.println("-this.currChar: |"+(char)this.currChar+"|");

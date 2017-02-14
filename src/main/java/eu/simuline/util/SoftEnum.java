@@ -174,7 +174,7 @@ public abstract class SoftEnum<E extends SoftEnum<E>>
      *
      * @return (never returns)
      */
-    protected final Object clone() throws CloneNotSupportedException {
+    public final SoftEnum clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
     }
 

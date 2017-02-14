@@ -1584,7 +1584,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      *     a clone of this <code>CyclicArrayList</code>. 
      *     This includes copying <code>vertices</code>. 
      */
-    public Object clone() /* NOPMD */ throws CloneNotSupportedException {
+    public CyclicArrayList clone() throws CloneNotSupportedException {
 	CyclicArrayList<E> res = (CyclicArrayList<E>)super.clone();
 	res.list.clear();// = (List<E>)((ArrayList<E>)this.list).clone();
 	res.list.addAll((List<E>)((ArrayList<E>)this.list).clone());

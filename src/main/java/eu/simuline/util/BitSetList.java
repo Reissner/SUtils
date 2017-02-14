@@ -644,9 +644,9 @@ System.out.println("ret"+ret);
 */
 
 
-    protected Object clone() throws CloneNotSupportedException {
-	BitSetList res = (BitSetList)super.clone();
-	res.wrapped    = (BitSet    )this .clone();
+    public BitSetList clone() throws CloneNotSupportedException {
+	BitSetList res = (BitSetList)super       .clone();
+	res.wrapped    = (BitSet    )this.wrapped.clone();
 
 // 	res.test = (List<Integer>)((ArrayList<Integer>)this.test).clone();
  	assert res.size == this.size;

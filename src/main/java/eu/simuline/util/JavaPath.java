@@ -91,7 +91,7 @@ public class JavaPath {
     /**
      * Determines whether a class file or a source file is meant. 
      */
-    public static enum ClsSrc {
+    public enum ClsSrc {
 	Class {
 	    String fileEnding() {
 		return ".class";
@@ -142,7 +142,7 @@ public class JavaPath {
      * Accordingly, there are two implementations, 
      * {@link JavaPath.OrdFileWrapper} and {@link JavaPath.ZipEntryWrapper}. 
      */
-    static interface FileWrapper {
+    interface FileWrapper {
 
 	/**
 	 * Returns whether the wrapped file is within a zip-archive. 

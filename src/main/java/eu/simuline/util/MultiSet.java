@@ -30,7 +30,7 @@ public interface MultiSet<T> extends Iterable<T> {
     /**
      * Represents the multiplicity of an entry of the enclosing multi-set. 
      */
-    public interface Multiplicity extends Comparable<Multiplicity> {
+    interface Multiplicity extends Comparable<Multiplicity> {
 
 	/**
 	 * Sets the multiplicity wrapped by this object 
@@ -42,7 +42,7 @@ public interface MultiSet<T> extends Iterable<T> {
 	 * @throws IllegalArgumentException 
 	 *    if <code>mult</code> is not strictly positive. 
 	 */
-	public int set(int mult);
+	int set(int mult);
 
 	/**
 	 * Adds the specified multiplicity (which may well be negative) 
@@ -59,12 +59,12 @@ public interface MultiSet<T> extends Iterable<T> {
 	 *    if <code>this.mult + mult == 0</code> holds. 
 	 *    This cannot occur: if it does this is a bug within this class. 
 	 */
-	public int add(int mult);
+	int add(int mult);
 
 	/**
 	 * Returns the wrapped multiplicity. 
 	 */
-	public int get();
+	int get();
 
 	/**
 	 * Defines the natural ordering on natural numbers. 
@@ -80,10 +80,7 @@ public interface MultiSet<T> extends Iterable<T> {
 	 *    if <code>mult</code> is neither <code>null</code> 
 	 *    nor an instance of {@link MultiSet.Multiplicity}. 
 	 */
-	public int compareTo(Multiplicity mult);
-
-
-
+	int compareTo(Multiplicity mult);
     } // class Multiplicity 
 
     /* -------------------------------------------------------------------- *
@@ -148,7 +145,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @return 
      *    whether this multiple set contains no element. 
      */
-    public boolean isEmpty();
+    boolean isEmpty();
 
 
     /**
@@ -162,7 +159,7 @@ public interface MultiSet<T> extends Iterable<T> {
      *    or <code>null</code> if this multiple set is empty. 
      * @see #isEmpty
      */
-    public Object getObjWithMaxMult();
+    Object getObjWithMaxMult();
 
     /**
      * Returns the maximal multiplicity of an element in this set. 
@@ -174,7 +171,7 @@ public interface MultiSet<T> extends Iterable<T> {
      *    In particular this is <code>0</code> 
      *    if and only if this set is empty. 
      */
-    public int getMaxMult();
+    int getMaxMult();
 
     /**
      * Returns the multiplicity 
@@ -192,7 +189,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @see #setMultiplicity(Object, int)
      * @see #getMultiplicityObj(Object)
      */
-    public int getMultiplicity(Object obj);
+    int getMultiplicity(Object obj);
 
     /**
      * Returns the multiplicity object of the given object in this set 
@@ -209,7 +206,7 @@ public interface MultiSet<T> extends Iterable<T> {
      *    for <code>obj==null</code>. 
      * @see #getMultiplicity(Object)
      */
-    public Multiplicity getMultiplicityObj(Object obj);
+    Multiplicity getMultiplicityObj(Object obj);
 
     /**
      * Returns <tt>true</tt> if this <code>MultiSet</code> 
@@ -227,7 +224,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @throws NullPointerException
      *    for <code>obj==null</code>. 
      */
-    public boolean contains(Object obj);
+    boolean contains(Object obj);
 
     /**
      * Returns an iterator over the elements in this collection 
@@ -244,7 +241,7 @@ public interface MultiSet<T> extends Iterable<T> {
      *    an <tt>Iterator</tt> over the elements in this collection 
      *    considering each element exactly once ignoring its multiplicity. 
      */
-    public MultiSetIterator<T> iterator();
+    MultiSetIterator<T> iterator();
 
     /**
      * Returns an array containing all of the elements 
@@ -268,7 +265,7 @@ public interface MultiSet<T> extends Iterable<T> {
      *    an array containing all of the elements in this collection 
      * @see #iterator
      */
-    public Object[] toArray();
+    Object[] toArray();
 
     /**
      * Returns an array containing all of the elements 
@@ -328,7 +325,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @throws NullPointerException 
      *    if the specified array is <tt>null</tt>. 
      */
-    public T[] toArray(T[] arr);
+    T[] toArray(T[] arr);
     // Modification Operations
 
     /**
@@ -347,7 +344,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public int addWithMult(T obj);
+    int addWithMult(T obj);
 
     /**
      * Increases the multiplicity of <code>obj</code> 
@@ -370,7 +367,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public int addWithMult(T obj, int addMult);
+    int addWithMult(T obj, int addMult);
 
     /**
      * Adds <code>obj</code> to this <code>MultiSet</code>. 
@@ -413,7 +410,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public boolean add(T obj);
+    boolean add(T obj);
 
     /**
      * Decrements the multiplicity of <code>obj</code> 
@@ -434,7 +431,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public int removeWithMult(Object obj);
+    int removeWithMult(Object obj);
 
     /**
      * Decreases the multiplicity of <code>obj</code> 
@@ -459,13 +456,13 @@ public interface MultiSet<T> extends Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public int removeWithMult(Object obj,int removeMult);
+    int removeWithMult(Object obj,int removeMult);
 
     /**
      * Removes <em>all</em> instances of the specified element from this 
      * <code>MultiSet</code>, if it is present with nontrivial multiplicity. 
-     * More formally,
-     * immediately after having (successively) invoked <code>s.remove(o)</code>, 
+     * More formally, immediately after having (successively) invoked 
+     * <code>s.remove(o)</code>, 
      * the condition <code>s.contains(o) == false</code> is satisfied. 
      * Returns true if this <code>MultiSet</code> contained the specified 
      * element (or equivalently, if (the underlying set of) 
@@ -482,7 +479,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public boolean remove(Object obj);
+    boolean remove(Object obj);
 
     /**
      * Sets the multiplicity of <code>obj</code> to the value 
@@ -501,7 +498,7 @@ public interface MultiSet<T> extends Iterable<T> {
      *    if this <code>MultiSet</code> does not support this method. 
      * @see #getMultiplicity(Object)
      */
-    public int setMultiplicity(T obj,int newMult);
+    int setMultiplicity(T obj,int newMult);
 
     // Bulk Operations
 
@@ -522,7 +519,7 @@ public interface MultiSet<T> extends Iterable<T> {
      *    if the specified collection is <tt>null</tt>.
      * @see #contains(Object)
      */
-    public boolean containsAll(Collection<?> coll);
+    boolean containsAll(Collection<?> coll);
 
     /**
      * Adds <code>mvs</code> elementwise to this multi set 
@@ -539,7 +536,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public boolean addAll(MultiSet<? extends T> mvs);
+    boolean addAll(MultiSet<? extends T> mvs);
 
     /**
      * Adds <code>set</code> elementwise to this multi set 
@@ -556,7 +553,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public boolean addAll(Set<? extends T> set);
+    boolean addAll(Set<? extends T> set);
 
     /**
      * Removes all this <code>MultiSet</code>'s elements 
@@ -576,7 +573,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @see #remove(Object)
      * @see #contains(Object)
      */
-    public boolean removeAll(Collection<?> coll);
+    boolean removeAll(Collection<?> coll);
 
     /**
      * Retains only the elements in this <code>MultiSet</code> 
@@ -597,7 +594,8 @@ public interface MultiSet<T> extends Iterable<T> {
      * @see #remove(Object)
      * @see #contains(Object)
      */
-    public boolean retainAll(Collection<?> coll);
+    boolean retainAll(Collection<?> coll);
+
     /**
      * Removes all of the elements from this <code>MultiSet</code>. 
      * This <code>MultiSet</code> will be empty after this method returns. 
@@ -605,7 +603,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public void clear();
+    void clear();
 
     /**
      * Returns a view of the underlying set of this <code>MultiSet</code>. 
@@ -617,13 +615,13 @@ public interface MultiSet<T> extends Iterable<T> {
      *    with strictly positive multiplicity in this <code>MultiSet</code>. 
      * @see HashMultiSet.Immutable#getSet()
      */
-    public Set<T> getSet();
+    Set<T> getSet();
 
     /**
      * Returns a view of the underlying map of this <code>MultiSet</code> 
      * as a map mapping each entry to its multiplicity. 
      */
-    public Map<T, Multiplicity> getMap();
+    Map<T, Multiplicity> getMap();
 
     /**
      * Returns a Set view of the mapping 
@@ -644,9 +642,9 @@ public interface MultiSet<T> extends Iterable<T> {
      * It does not support the methods 
      * {@link #add(Object)} or {@link Set#addAll(Collection)}. 
      */
-    public Set<Map.Entry<T,Multiplicity>> getSetWithMults();
+    Set<Map.Entry<T,Multiplicity>> getSetWithMults();
 
-    public String toString();
+    String toString();
 
     /**
      * Returns <code>true</code> if and only if <code>obj</code> 
@@ -662,7 +660,7 @@ public interface MultiSet<T> extends Iterable<T> {
      *    and contains the same elements with the same multiplicities 
      *    as this one. 
      */
-    public boolean equals(Object obj);
+    boolean equals(Object obj);
 
-    public int hashCode();
+    int hashCode();
 }

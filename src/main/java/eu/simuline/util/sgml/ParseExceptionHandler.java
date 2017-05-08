@@ -59,8 +59,7 @@ public interface ParseExceptionHandler {
      *    whether the ordering of the attribute list is significant. 
      *    The former occurence of the attribute is lost. **** is this true? 
      */
-    public void foundMultipleAttribute(String attrName,
-				       Object oldAttrValue);
+    void foundMultipleAttribute(String attrName, Object oldAttrValue);
 
     /**
      * Notifies that an illegal character was found in a tag *****. 
@@ -70,7 +69,7 @@ public interface ParseExceptionHandler {
      * @param chr 
      *    the illegal <code>char</code> value. 
      */
-    public void foundIllegalCharInTag(char chr);
+    void foundIllegalCharInTag(char chr);
 
     /**
      * Notifies that a character was found after the "/" of an end tag. 
@@ -79,9 +78,9 @@ public interface ParseExceptionHandler {
      * @param chr 
      *    the illegal <code>char</code> value. 
      */
-    public void foundCharAfterEndOfEndTag(char chr);
+    void foundCharAfterEndOfEndTag(char chr);
 
     // ****** would need an argument 
-    public void foundUnexpectedEndOfDocument();
+    void foundUnexpectedEndOfDocument();
     
 } // ParseExceptionHandler

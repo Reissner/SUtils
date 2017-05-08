@@ -35,13 +35,13 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      *    in this <code>SortedMultiSet</code>. 
      * @see HashMultiSet.Immutable#getSet()
      */
-    public SortedSet<T> getSet();
+    SortedSet<T> getSet();
 
     /**
      * Returns a view of the underlying map of this <code>MultiSet</code> 
      * as a map mapping each entry to its multiplicity. 
      */
-    public NavigableMap<T, Multiplicity> getMap();
+    NavigableMap<T, Multiplicity> getMap();
 
     /**
      * Returns the comparator used to order the elements in this set, 
@@ -53,7 +53,7 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      *    or <code>null</code> 
      *    if this set uses the natural ordering of its elements. 
      */
-    public Comparator<? super T> comparator();
+    Comparator<? super T> comparator();
 
     /**
      * Returns the first (lowest) element currently in this set.
@@ -63,7 +63,7 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      * @throws NoSuchElementException
      *    if this set is empty. 
      */
-    public T first();
+    T first();
 
     /**
      * Returns the last (highest) element currently in this set.
@@ -73,7 +73,7 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      * @throws NoSuchElementException
      *    if this set is empty. 
      */
-    public T last();
+    T last();
 
     /**
      * Returns a view of the portion of this multi-set 
@@ -108,7 +108,7 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      *    if this multi-set itself has a restricted range, 
      *    and <code>toElement</code> lies outside the bounds of the range. 
      */
-    public MultiSet<T> headSet(T toElement);
+    MultiSet<T> headSet(T toElement);
 
     /**
      * Returns a view of the portion of this multi-set 
@@ -143,7 +143,7 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      *    if this multi-set itself has a restricted range, 
      *    and <code>fromElement</code> lies outside the bounds of the range. 
      */
-    public MultiSet<T> tailSet(T fromElement);
+    MultiSet<T> tailSet(T fromElement);
 
     /**
      * Returns a view of the portion of this multi-set 
@@ -189,6 +189,6 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      *    and <code>fromElement</code> or <code>toElement</code> 
      *    lies outside the bounds of the range. 
      */
-    public MultiSet<T> subSet(T fromElement, T toElement);
+    MultiSet<T> subSet(T fromElement, T toElement);
 
 }

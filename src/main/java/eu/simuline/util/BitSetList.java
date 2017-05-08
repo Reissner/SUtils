@@ -409,7 +409,7 @@ System.out.println("ret"+ret);
 */
 //assert ret == this.test.get(index);
 	//assert this.test.equals(this);
-	return ret;
+	return ret;// NOPMD
     }
 
     /**

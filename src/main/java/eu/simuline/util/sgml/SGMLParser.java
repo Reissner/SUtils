@@ -13,6 +13,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import java.util.Locale;
 
 /**
  * A rudimentary <code>SGML</code> parser with something like a SAX-api. 
@@ -674,7 +675,7 @@ public class SGMLParser {
 	    qName = SGMLParser.this.buffer.
 		readStringBuffer(TEST_BLANK_EQUALS_GT, ATTR_NAME);
 	    qName.insert(0, (char) SGMLParser.this.currChar);
-	    attName = qName.toString().toLowerCase();
+	    attName = qName.toString().toLowerCase(Locale.ENGLISH);
 //System.out.println("attName: |"+attName+"|");
 	    
 	    // Here, the attribute may have a value or not. 

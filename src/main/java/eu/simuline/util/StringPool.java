@@ -12,5 +12,5 @@ package eu.simuline.util;
  */
 public interface StringPool {// NOPMD
 
-    public final static String FULL_STOP = ". ";
+    String FULL_STOP = ". ";
 }

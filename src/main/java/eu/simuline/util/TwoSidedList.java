@@ -63,7 +63,7 @@ public class TwoSidedList<E> implements List<E> {
      * from this list 
      * to determine in which direction this list has to shrink or grow. 
      */
-    public static enum Direction {
+    public enum Direction {
 	Left2Right {
 	    // api-docs provided by javadoc 
 	    void checkRange(int ind, TwoSidedList list) {

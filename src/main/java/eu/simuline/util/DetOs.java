@@ -1,6 +1,8 @@
 
 package eu.simuline.util;
 
+import java.util.Locale;
+
 /**
  * Enumerates the most important operating system 
  * and determines the current operating system. 
@@ -55,7 +57,7 @@ public enum DetOs {
      * @see System#getProperty(String)
      */
     private static String osString() {
-	return  System.getProperty("os.name").toLowerCase();
+	return  System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
     }
 
     /**

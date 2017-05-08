@@ -261,8 +261,8 @@ public abstract class SoftEnum<E extends SoftEnum<E>>
     /**
      * prevent default deserialization
      */
-    private void readObject(ObjectInputStream in) throws IOException,
-        ClassNotFoundException {
+    private void readObject(ObjectInputStream stream) 
+	throws IOException, ClassNotFoundException {
         throw new InvalidObjectException("can't deserialize enum");
     }
 

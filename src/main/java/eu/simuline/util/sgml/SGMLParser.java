@@ -1041,13 +1041,13 @@ public class SGMLParser {
      * but delegates everything inside a tag or a processing instruction 
      * to {@link #parseTagOrPI}. 
      *
-     * @param inSource 
+     * @param src 
      *    an <code>InputSource</code>. 
      * @exception IOException if an error occurs
      * @exception SAXException if an error occurs
      */
-    void parse(InputSource inSource) throws IOException, SAXException {
-	parse(inSource.getCharacterStream());
+    void parse(InputSource src) throws IOException, SAXException {
+	parse(src.getCharacterStream());
     }
 
     /**

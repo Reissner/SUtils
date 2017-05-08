@@ -10,7 +10,7 @@ package eu.simuline.util;
  * @author <a href="mailto:ernst@">Ernst Reissner</a>
  * @version 1.0
  */
-public interface StringPool {// NOPMD
+public class StringPool {// NOPMD
 
-    String FULL_STOP = ". ";
+    public final static String FULL_STOP = ". ";
 }

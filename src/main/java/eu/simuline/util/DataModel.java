@@ -65,7 +65,7 @@ public enum DataModel {
      */
     public static DataModel getDataModel(boolean retNull) {
 	String code = System.getProperty("sun.arch.data.model");
-	DataModel dataModel = null;
+	//DataModel dataModel = null;
 	for (DataModel cand : DataModel.values()) {
 	    if (cand.code.equals(code)) {
 		return cand;

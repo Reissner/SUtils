@@ -348,7 +348,7 @@ public class TwoSidedList<E> implements List<E> {
      * remove(int ind, Direction) **** is this correct? 
      * -->
      */
-    private void checkRange(int ind) {
+    void checkRange(int ind) {
 	checkRange("",ind,this.firstIndex,minFreeIndex());
     }
 
@@ -471,7 +471,7 @@ public class TwoSidedList<E> implements List<E> {
      *    if incrementing {@link #minFreeIndex()} 
      *    would cause overrun of {@link #minFreeIndex()}. 
      */
-    private void checkIncMinFreeIndex() {
+    void checkIncMinFreeIndex() {
 	if (minFreeIndex() == Integer.MAX_VALUE) {
 	    throw new IllegalStateException
 		("Adding an object at the tail of this list " + 
@@ -509,7 +509,7 @@ public class TwoSidedList<E> implements List<E> {
      *    to this list **** or at the tail of this list 
      *    would cause overrun of {@link #minFreeIndex()}. 
      */
-    private void checkMinFreeIndex(int numAdded) {
+    void checkMinFreeIndex(int numAdded) {
 	assert  numAdded >= 0;
 	if (minFreeIndex() > minFreeIndex()+numAdded) {
 	    throw new IllegalStateException

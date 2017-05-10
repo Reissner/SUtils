@@ -23,7 +23,10 @@ import java.util.Locale;
  */
 public class SGMLParser {
 
-	private final static String QUOTE_DOT = "\". ";
+    private final static String QUOTE_DOT = "\". ";
+    private final static char   SYMB_EQ   = '=';
+    private final static char   SYMB_COMMENT = '-';
+    private final static char   SYMB_TAG = '<';
 
     /* --------------------------------------------------------------------- *
      * inner classes                                                         *
@@ -690,7 +693,7 @@ public class SGMLParser {
 	    }
 
 	    // Here is the decision whether a value is provided or not. 
-	    if (SGMLParser.this.currChar != '=') {
+	    if (SGMLParser.this.currChar != SYMB_EQ) {
 		// Here, no value may be given 
 		attributes.addAttribute(attName, AttributesImpl.NO_VALUE);
 //System.out.println("attName: |"+attName+"|");
@@ -755,7 +758,7 @@ public class SGMLParser {
 
 	    SGMLParser.this.currChar = //NOPMD
 		SGMLParser.this.buffer.readChar();
-	    if (SGMLParser.this.currChar != '-') {
+	    if (SGMLParser.this.currChar != SYMB_COMMENT) {
 		//int numRead = 
 		SGMLParser.this.buffer.readArray(TEST_GT);
 		SGMLParser.this.buffer.getStartAndMove();
@@ -765,7 +768,7 @@ public class SGMLParser {
 
 	    SGMLParser.this.currChar = //NOPMD
 		SGMLParser.this.buffer.readChar();
-	    if (SGMLParser.this.currChar != '-') {
+	    if (SGMLParser.this.currChar != SYMB_COMMENT) {
 		throw new SAXParseException
 		    ("Comments must start with \"<!--\" but found " 
 		     + "\"<!-" + (char) SGMLParser.this.currChar + QUOTE_DOT, 
@@ -840,7 +843,7 @@ public class SGMLParser {
 	    }
 
 	    // Here is the decision whether a value is provided or not. 
-	    if (SGMLParser.this.currChar != '=') {
+	    if (SGMLParser.this.currChar != SYMB_EQ) {
 		// Here, a value is missing. 
 		throw new SAXParseException
 		    ("Missing value for attribute \"" 
@@ -1068,7 +1071,7 @@ public class SGMLParser {
 	this.contentHandler.startDocument();
 	while (numRead != -1) {
 	    this.currChar = this.buffer.readChar();// the '<' char? 
-	    if (this.currChar == '<') {
+	    if (this.currChar == SYMB_TAG) {
 		// a tag or a PI. 
 		numRead = parseTagOrPI();
 	    } else {

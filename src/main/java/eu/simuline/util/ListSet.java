@@ -509,7 +509,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      *    This case implies that neither are <code>null</code>. 
      *    </ul>
      */
-    private final boolean isSortedWithSameComparator(Collection<?> coll) {
+    private boolean isSortedWithSameComparator(Collection<?> coll) {
 	if (!(coll instanceof SortedSet)) {
 	    return false;
 	}
@@ -569,7 +569,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      * @return
      *    whether <code>list1</code> had been modified. 
      */
-    private final boolean addList(List<E> list1, List<E> list2) {
+    private boolean addList(List<E> list1, List<E> list2) {
 	
 	switch (list2.size()) {// NOPMD
 	    case  0:

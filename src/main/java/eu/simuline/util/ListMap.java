@@ -605,7 +605,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
      * This ordering reflects the ordering 
      * given by the iteration on the key set of <code>map</code>. 
      */
-    private final static <K,V> ListSet<K> map2keys(Map<K,V> map) {
+    private static <K,V> ListSet<K> map2keys(Map<K,V> map) {
 	ListSet<K> res = ListSet.sortedAsAdded();
 	res.addAll(map.keySet());
 	return res;
@@ -619,7 +619,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
      * that this ordering is the same as the one 
      * of the value collection {@link Map#values() map#values()}. **** 
      */
-    private final static <K,V> List<V> map2values(Map<K,V> map) {
+    private static <K,V> List<V> map2values(Map<K,V> map) {
 	List<V> res = new ArrayList<V>();
 	// **** using entrySet() would be more elegant, 
 	// but seems not to guarantee an ordering of iteration. 

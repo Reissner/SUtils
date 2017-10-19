@@ -16,7 +16,7 @@ package eu.simuline.util;
  * A snippet of typical implementation for the {@link #cast}-method 
  * would be "<code>return new ExaClass(descriptor)</code>" in this case. 
  *
- * @author <a href="mailto:rei3ner@arcor.de">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public abstract class Caster {

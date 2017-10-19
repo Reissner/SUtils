@@ -49,7 +49,7 @@ import java.util.ArrayList;
  *
  * Created: Sun Aug 26 23:25:26 2007
  *
- * @author <a href="mailto:rei3ner@arcor.de">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public class TwoSidedList<E> implements List<E> {

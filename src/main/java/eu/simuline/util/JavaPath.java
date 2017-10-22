@@ -514,7 +514,7 @@ System.out.println("locFileName: "+locFileName);
 	System.out.println("tt: "+new JavaPath("/home/ernst"));
 	System.out.println("tt: "+new JavaPath("/home/ernst:/usr/bin"));
 
-	//JavaPath jPath = new JavaPath("/home/ernst/Software/src/");
+	//JavaPath jPath = new JavaPath("/home/ernst/.../src/");
 /*
 	System.out.println("tt: "+
 			   jPath.getFile(AddArrays.class,ClsSrc.Class));

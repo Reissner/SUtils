@@ -31,7 +31,7 @@ public abstract class Caster {
      */
     public final static Caster ASSIGNEMENT_COMPATIBLE = new Trivial() {
 	     
-	    public boolean areCompatible(final Class cls, final Object obj) {
+	    public boolean areCompatible(final Class<?> cls, final Object obj) {
 		return cls.isInstance(obj);
 	    }
 	}; // ASSIGNEMENT_COMPATIBLE 
@@ -41,7 +41,7 @@ public abstract class Caster {
      * is equality of classes. 
      */
     public final static Caster STRICT = new Trivial() {
-	    public boolean areCompatible(final Class cls, final Object obj) {
+	    public boolean areCompatible(final Class<?> cls, final Object obj) {
 		return cls == obj.getClass();
 	    }
 	}; // STRICT 
@@ -68,7 +68,7 @@ public abstract class Caster {
 	     * @return 
 	     *    see {@link BasicTypesCompatibilityChecker#areCompatible}. 
 	     */
-	    public boolean areCompatible(final Class cls, final Object obj) {
+	    public boolean areCompatible(final Class<?> cls, final Object obj) {
 		return BasicTypesCompatibilityChecker.areCompatible(cls,obj);
 	    }
 	}; // BASIC_TYPES 

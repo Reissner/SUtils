@@ -637,7 +637,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	    if (!(other instanceof CyclicIterator)) {
 		return false; 
 	    }
-	    CyclicIterator<E> otherIter = (CyclicIterator<E>)other;
+	    CyclicIterator<?> otherIter = (CyclicIterator<?>)other;
 	    return  this.cal.equals(otherIter.getCyclicList()) && 
 		this.getFirstIndex() == otherIter.getFirstIndex() &&
 		this.getIndex()      == otherIter.getIndex();
@@ -662,7 +662,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	 *    This imposes that the lengths of the sequences coincide. 
 	 *    The elements in the sequence may well be <code>null</code>. 
 	 */
-	public boolean retEquals(CyclicIterator<E> other) {
+	public boolean retEquals(CyclicIterator<?> other) {
 
 	    while (this.hasNext() && other.hasNext()) {
 		// Here, this.hasNext() and other.hasNext(). 
@@ -1082,7 +1082,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	    return false;
 	}
 
-	CyclicList<E> other = (CyclicList<E>)obj;
+	CyclicList<?> other = (CyclicList<?>)obj;
 	return this.asList().equals(other.asList());
     }
 
@@ -1115,7 +1115,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	    return false;
 	}
 
-	CyclicList<E> other = (CyclicList<E>)obj;
+	CyclicList<?> other = (CyclicList<?>)obj;
 	if (this.size() != other.size()) {
 	    return false;
 	}
@@ -1126,8 +1126,8 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	}
 	// Here, the two lists of points have the same, positive size. 
 
-	CyclicIterator<E> thisIt;
-	CyclicIterator<E> otherIt;
+	CyclicIterator<?> thisIt;
+	CyclicIterator<?> otherIt;
 	for (int i = 0; i < this.size(); i++) {
 	    thisIt  = this .cyclicIterator(i);
 	    otherIt = other.cyclicIterator(0);
@@ -1584,7 +1584,7 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
      *     a clone of this <code>CyclicArrayList</code>. 
      *     This includes copying <code>vertices</code>. 
      */
-    public CyclicArrayList clone() throws CloneNotSupportedException {
+    public CyclicArrayList<E> clone() throws CloneNotSupportedException {
 	CyclicArrayList<E> res = (CyclicArrayList<E>)super.clone();
 	res.list.clear();// = (List<E>)((ArrayList<E>)this.list).clone();
 	res.list.addAll((List<E>)((ArrayList<E>)this.list).clone());

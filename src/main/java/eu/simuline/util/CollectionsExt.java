@@ -709,7 +709,7 @@ public abstract class CollectionsExt<E> {
 	    throw new UnsupportedOperationException();
 	}
 
-	public boolean retEquals(CyclicIterator<E> other) {
+	public boolean retEquals(CyclicIterator<?> other) {
 	    throw new NotYetImplementedException();
 	}
 
@@ -1025,8 +1025,8 @@ public abstract class CollectionsExt<E> {
      *    </ul>
      * @see ArraysExt#recAsList(Object,Class)
      */
-    public static Object recToArray(Object source,Class cls) {
-	return recToArray(source,cls,Caster.BASIC_TYPES);
+    public static Object recToArray(Object source, Class<?> cls) {
+	return recToArray(source, cls, Caster.BASIC_TYPES);
     }
 
     /**

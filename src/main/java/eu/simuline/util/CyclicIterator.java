@@ -296,7 +296,7 @@ public interface CyclicIterator<E> extends Iterator<E> {
     void refresh();
 
     //boolean equals(Object other);
-    boolean retEquals(CyclicIterator<E> other);
+    boolean retEquals(CyclicIterator<?> other);
 
     /**
      * Returns <code>false</code> if <code>other</code> is not an instance of 

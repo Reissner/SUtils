@@ -36,7 +36,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
      * -------------------------------------------------------------------- */
 
     /**
-     * Class of entries of the enclosing map. 
+     * Class of entries of the encylosing map. 
      * **** I wonder whether there is no generic implementation 
      * for {@link java.util.Map.Entry}. 
      */
@@ -119,7 +119,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 		return false;
 	    }
 
-	    Map.Entry<K,V> other = (Map.Entry<K,V>)obj;
+	    Map.Entry<?,?> other = (Map.Entry<?,?>)obj;
 	    return Objects.equals(this.getKey(),   other.getKey()) 
 		&& Objects.equals(this.getValue(), other.getValue());
 	}
@@ -255,7 +255,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
      *
      * @see ListMap#entrySet
      */
-    private class Entries 
+    private class Entries
 	extends  AbstractSet<Map.Entry<K,V>> 
 	implements SortedSet<Map.Entry<K,V>> {
 
@@ -288,8 +288,8 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 	 *    if <code>obj</code> is neither <code>null</code> 
 	 *    nor an instance of {@link java.util.Map.Entry}. 
 	 */
-	private K getKey(Object obj) {
-	    Map.Entry<K,V> entry = (Map.Entry<K,V>) obj;
+	private Object getKey(Object obj) {
+	    Map.Entry<?,?> entry = (Map.Entry<?,?>) obj;
 	    return entry.getKey();
 	}
 
@@ -324,7 +324,9 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 	    if (!(obj instanceof Map.Entry)) {
 		return false;
 	    }
-	    return ListMap.this.keysSet.remove(getKey(obj));
+	    Map.Entry<?,?> entry = (Map.Entry<?,?>)obj;
+	    entry.getClass().getTypeParameters();
+	    return ListMap.this.keysSet.remove(getKey(entry));
         }
 
 	/**
@@ -581,8 +583,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
      * as described by {@link ListSet#sortedAsAdded()}. 
      */
     public ListMap() {
-	// **** cast should be superfluous **** 
-	this((ListSet<K>)ListSet.sortedAsAdded(), new ArrayList<V>());
+	this(ListSet.sortedAsAdded(), new ArrayList<V>());
     }
 
     /**
@@ -799,7 +800,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 	    return false;
 	}
 
-	Map<K,V> other = (Map<K,V>)obj;
+	Map<?,?> other = (Map<?,?>)obj;
 	return this.entrySet().equals(other.entrySet());
     }
 

@@ -128,6 +128,21 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
     /**
      * Creates a new <code>ListSet</code> 
      * with elements given by <code>list</code> 
+     * and ordering given by <code>cmp</code>. 
+     * If the latter is <code>null</code> 
+     * then the type parameter of <code>list</code> 
+     * must be a <code>Comparable</code>. 
+     * and <code>list</code> must 
+     * This is inspired by a constructor of TreeSet. 
+     *
+     * @param list
+     *    the list wrapped by this set. 
+     *    It must be ordered ascending according to <code>cmp</code> 
+     *    if this is non-null, else as <code>Comparable</code>s. 
+     *    It is desireable that <code>list</code> 
+     *    contains each element once only. 
+     * @param cmp
+     *    A comparator or <code>null</code>. 
      */
     private ListSet(List<E> list, Comparator<? super E> cmp) {
 	this.list = list;
@@ -137,6 +152,8 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	if (cmp == null) {
 	    this.innerCmp = new Comparator<E>() {
 		// throws a ClassCastException if not comparable. 
+		// **** it is not easy to eliminate the compiler warning. 
+		// to that end, compare with TreeSet 
 		public int compare(E obj1,E obj2) {
 		    return ((Comparable<E>)obj1).compareTo(obj2);
 		}
@@ -242,8 +259,6 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	this(new ArrayList<E>(), cmp);
     }
 
-
-
     /**
      * Constructs a new, empty set, 
      * sorted according to the natural ordering of its elements. 
@@ -312,16 +327,20 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      *    <code>true</code> if this set contains the specified element.
      */
      public boolean contains(Object obj) {
-	 try {
-	     return Collections.binarySearch(this.list,
-					     (E)obj,
-					     this.innerCmp) >= 0;
-	 } catch (ClassCastException e) {
-	     // Here, obj is no instance of E 
-	     return false;
-	 }
+	 // if (isEmpty()) {
+	 //     return false;
+	 // }
+	 // if (!this.list.get(0).getClass().isInstance(obj)) {
+	 //     return false;
+	 // }
+	 // E eObj = (E)obj;
+
+	 // int lastIdx = this.list.size()-1;
+	 // return this.innerCmp.compare(this.list.get(0      ), eObj) <= 0
+	 //     && this.innerCmp.compare(this.list.get(lastIdx), eObj) >= 0;
 	 
-	//return o == null : containsNull : this.list.contains(o);
+	//return obj == null : containsNull : this.list.contains(obj);
+	 return this.list.contains(obj);
     }
 
     /**
@@ -454,32 +473,33 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      *    of the specified collection. 
      */
     public boolean containsAll(Collection<?> coll) {
-	if (isSortedWithSameComparator(coll)) {
-	    // ***** here more efficient code would be possible 
-	    int min = 0;
-	    int sup = this.list.size();
-	    int index;
-	    Iterator<?> iter = coll.iterator();
-	    E elem;
-	    while (iter.hasNext()) {
-		try { /// **** not so good implementation. 
-		    elem = (E)iter.next();
-		} catch (ClassCastException cce) {
-		    return false;
-		}
+	// if (isSortedWithSameComparator(coll)) {
+	//     // ***** here more efficient code would be possible 
+	//     int min = 0;
+	//     int sup = this.list.size();
+	//     int index;
+	//     Iterator<?> iter = coll.iterator();
+	//     E elem;
+	//     while (iter.hasNext()) {
+	// 	try { /// **** not so good implementation. 
+	// 	    elem = (E)iter.next();
+	// 	} catch (ClassCastException cce) {
+	// 	    return false;
+	// 	}
 		
 		
-		index = Collections.binarySearch(this.list.subList(min,sup),
-						 elem,
-						 this.innerCmp);
-		//index = this.cmp.search(this.list.subList(min,sup),o);
-		if (index < 0) {
-		    return false;
-		}
-		min = index+1;
-	    }
-	    return true;
-	} // same comparator 
+	// 	index = Collections.binarySearch(this.list.subList(min,sup),
+	// 					 elem,
+	// 					 this.innerCmp);
+	// 	//index = this.cmp.search(this.list.subList(min,sup),o);
+	// 	if (index < 0) {
+	// 	    return false;
+	// 	}
+	// 	min = index+1;
+	//     }
+	//     return true;
+	// } // same comparator 
+
 	Iterator<?> iter = coll.iterator();
 	while (iter.hasNext()) {
 	    if (!contains(iter.next())) {

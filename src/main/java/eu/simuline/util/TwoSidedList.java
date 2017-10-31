@@ -66,32 +66,32 @@ public class TwoSidedList<E> implements List<E> {
     public enum Direction {
 	Left2Right {
 	    // api-docs provided by javadoc 
-	    void checkRange(int ind, TwoSidedList list) {
+	    void checkRange(int ind, TwoSidedList<?> list) {
 		list.checkRange("",
 				ind,
 				list.firstIndex(),
 				list.minFreeIndex()+1);
 	    }
 	    // api-docs provided by javadoc 
-	    void checkAdd1(TwoSidedList list) {
+	    void checkAdd1(TwoSidedList<?> list) {
 		list.checkIncMinFreeIndex();
 	    }
-	    void checkAddAll(int size, TwoSidedList list) {
+	    void checkAddAll(int size, TwoSidedList<?> list) {
 		list.checkMinFreeIndex(size);
 	    }
 	}, Right2Left {
 	    // api-docs provided by javadoc 
-	    void checkRange(int ind, TwoSidedList list) {
+	    void checkRange(int ind, TwoSidedList<?> list) {
 		list.checkRange("",
 				ind,
 				list.firstIndex()-1,
 				list.minFreeIndex());
 	    }
 	    // api-docs provided by javadoc 
-	    void checkAdd1(TwoSidedList list) {
+	    void checkAdd1(TwoSidedList<?> list) {
 		list.decFirstIndex();
 	    }
-	    void checkAddAll(int size, TwoSidedList list) {
+	    void checkAddAll(int size, TwoSidedList<?> list) {
 		list.subFirstIndex(size);
 	    }
 	};
@@ -124,7 +124,7 @@ public class TwoSidedList<E> implements List<E> {
 	 * addAll(int, Collection, Direction) 
 	 * -->
 	 */
-	abstract void checkRange(int ind, TwoSidedList list);
+	abstract void checkRange(int ind, TwoSidedList<?> list);
 
 	/**
 	 * Checks in {@link TwoSidedList#add(int, Object, Direction)} 
@@ -143,7 +143,7 @@ public class TwoSidedList<E> implements List<E> {
 	 * @see TwoSidedList#checkIncMinFreeIndex() 
 	 * <!-- used only in add(int, E, Direction)  -->
 	 */
-	abstract void checkAdd1(TwoSidedList list);
+	abstract void checkAdd1(TwoSidedList<?> list);
 
 	/**
 	 * Checks in {@link TwoSidedList#addAll(int, Collection, Direction)} 
@@ -161,7 +161,7 @@ public class TwoSidedList<E> implements List<E> {
 	 *    or     overrun in {@link TwoSidedList#minFreeIndex()} 
 	 *    depending on this direction. 
 	 */
-	abstract void checkAddAll(int size, TwoSidedList list);
+	abstract void checkAddAll(int size, TwoSidedList<?> list);
 
     } // enum Direction 
 
@@ -1477,7 +1477,7 @@ public class TwoSidedList<E> implements List<E> {
 	if (!(obj instanceof TwoSidedList)) {
 	    return false;
 	}
-	TwoSidedList<E> other = (TwoSidedList<E>)obj;
+	TwoSidedList<?> other = (TwoSidedList<?>)obj;
 
 	return this.list.equals(other.list) 
 	    && this.firstIndex == other.firstIndex;

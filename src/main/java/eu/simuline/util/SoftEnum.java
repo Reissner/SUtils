@@ -68,7 +68,10 @@ import java.io.ObjectStreamException;
  * @since   1.5
  */
 public abstract class SoftEnum<E extends SoftEnum<E>>
-        implements Comparable<E>, Serializable {
+    implements Comparable<E>, Serializable {
+
+    private static final long serialVersionUID = -2479143000061671589L;
+
     /**
      * The name of this enum constant, as declared in the enum declaration.
      * Most programmers should use the {@link #toString} method rather than
@@ -174,7 +177,7 @@ public abstract class SoftEnum<E extends SoftEnum<E>>
      *
      * @return (never returns)
      */
-    public final SoftEnum clone() throws CloneNotSupportedException {
+    public final SoftEnum<E> clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
     }
 
@@ -187,9 +190,9 @@ public abstract class SoftEnum<E extends SoftEnum<E>>
      * same enum type.  The natural order implemented by this
      * method is the order in which the constants are declared.
      */
-    public final int compareTo(E o) {
-        SoftEnum other = (SoftEnum)o;
-        SoftEnum self = this;
+    public final int compareTo(E obj) {
+        SoftEnum<E> other = obj;
+        SoftEnum<E> self = this;
         if (self.getClass()          != other.getClass() && // optimization
             self.getDeclaringClass() != other.getDeclaringClass()) {
             throw new ClassCastException();
@@ -209,9 +212,9 @@ public abstract class SoftEnum<E extends SoftEnum<E>>
      * @return the Class object corresponding to this enum constant's
      *     enum type
      */
-    public final Class<E> getDeclaringClass() {
-        Class clazz = getClass();
-        Class zuper = clazz.getSuperclass();
+    public final Class<?> getDeclaringClass() {
+        Class<?> clazz = getClass();
+        Class<?> zuper = clazz.getSuperclass();
         return (zuper == Enum.class) ? clazz : zuper;
     }
 

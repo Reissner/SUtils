@@ -1576,21 +1576,24 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
     /* methods implementing Cloneable                                       */
     /*----------------------------------------------------------------------*/
 
-    /**
-     * Returns a clone of this <code>CyclicArrayList</code>. 
-     * This includes copying<code>vertices</code>. 
-     *
-     * @return 
-     *     a clone of this <code>CyclicArrayList</code>. 
-     *     This includes copying <code>vertices</code>. 
-     */
-    public CyclicArrayList<E> clone() throws CloneNotSupportedException {
-	CyclicArrayList<E> res = (CyclicArrayList<E>)super.clone();
-	res.list.clear();// = (List<E>)((ArrayList<E>)this.list).clone();
-	res.list.addAll((List<E>)((ArrayList<E>)this.list).clone());
-	return res;
-	// return new CyclicArrayList<E>
-	// 	((List<E>) ((ArrayList<E>)this.list).clone());
-    }
+    // not supported by CyclicList interface either 
+    // /**
+    //  * Returns a clone of this <code>CyclicArrayList</code>. 
+    //  * This includes copying<code>vertices</code>. 
+    //  *
+    //  * @return 
+    //  *     a clone of this <code>CyclicArrayList</code>. 
+    //  *     This includes copying <code>vertices</code>. 
+    //  */
+    // public CyclicArrayList<E> clone() throws CloneNotSupportedException {
+
+
+    // 	CyclicArrayList<E> res = (CyclicArrayList<E>)super.clone();
+    // 	res.list.clear();// = (List<E>)((ArrayList<E>)this.list).clone();
+    // 	res.list.addAll((List<E>)((ArrayList<E>)this.list).clone());
+    // 	return res;
+    // 	// return new CyclicArrayList<E>
+    // 	// 	((List<E>) ((ArrayList<E>)this.list).clone());
+    // }
 }
 

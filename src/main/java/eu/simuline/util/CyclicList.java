@@ -245,6 +245,7 @@ public interface CyclicList<E> extends Collection<E> {
      */
     void clear();
 
+    // not supported by list either 
     /*
      * Returns a clone of this <code>CyclicArrayList</code>. 
      * This includes copying <code>vertices</code>. 

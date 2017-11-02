@@ -930,3 +930,11 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
     }
 }
 
+// ListSet.java:158: warning: [unchecked] unchecked cast
+// 		    return ((Comparable<E>)obj1).compareTo(obj2);
+// 		                           ^
+//   required: Comparable<E>
+//   found:    E
+//   where E is a type-variable:
+//     E extends Object declared in class ListSet
+// 1 warning

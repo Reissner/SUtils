@@ -229,8 +229,11 @@ public class CyclicArrayList<E> implements CyclicList<E>, Cloneable {// NOPMD
 	 * Creates a fresh <code>CyclicPtIterator</code> 
 	 * with the same list and the same pointer 
 	 * as the <code>CyclicPtIterator</code> given. 
-	 * For the definition of "fresh" see 
-	 * {@link eu.simuline.graphDV.model.ClosedPolyline.CyclicPtIterator}. 
+	 * <p>
+	 * An iterator is called "fresh" 
+	 * if it delivers all elements of its list. 
+	 * Equivalently, it is called fresh, if after having created it, 
+	 * no getNext-method has been invoked. 
 	 *
 	 * @param iter 
 	 *    some <code>CyclicPtItererator</code>. 

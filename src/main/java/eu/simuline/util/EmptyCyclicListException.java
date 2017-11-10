@@ -4,7 +4,7 @@ package eu.simuline.util;
 /**
  * Thrown by various methods in {@link eu.simuline.util.CyclicList}. 
  *
- * @author <a href="mailto:Ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public class EmptyCyclicListException extends RuntimeException {

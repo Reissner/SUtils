@@ -30,7 +30,7 @@ import java.util.EnumSet;
  * @param <E>
  *    the class of the elements of collections under consideration. 
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public abstract class CollectionsExt<E> {

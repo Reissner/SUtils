@@ -12,7 +12,7 @@ import java.util.BitSet;
  *
  * Created: Mon May 29 19:37:38 2006
  *
- * @author <a href="mailto:ernst@">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public final class BitSetList extends AbstractList<Integer> 

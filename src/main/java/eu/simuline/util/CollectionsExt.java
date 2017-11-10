@@ -20,7 +20,7 @@ import java.util.EnumSet;
  * An add on of the core class {@link java.util.Collections}. 
  * This class provides various kinds of immutable collections, 
  * where immutability is configurable. 
- * Also this class yields weak has sets via {@link weakHashSet()}. 
+ * Also this class yields weak has sets via {@link #weakHashSet()}. 
  * Moreover, there are methods to convert arrays and lists in one another 
  * also recursively. 
  * Finally, there are methods {@link #getUnique(Collection)} 

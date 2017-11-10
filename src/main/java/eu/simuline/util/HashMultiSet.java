@@ -12,11 +12,14 @@ import java.util.Collections;
  * Mathematically this is something between a set and a family. 
  * Note that this kind of set does support <code>null</code> elements. 
  *
- * @author <a href="mailto:ereissner@rig35.rose.de">Ernst Reissner</a>
+ * @param <T>
+ *    the class of the elements of this multi-set. 
+ *
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public class HashMultiSet<T> 
-    extends AbstractMultiSet<Map<T,MultiSet.Multiplicity>, T> 
+    extends AbstractMultiSet<Map<T, MultiSet.Multiplicity>, T> 
     implements MultiSet<T> {
 
     /* -------------------------------------------------------------------- *
@@ -28,8 +31,11 @@ public class HashMultiSet<T>
      * as e.g. the one given by {@link HashMultiSet#emptyMultiSet()}. 
      * **** Idea: use {@link Collections#unmodifiableMap(Map)} 
      * but still modifications of multiplicities must be handled. 
+     *
+     * @param <T>
+     *    the class of the elements of this multi-set. 
      */
-    final static class Immutable<T> extends HashMultiSet<T> {
+    static final class Immutable<T> extends HashMultiSet<T> {
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
@@ -50,7 +56,7 @@ public class HashMultiSet<T>
 	 * @param other 
 	 *    another <code>MultiSet</code> instance. 
 	 */
-	public Immutable(HashMultiSet<T> other) {
+	Immutable(HashMultiSet<T> other) {
 	    super(other);
 	}
 
@@ -59,7 +65,7 @@ public class HashMultiSet<T>
 	 * with the elements of <code>sSet</code> 
 	 * and all elements with multiplicity <code>1</code>. 
 	 */
-	public Immutable(Set<? extends T> sSet) {
+	Immutable(Set<? extends T> sSet) {
 	    this();
 	    super.addAll(sSet);
 	}
@@ -117,7 +123,7 @@ public class HashMultiSet<T>
 	/**
 	 * @throws UnsupportedOperationException
 	 */
-	public int removeWithMult(Object obj,int removeMult) {
+	public int removeWithMult(Object obj, int removeMult) {
 	    throw new UnsupportedOperationException();
 	}
 
@@ -131,7 +137,7 @@ public class HashMultiSet<T>
 	/**
 	 * @throws UnsupportedOperationException
 	 */
-	public int setMultiplicity(T obj,int newMult) {
+	public int setMultiplicity(T obj, int newMult) {
 	    throw new UnsupportedOperationException();
 	}
 
@@ -175,7 +181,7 @@ public class HashMultiSet<T>
 	 * from the element of this <code>MultiSet</code> 
 	 * to the according multiplicities. 
 	 */
-	public Set<Map.Entry<T,Multiplicity>> getSetWithMults() {
+	public Set<Map.Entry<T, Multiplicity>> getSetWithMults() {
 	    return Collections.unmodifiableSet(super.getSetWithMults());
 	}
 
@@ -222,7 +228,7 @@ public class HashMultiSet<T>
      * -------------------------------------------------------------------- */
 
 
-    private HashMultiSet(Map<T,Multiplicity> t2mult) {
+    private HashMultiSet(Map<T, Multiplicity> t2mult) {
 	super(t2mult);
     }
 
@@ -230,7 +236,7 @@ public class HashMultiSet<T>
      * Creates a new, empty <code>MultiSet</code>. 
      */
     public HashMultiSet() {
-	this(new HashMap<T,Multiplicity>());
+	this(new HashMap<T, Multiplicity>());
     }
 
     /**
@@ -240,7 +246,7 @@ public class HashMultiSet<T>
      *    another <code>MultiSet</code> instance. 
      */
     public HashMultiSet(MultiSet<? extends T> other) {
-	this(new HashMap<T,Multiplicity>(other.getMap()));
+	this(new HashMap<T, Multiplicity>(other.getMap()));
     }
 
     /**

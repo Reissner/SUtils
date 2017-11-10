@@ -14,16 +14,16 @@ import org.xml.sax.Attributes;
  *
  * Created: Mon Jul  4 19:42:05 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class SGMLFilter implements ContentHandler {
+public final class SGMLFilter implements ContentHandler {
 
     /* --------------------------------------------------------------------- *
      * attributes                                                            *
      * --------------------------------------------------------------------- */
 
-    ContentHandler handler;
+    private ContentHandler handler;
 
     /* --------------------------------------------------------------------- *
      * constructors                                                          *
@@ -66,7 +66,7 @@ public class SGMLFilter implements ContentHandler {
 	if (str == null) {
 	    return null;
 	}
-	return str.toLowerCase();// NOPMD
+	return str.toLowerCase(); // NOPMD
     }
 
     public void startElement(String namespaceURI,
@@ -94,20 +94,20 @@ public class SGMLFilter implements ContentHandler {
 			   int start,
 			   int length)
 	throws SAXException {
-	this.handler.characters(chr,start,length);
+	this.handler.characters(chr, start, length);
     }
 
     public void ignorableWhitespace(char[] chr,
 				    int start,
 				    int length)
 	throws SAXException {
-	this.handler.ignorableWhitespace(chr,start,length);
+	this.handler.ignorableWhitespace(chr, start, length);
     }
 
     public void processingInstruction(String target,
 				      String data)
 	throws SAXException {
-	this.handler.processingInstruction(target,data);
+	this.handler.processingInstruction(target, data);
     }
 
     public void skippedEntity(String name)

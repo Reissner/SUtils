@@ -9,18 +9,21 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.Comparator;
 import java.util.Collections;
-import java.util.NoSuchElementException;// for javadoc only 
+import java.util.NoSuchElementException; // for javadoc only 
 
 /**
  * Represents a sorted set with multiplicities based on a {@link TreeMap}. 
  * Mathematically this is something between a set and a family. 
  * Note that this kind of set does not support <code>null</code> elements. 
  *
- * @author <a href="mailto:ereissner@rig35.rose.de">Ernst Reissner</a>
+ * @param <T>
+ *    the class of the elements of this multi-set. 
+ *
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public class TreeMultiSet<T> 
-    extends AbstractMultiSet<NavigableMap<T,MultiSet.Multiplicity>,T> 
+    extends AbstractMultiSet<NavigableMap<T, MultiSet.Multiplicity>, T> 
     implements SortedMultiSet<T> {
 
     /* -------------------------------------------------------------------- *
@@ -33,8 +36,11 @@ public class TreeMultiSet<T>
      * as e.g. the one given by {@link TreeMultiSet#emptyMultiSet()}. 
      * **** Idea: use {@link Collections#unmodifiableMap(Map)} 
      * but still modifications of multiplicities must be handled. 
+     *
+     * @param <T>
+     *    the class of the elements of this multi-set. 
      */
-    final static class Immutable<T> extends TreeMultiSet<T> {
+    static final class Immutable<T> extends TreeMultiSet<T> {
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
@@ -55,7 +61,7 @@ public class TreeMultiSet<T>
 	 * @param other 
 	 *    another <code>MultiSet</code> instance. 
 	 */
-	public Immutable(TreeMultiSet<T> other) {
+	Immutable(TreeMultiSet<T> other) {
 	    super(other);
 	}
 
@@ -64,7 +70,7 @@ public class TreeMultiSet<T>
 	 * with the elements of <code>sSet</code> 
 	 * and all elements with multiplicity <code>1</code>. 
 	 */
-	public Immutable(Set<? extends T> sSet) {
+	Immutable(Set<? extends T> sSet) {
 	    this();
 	    super.addAll(sSet);
 	}
@@ -122,7 +128,7 @@ public class TreeMultiSet<T>
 	/**
 	 * @throws UnsupportedOperationException
 	 */
-	public int removeWithMult(Object obj,int removeMult) {
+	public int removeWithMult(Object obj, int removeMult) {
 	    throw new UnsupportedOperationException();
 	}
 
@@ -136,7 +142,7 @@ public class TreeMultiSet<T>
 	/**
 	 * @throws UnsupportedOperationException
 	 */
-	public int setMultiplicity(T obj,int newMult) {
+	public int setMultiplicity(T obj, int newMult) {
 	    throw new UnsupportedOperationException();
 	}
 
@@ -180,7 +186,7 @@ public class TreeMultiSet<T>
 	 * from the element of this <code>MultiSet</code> 
 	 * to the according multiplicities. 
 	 */
-	public Set<Map.Entry<T,Multiplicity>> getSetWithMults() {
+	public Set<Map.Entry<T, Multiplicity>> getSetWithMults() {
 	    return Collections.unmodifiableSet(super.getSetWithMults());
 	}
 
@@ -210,8 +216,6 @@ public class TreeMultiSet<T>
 		}
 	    };
 	}
-
-
     } // class Immutable 
 
     /* -------------------------------------------------------------------- *
@@ -228,7 +232,7 @@ public class TreeMultiSet<T>
      * -------------------------------------------------------------------- */
 
 
-    private TreeMultiSet(NavigableMap<T,Multiplicity> t2mult) {
+    private TreeMultiSet(NavigableMap<T, Multiplicity> t2mult) {
 	super(t2mult);
     }
 
@@ -236,14 +240,14 @@ public class TreeMultiSet<T>
      * Creates a new, empty <code>MultiSet</code>. 
      */
     public TreeMultiSet() {
-	this(new TreeMap<T,Multiplicity>());
+	this(new TreeMap<T, Multiplicity>());
     }
 
     /**
      * Creates a new, empty <code>MultiSet</code>. 
      */
     public TreeMultiSet(Comparator<? super T> comp) {
-	this(new TreeMap<T,Multiplicity>(comp));
+	this(new TreeMap<T, Multiplicity>(comp));
     }
 
     /**
@@ -253,7 +257,7 @@ public class TreeMultiSet<T>
      *    another <code>MultiSet</code> instance. 
      */
     public TreeMultiSet(MultiSet<? extends T> other) {
-	this(new TreeMap<T,Multiplicity>(other.getMap()));
+	this(new TreeMap<T, Multiplicity>(other.getMap()));
     }
 
     /**
@@ -314,7 +318,7 @@ public class TreeMultiSet<T>
      * @throws NoSuchElementException
      *    if this set is empty. 
      */
-    public T first() {
+    public final T first() {
 	return this.obj2mult.firstKey();
     }
 
@@ -326,7 +330,7 @@ public class TreeMultiSet<T>
      * @throws NoSuchElementException
      *    if this set is empty. 
      */
-    public T last() {
+    public final T last() {
 	return this.obj2mult.lastKey();
     }
 
@@ -363,7 +367,7 @@ public class TreeMultiSet<T>
      *    if this multi-set itself has a restricted range, 
      *    and <code>toElement</code> lies outside the bounds of the range. 
      */
-    public MultiSet<T> headSet(T toElement) {
+    public final MultiSet<T> headSet(T toElement) {
 	return new TreeMultiSet<T>(this.obj2mult.headMap(toElement, false));
     }
 
@@ -400,7 +404,7 @@ public class TreeMultiSet<T>
      *    if this multi-set itself has a restricted range, 
      *    and <code>fromElement</code> lies outside the bounds of the range. 
      */
-    public MultiSet<T> tailSet(T fromElement) {
+    public final MultiSet<T> tailSet(T fromElement) {
 	return new TreeMultiSet<T>(this.obj2mult.tailMap(fromElement, true));
     }
 
@@ -448,7 +452,7 @@ public class TreeMultiSet<T>
      *    and <code>fromElement</code> or <code>toElement</code> 
      *    lies outside the bounds of the range. 
      */
-    public MultiSet<T> subSet(T fromElement, T toElement) {
+    public final MultiSet<T> subSet(T fromElement, T toElement) {
 	return new TreeMultiSet<T>(this.obj2mult.subMap(fromElement, true, 
 						    toElement, false));
     }

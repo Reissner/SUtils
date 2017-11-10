@@ -4,7 +4,7 @@ package eu.simuline.util;
 import java.util.Collection;
 import java.util.Set;
 import java.util.Map;
-import java.util.Iterator;// for docs only 
+import java.util.Iterator; // for docs only 
 
 /**
  * Represents a set with multiplicities. 
@@ -18,7 +18,10 @@ import java.util.Iterator;// for docs only
  * Note that this should extend Collection, but still does not *****. 
  * maybe it should even extend Set. 
  *
- * @author <a href="mailto:ereissner@rig35.rose.de">Ernst Reissner</a>
+ * @param <T>
+ *    the class of the elements of this multi-set. 
+ *
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public interface MultiSet<T> extends Iterable<T> {
@@ -456,7 +459,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    int removeWithMult(Object obj,int removeMult);
+    int removeWithMult(Object obj, int removeMult);
 
     /**
      * Removes <em>all</em> instances of the specified element from this 
@@ -498,7 +501,7 @@ public interface MultiSet<T> extends Iterable<T> {
      *    if this <code>MultiSet</code> does not support this method. 
      * @see #getMultiplicity(Object)
      */
-    int setMultiplicity(T obj,int newMult);
+    int setMultiplicity(T obj, int newMult);
 
     // Bulk Operations
 
@@ -642,7 +645,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * It does not support the methods 
      * {@link #add(Object)} or {@link Set#addAll(Collection)}. 
      */
-    Set<Map.Entry<T,Multiplicity>> getSetWithMults();
+    Set<Map.Entry<T, Multiplicity>> getSetWithMults();
 
     String toString();
 

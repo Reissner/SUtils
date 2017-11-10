@@ -18,6 +18,17 @@ import java.util.EnumSet;
 
 /**
  * An add on of the core class {@link java.util.Collections}. 
+ * This class provides various kinds of immutable collections, 
+ * where immutability is configurable. 
+ * Also this class yields weak has sets via {@link weakHashSet()}. 
+ * Moreover, there are methods to convert arrays and lists in one another 
+ * also recursively. 
+ * Finally, there are methods {@link #getUnique(Collection)} 
+ * to retrieve the unique element, 
+ * to reverse a list via {@link #reverse(List)}. 
+ *
+ * @param <E>
+ *    the class of the elements of collections under consideration. 
  *
  * @author <a href="mailto:ernst@local">Ernst Reissner</a>
  * @version 1.0
@@ -128,6 +139,11 @@ public abstract class CollectionsExt<E> {
      * whereas methods for modification are blocked 
      * if the modification is not allowed according to 
      * {@link #allowedModifications()}. 
+     *
+     * @param <C>
+     *    the class extending {@link Collection} with elements in E. 
+     * @param <E>
+     *    the class of the elements of this collection. 
      */
     public abstract static 
 	class AbstractImmutableCollection<C extends Collection<E>, E> 
@@ -163,20 +179,20 @@ public abstract class CollectionsExt<E> {
 	/**
 	 * Returns this set but with additional modification <code>mod</code>. 
 	 */
-    	public AbstractImmutableCollection<C,E> 
+    	public final AbstractImmutableCollection<C, E> 
 	    allowModification(Modification mod) {
     	    this.mods.add(mod);
     	    return this;
     	}
 
-    	public void allowModifications(Set<Modification> mods) {
+    	public final void allowModifications(Set<Modification> mods) {
     	    this.mods.addAll(mods);
     	}
 
 	/**
 	 * Returns the set of allowed modification of this set. 
 	 */
-    	public Set<Modification> allowedModifications() {
+    	public final Set<Modification> allowedModifications() {
     	    return this.mods;
     	}
 
@@ -189,7 +205,7 @@ public abstract class CollectionsExt<E> {
 	 */
 	public abstract C unrestricted();
 
-	public int size() {
+	public final int size() {
 	    return unrestricted().size();
 	}
 
@@ -200,7 +216,7 @@ public abstract class CollectionsExt<E> {
 	 *    is no allowed operation 
 	 *    according to {@link #allowedModifications()}. 
     	 */
-    	public boolean add(E obj) {
+    	public final boolean add(E obj) {
     	    if (this.mods.contains(Modification.AddObj)) {
     		return unrestricted().add(obj);
     	    }
@@ -215,7 +231,7 @@ public abstract class CollectionsExt<E> {
 	 *    is no allowed operation 
 	 *    according to {@link #allowedModifications()}. 
     	 */
-    	public boolean remove(Object obj) {
+    	public final boolean remove(Object obj) {
     	    if (this.mods.contains(Modification.RemoveObj)) {
     		return unrestricted().remove(obj);
     	    }
@@ -229,7 +245,7 @@ public abstract class CollectionsExt<E> {
 	 *    is no allowed operation 
 	 *    according to {@link #allowedModifications()}. 
     	 */
-    	public void clear() {
+    	public final void clear() {
     	    if (this.mods.contains(Modification.Clear)) {
     		unrestricted().clear();
     	    }
@@ -247,7 +263,7 @@ public abstract class CollectionsExt<E> {
 	// this method need not be implemented: 
 	// Extending AbstractSet, this method is supported 
 	// iff so is add(E) 
-    	public boolean addAll(Collection<? extends E> cmp) {
+    	public final boolean addAll(Collection<? extends E> cmp) {
     	    if (this.mods.contains(Modification.AddAll)) {
     		return unrestricted().addAll(cmp);
     	    }
@@ -266,7 +282,7 @@ public abstract class CollectionsExt<E> {
 	// this method need not be implemented: 
 	// Extending AbstractSet, this method is supported 
 	// iff so is remove(E) 
-    	public boolean retainAll(Collection<?> cmp) {
+    	public final boolean retainAll(Collection<?> cmp) {
     	    if (this.mods.contains(Modification.RetainAll)) {
     		return unrestricted().retainAll(cmp);
     	    }
@@ -281,7 +297,7 @@ public abstract class CollectionsExt<E> {
 	 *    according to {@link #allowedModifications()}. 
     	 */
 	// **** see retainAll(...) 
-    	public boolean removeAll(Collection<?> cmp) {
+    	public final boolean removeAll(Collection<?> cmp) {
     	    if (this.mods.contains(Modification.RemoveAll)) {
     		return unrestricted().removeAll(cmp);
     	    }
@@ -297,9 +313,9 @@ public abstract class CollectionsExt<E> {
 	 * is no allowed operation 
 	 * according to {@link #allowedModifications()}. 
     	 */
-    	public Iterator<E> iterator() {
+    	public final Iterator<E> iterator() {
 	    return new Iterator<E>() {
-		Iterator<E> wrapped = AbstractImmutableCollection.this
+		private Iterator<E> wrapped = AbstractImmutableCollection.this
 		    .unrestricted().iterator();
 		public boolean hasNext() {
 		    return this.wrapped.hasNext();
@@ -328,7 +344,7 @@ public abstract class CollectionsExt<E> {
     	}
 
 	// **** modifications missing 
-	public String toString() {
+	public final String toString() {
 	    StringBuilder res = new StringBuilder();
 	    res.append("<Immutable>");
 	    res.append(unrestricted().toString());
@@ -338,7 +354,14 @@ public abstract class CollectionsExt<E> {
     } // class AbstractImmutableCollection 
 
 
-    public static class ImmutableCollection<E> 
+    /**
+     * A collection which prevents being modified 
+     * by throwing an exception for the modifying methods. 
+     *
+     * @param <E>
+     *    the class of the elements of this collection. 
+     */
+    public static final class ImmutableCollection<E> 
 	extends AbstractImmutableCollection<Collection<E>, E> 
 	implements Collection<E> {
 
@@ -365,7 +388,7 @@ public abstract class CollectionsExt<E> {
    	 */
 	ImmutableCollection(Collection<E> coll) {
 	    if (coll == null) {
-		throw new NullPointerException();// NOPMD
+		throw new NullPointerException(); // NOPMD
 	    }
 	    this.coll = coll;
 	}
@@ -378,9 +401,16 @@ public abstract class CollectionsExt<E> {
 	    return this.coll;
 	}
 
-   } // class ImmutableSet<E>
+   } // class ImmutableCollection<E>
 
-    public static class ImmutableSet<E> 
+    /**
+     * A set which prevents being modified 
+     * by throwing an exception for the modifying methods. 
+     *
+     * @param <E>
+     *    the class of the elements of this set. 
+     */
+    public static final class ImmutableSet<E> 
 	extends AbstractImmutableCollection<Set<E>, E> 
 	implements Set<E> {
 
@@ -399,7 +429,7 @@ public abstract class CollectionsExt<E> {
 
 	ImmutableSet(Set<E> set) {
 	    if (set == null) {
-		throw new NullPointerException();// NOPMD 
+		throw new NullPointerException(); // NOPMD 
 	    }
 	    this.set = set;
 	}
@@ -416,7 +446,14 @@ public abstract class CollectionsExt<E> {
 
     // **** modifications of views are allowed if allowed for original set. 
     // changes in allowances are reflected in views. 
-    public static class ImmutableSortedSet<E> 
+    /**
+     * A sorted set which prevents being modified 
+     * by throwing an exception for the modifying methods. 
+     *
+     * @param <E>
+     *    the class of the elements of this list. 
+     */
+    public static final class ImmutableSortedSet<E> 
 	extends AbstractImmutableCollection<SortedSet<E>, E> 
 	implements SortedSet<E> {
 
@@ -440,7 +477,7 @@ public abstract class CollectionsExt<E> {
 	ImmutableSortedSet(Set<Modification> mods, SortedSet<E> set) {
 	    super(mods);
 	    if (set == null) {
-		throw new NullPointerException();// NOPMD 
+		throw new NullPointerException(); // NOPMD 
 	    }
 	    this.set = set;
 	}
@@ -481,7 +518,14 @@ public abstract class CollectionsExt<E> {
 	}
     } // class ImmutableSortedSet<E> 
 
-    public static class ImmutableList<E> 
+    /**
+     * A list which prevents being modified 
+     * by throwing an exception for the modifying methods. 
+     *
+     * @param <E>
+     *    the class of the elements of this list. 
+     */
+    public static final class ImmutableList<E> 
 	extends AbstractImmutableCollection<List<E>, E> 
 	implements List<E> {
 
@@ -500,7 +544,7 @@ public abstract class CollectionsExt<E> {
 
 	ImmutableList(List<E> list) {
 	    if (list == null) {
-		throw new NullPointerException();// NOPMD
+		throw new NullPointerException(); // NOPMD
 	    }
 	    this.list = list;
 	}
@@ -508,7 +552,7 @@ public abstract class CollectionsExt<E> {
 	ImmutableList(Set<Modification> mods, List<E> list) {
 	    super(mods);
 	    if (list == null) {
-		throw new NullPointerException();// NOPMD
+		throw new NullPointerException(); // NOPMD
 	    }
 	    this.list = list;
 	}
@@ -560,7 +604,7 @@ public abstract class CollectionsExt<E> {
 
 	public ListIterator<E> 	listIterator(int index) {
 	    return new ListIterator<E>() {
-		ListIterator<E> wrapped = ImmutableList.this
+		private ListIterator<E> wrapped = ImmutableList.this
 		    .unrestricted().listIterator();
 		public boolean hasNext() {
 		    return this.wrapped.hasNext();
@@ -649,7 +693,16 @@ public abstract class CollectionsExt<E> {
 
     } // class ImmutableList
 
-    public final static class NonModifyingCyclicIterator<E> 
+    /**
+     * An interator which prevents modification on the underlying list, 
+     * by throwing an exception for the modifying methods. 
+     * This is used in conjunction 
+     * with {@link CollectionsExt.ImmutableCyclicList}. 
+     *
+     * @param <E>
+     *    the class of the elements to iterate over. 
+     */
+    public static final class NonModifyingCyclicIterator<E> 
 	implements CyclicIterator<E> {
 
 	private final CyclicIterator<E> wrapped;
@@ -725,11 +778,17 @@ public abstract class CollectionsExt<E> {
 
     } // NonModifyingCyclicIterator 
 
-
-    public final static class ImmutableCyclicList<E> implements CyclicList<E> {
+    /**
+     * Represents an immutable cyclic list 
+     * by throwing an exception 
+     * when invoking a method which modifies this list. 
+     *
+     * @param <E>
+     *    the class of the elements of this list. 
+     */
+    public static final class ImmutableCyclicList<E> implements CyclicList<E> {
 
 	private final CyclicList<E> wrapped;
-
 
 	ImmutableCyclicList(CyclicList<E> wrapped) {
 	    this.wrapped = wrapped;
@@ -778,7 +837,7 @@ public abstract class CollectionsExt<E> {
 	public Object[] toArray(int index) {
 	    throw new NotYetImplementedException();
 	}
-	public <E> E[] toArray(int index,E[] array) {
+	public <E> E[] toArray(int index, E[] array) {
 	    throw new NotYetImplementedException();
 	}
 	public Object[] toArray() {
@@ -838,7 +897,7 @@ public abstract class CollectionsExt<E> {
    	    throw new UnsupportedOperationException();
 	}
 	public boolean addAll(Collection<? extends E> coll) {
-	    throw new UnsupportedOperationException();// for cyclic lists 
+	    throw new UnsupportedOperationException(); // for cyclic lists 
 	}
 	public E remove(int index) throws EmptyCyclicListException {
    	    throw new UnsupportedOperationException();
@@ -890,7 +949,8 @@ public abstract class CollectionsExt<E> {
      *    returned by the iterator in the same ordering 
      *    but is immutable. 
      *    Note that the return type offers methods 
-     *    {@link CollectionsExt.ImmutableCollection#allowModification(CollectionsExt.Modification)}, 
+     *    {@link CollectionsExt.ImmutableCollection
+     *#allowModification(CollectionsExt.Modification)}, 
      *    {@link CollectionsExt.ImmutableCollection#allowedModifications()} 
      *    and {@link CollectionsExt.ImmutableCollection#unrestricted()}. 
      * @throws NullPointerException
@@ -943,7 +1003,7 @@ public abstract class CollectionsExt<E> {
      *    <code>array[i] == recToArray(list.get(i))</code> otherwise. 
      *    Note that <code>array</code> may be a nested array 
      *    but that the dimension is always one. 
-     * @see #recToArray(Object,Class)
+     * @see #recToArray(Object, Class)
      * @see ArraysExt#recAsList(Object[])
      */
     public static Object[] recToArray(List<?> list) {
@@ -953,7 +1013,7 @@ public abstract class CollectionsExt<E> {
 	for (Object cand : list) {
 	    if (cand instanceof List) {
 		// cand is a list. 
-		result[index] = recToArray((List)cand);
+		result[index] = recToArray((List) cand);
 	    } else {
 		// cand is no list. 
 		result[index] = cand;
@@ -1023,7 +1083,7 @@ public abstract class CollectionsExt<E> {
      *    <code>cls</code> is an array type and 
      *    <code>source</code> is a <code>List</code>. 
      *    </ul>
-     * @see ArraysExt#recAsList(Object,Class)
+     * @see ArraysExt#recAsList(Object, Class)
      */
     public static Object recToArray(Object source, Class<?> cls) {
 	return recToArray(source, cls, Caster.BASIC_TYPES);
@@ -1094,11 +1154,11 @@ public abstract class CollectionsExt<E> {
      *    <code>cls</code> is an array type and 
      *    <code>source</code> is a <code>List</code>. 
      *    </ul>
-     * @see ArraysExt#recAsList(Object,Class,Caster)
+     * @see ArraysExt#recAsList(Object, Class, Caster)
      */
-    public static Object recToArray(Object source,Class cls,Caster caster) {
+    public static Object recToArray(Object source, Class cls, Caster caster) {
 
-	if (caster.areCompatible(cls,source)) {
+	if (caster.areCompatible(cls, source)) {
 	    // Here, either source == null || cls.isInstance(source) 
 	    // or source wraps something of type cls. 
 	    return caster.cast(source);
@@ -1121,13 +1181,13 @@ public abstract class CollectionsExt<E> {
 	}
 	// Here, source instanceof Collection and cls.isArray(). 
 
-	Collection<?> coll = (Collection<?>)source;
+	Collection<?> coll = (Collection<?>) source;
 	Class<?> compType = cls.getComponentType();
-	Object result = Array.newInstance(compType,coll.size());
+	Object result = Array.newInstance(compType, coll.size());
 	int ind = 0;
 	for (Object cand : coll) {
 	    // automatic unwrapping if needed. 
-	    Array.set(result,ind++,recToArray(cand,compType,caster));
+	    Array.set(result, ind++, recToArray(cand, compType, caster));
 	}
 	return result;
     }
@@ -1149,17 +1209,17 @@ public abstract class CollectionsExt<E> {
      *    <code>map.get(key) == value</code> hold. 
      *    Note that <code>value == null</code> is possible. 
      * @throws ClassCastException 
-     *    if an element of an entry <code>new Object[] {key,value}</code> 
+     *    if an element of an entry <code>new Object[] {key, value}</code> 
      *    of <code>keyVal</code> has not the right type. 
      */
 /*
-    public static <K,V> Object[][] fillMap(Map<K,V> map,Object[][] keyVal) {
+    public static <K, V> Object[][] fillMap(Map<K, V> map, Object[][] keyVal) {
 	List<Object[]> replaced = new ArrayList<Object[]>();
 	V repl;
 	for (int i = 0; i < keyVal.length; i++) {
-	    repl = map.put((K)keyVal[i][0],(V)keyVal[i][1]);
+	    repl = map.put((K)keyVal[i][0], (V)keyVal[i][1]);
 	    if (map.keySet().contains(keyVal[i][0])) {
-		replaced.add(new Object[] {keyVal[i][0],repl});
+		replaced.add(new Object[] {keyVal[i][0], repl});
 	    }
 	}
 	return (Object[][])replaced.toArray(new Object[][] {});
@@ -1198,17 +1258,15 @@ public abstract class CollectionsExt<E> {
     public static <T> List<T> reverse(List<T> list) {
 	List<T> res = new ArrayList<T>(list.size());
 	for (int i = 0; i < list.size(); i++) {
-	    res.add(list.get(list.size()-1-i));
+	    res.add(list.get(list.size() - 1 - i));
 	}
 	return res;
     }
 
     public static void main(String[] args) {
-	
-	    System.out.println(""+Collections.unmodifiableSortedSet(null));
-	    System.out.println(""+Collections.unmodifiableSet(null));
-	    System.out.println(""+Collections.unmodifiableCollection(null));
-	
+	    System.out.println("" + Collections.unmodifiableSortedSet(null));
+	    System.out.println("" + Collections.unmodifiableSet(null));
+	    System.out.println("" + Collections.unmodifiableCollection(null));
     }
 
 }

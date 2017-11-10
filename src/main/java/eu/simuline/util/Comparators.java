@@ -6,15 +6,17 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Comparators.java
+ * Collection of static methods related with {@link Comparator}s. 
  *
+ * @param <E>
+ *    the type to be compared. 
  *
  * Created: Sat May 21 16:30:58 2005
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public abstract class Comparators {// NOPMD
+public abstract class Comparators<E> { // NOPMD
 
     /* -------------------------------------------------------------------- *
      * inner classes.                                                       *
@@ -24,7 +26,10 @@ public abstract class Comparators {// NOPMD
      * Represents a comparator which is a cascade of comparators: 
      * Starting with the first comparator in {@link #seq} 
      * asks the next comparator if the current one detects equality. 
-     */
+     *
+     * @param <E>
+     *    the type to be compared. 
+    */
     private static class Cascade<E> implements Comparator<E> {
 	private final Collection<Comparator<E>> seq;
 	Cascade(Collection<Comparator<E>> seq) {
@@ -33,7 +38,7 @@ public abstract class Comparators {// NOPMD
 	public int compare(E obj1, E obj2) {
 	    int res;
 	    for (Comparator<E> cmp : seq) {
-		res = cmp.compare(obj1,obj2);
+		res = cmp.compare(obj1, obj2);
 		if (res != 0) {
 		    return res;
 		}
@@ -79,13 +84,15 @@ public abstract class Comparators {// NOPMD
      * transitivity holds. 
      * Otherwise, all elements are in {@link #seq} 
      * and transitivity follows directly. 
+     *
+     * @param <E>
+     *    the type to be compared. 
      */
     private static class AsListed<E> implements Comparator<E> {
 
 	/* ----------------------------------------------------------------- *
 	 * fields.                                                           *
 	 * ----------------------------------------------------------------- */
-
 
 	private final List<E> seq;
 
@@ -96,7 +103,7 @@ public abstract class Comparators {// NOPMD
 	// **** does not check that the elements of seq are pairwise different. 
 	AsListed(List<E> seq) {
 	    if (seq == null) {
-		throw new NullPointerException();// NOPMD
+		throw new NullPointerException(); // NOPMD
 	    }
 	    this.seq = seq;
 	    assert this.seq != null;
@@ -119,22 +126,21 @@ public abstract class Comparators {// NOPMD
 	    // the result is strictly positive. 
 	    // Thus all elements in seq are smaller 
 	    // than all elements not in seq. 
-    
+
 	    int idx1 = this.seq.indexOf(obj1);
 	    int idx2 = this.seq.indexOf(obj2);
 	    if (idx1 == -1 || idx2 == -1) {
 		// If neither object is in seq, returns 0=-1-(-1) 
 		// If obj1 is in seq whereas obj2 is not, returns <0 
 		// If obj2 is in seq whereas obj1 is not, returns >0 
-		return this.seq.indexOf(obj2)-this.seq.indexOf(obj1);
+		return this.seq.indexOf(obj2) - this.seq.indexOf(obj1);
 	    } else {
 		// Here, both obj1 and obj2 are in seq. 
 		// Returns the signed difference of the indices. 
-		return this.seq.indexOf(obj1)-this.seq.indexOf(obj2);
-	    }	    
+		return this.seq.indexOf(obj1) - this.seq.indexOf(obj2);
+	    }
 	}
     } // class AsListed<E> 
-
 
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
@@ -145,7 +151,7 @@ public abstract class Comparators {// NOPMD
     public static <E> Comparator<E> getNegative(Comparator<E> cmp) {
 	return new Comparator<E>() {
 	    public int compare(E obj1, E obj2) {
-		return -compare(obj1,obj2);
+		return -compare(obj1, obj2);
 	    }
 	};
     }
@@ -153,7 +159,7 @@ public abstract class Comparators {// NOPMD
     public static <E> Comparator<E> getInv(Comparator<E> cmp) {
 	return new Comparator<E>() {
 	    public int compare(E obj1, E obj2) {
-		return compare(obj2,obj1);
+		return compare(obj2, obj1);
 	    }
 	};
     }
@@ -184,6 +190,4 @@ public abstract class Comparators {// NOPMD
     public static <E> Comparator<E> getAsListed(List<E> seq) {
 	return new AsListed<E>(seq);
     }
-    
-
 } // Comparators

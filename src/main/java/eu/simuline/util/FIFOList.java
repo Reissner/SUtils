@@ -17,15 +17,17 @@ import java.util.Queue;
  * <p>
  * When a stack is first created, it contains no items.
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @param <E>
+ *    the class of the elements of this list. 
+ *
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class FIFOList<E> extends Vector<E> implements Queue<E> {
+public final class FIFOList<E> extends Vector<E> implements Queue<E> {
 
     /* -------------------------------------------------------------------- *
      * constants.                                                           *
      * -------------------------------------------------------------------- */
-
 
     private static final long serialVersionUID = -2479143000061671589L;
 
@@ -67,9 +69,9 @@ public class FIFOList<E> extends Vector<E> implements Queue<E> {
      * methods.                                                             *
      * -------------------------------------------------------------------- */
 
-
     /**
-     * Constructs a vector 
+     * Constructs a vector. 
+     *
      * @param item
      *    the element to insert. 
      * @return 

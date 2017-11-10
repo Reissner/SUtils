@@ -5,12 +5,12 @@
   modify it under the terms of the GNU General Public License
   as published by the Free Software Foundation; either version 2
   of the License, or (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-  
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the 
   Free Software Foundation, Inc., 
@@ -38,26 +38,25 @@ import java.util.zip.ZipEntry;
  *
  * Created: Wed Jun 14 23:12:06 2006
  *
- * @author <a href="mailto:ernst@">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class JavaPath {
+public final class JavaPath {
 
     /* -------------------------------------------------------------------- *
      * constants.                                                           *
      * -------------------------------------------------------------------- */
 
-
     /**
      * The entry of property <code>file.separator</code> as a char. 
      */
-    private final static char FILE_SEP = 
-	System.getProperty("file.separator").charAt(0);//
+    private static final char FILE_SEP = 
+	System.getProperty("file.separator").charAt(0);
 
     /**
      * The entry of property <code>path.separator</code>. 
      */
-    private final static String PATH_SEP = 
+    private static final String PATH_SEP = 
 	System.getProperty("path.separator");
 
     /**
@@ -65,23 +64,28 @@ public class JavaPath {
      * separating classes from their packages 
      * and also packages from their subpackages. 
      */
-    private final static char CLASS_SEP = '.';
+    private static final char CLASS_SEP = '.';
 
     /**
      * Java's class separator <code>$</code> 
      * separating inner classes from their enclosing classes. 
      */
-    private final static String INNER_CLASS_SEP = "\\$";
+    private static final String INNER_CLASS_SEP = "\\$";
 
     /**
      * File ending <code>.zip</code> identifying zip-files. 
      */
-    private final static String ZIP_END = ".zip";
+    private static final String ZIP_END = ".zip";
 
     /**
      * File ending <code>.jar</code> identifying jar-files. 
      */
-    private final static String JAR_END = ".jar";
+    private static final String JAR_END = ".jar";
+
+    /**
+     * The length of a buffer to read at once. 
+     */
+    private static final int LEN_BUFFER = 1000;
 
     /* -------------------------------------------------------------------- *
      * inner classes.                                                       *
@@ -105,7 +109,7 @@ public class JavaPath {
 		return ".java";
 	    }
 	    String trimInnerClass(String clsName) {
-		return clsName.replaceAll(INNER_CLASS_SEP+".*","");
+		return clsName.replaceAll(INNER_CLASS_SEP + ".*", "");
 	    }
 	};
 
@@ -215,6 +219,10 @@ public class JavaPath {
      */
     static class ZipEntryWrapper implements FileWrapper {
 
+	/**
+	 * A filter input stream closing {@link ipEntryWrapper.this.zipFile} 
+	 * when closing the stream. 
+	 */
 	class WrappedInputStream extends FilterInputStream {
 	    WrappedInputStream(InputStream inputStream) {
 		super(inputStream);
@@ -228,7 +236,7 @@ public class JavaPath {
 	private final ZipFile zipFile;
 	private final ZipEntry entry;
 
-	ZipEntryWrapper(ZipFile zipFile,ZipEntry entry) {
+	ZipEntryWrapper(ZipFile zipFile, ZipEntry entry) {
 	    this.zipFile = zipFile;
 	    this.entry = entry;
 	}
@@ -242,18 +250,19 @@ public class JavaPath {
 	public File getFile() throws IOException {	    
 	    // by extraction. 
 	    File ret = File
-		.createTempFile("JUnitGUI"+System.currentTimeMillis(),
+		.createTempFile("JUnitGUI" + System.currentTimeMillis(),
 				ClsSrc.Source.fileEnding());
-	    new File("/tmp/HI.java");//this.entry.getName());
+	    new File("/tmp/HI.java"); //this.entry.getName());
 	    ret.createNewFile(); // **** does not work well: shall be rec!!!
 	    InputStream inStream = getInputStream();
 	    FileOutputStream outStream = new FileOutputStream(ret);
-	    byte[] buf = new byte[1000];
-	    int numRead = inStream.read(buf,0,999);
+	    byte[] buf = new byte[LEN_BUFFER];
+	    int numRead = inStream.read(buf, 0, LEN_BUFFER - 1);
 	    while (numRead != -1) {
-		/*     */outStream.write(buf,0,numRead);
-		numRead = inStream.read (buf,0,999);
+		/*     */outStream.write(buf, 0, numRead);
+		numRead = inStream.read (buf, 0, LEN_BUFFER - 1);
 	    }
+
 	    inStream.close();
 	    outStream.close();
 	    return ret;
@@ -308,8 +317,8 @@ public class JavaPath {
 	for (int i = 0; i < fileNames.length; i++) {
 	    if (fileNames[i].length() == 0) {
 		System.out.println
-("Warning: Found file \"\" in path \"" + path + "\". ");
-		
+		    ("Warning: Found file \"\" in path \"" + path + "\". ");
+
 // 		throw new IllegalArgumentException
 // 		    ("Found file \"\" in path \"" + path + "\". ");
 	    }
@@ -320,7 +329,6 @@ public class JavaPath {
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
      * -------------------------------------------------------------------- */
-
 
     /**
      * Converts a class name into the into the corresponding name 
@@ -350,7 +358,7 @@ public class JavaPath {
 	}
 */
 	// replace file separator / by .
-	String localFilename = clsName.replace(CLASS_SEP,FILE_SEP);
+	String localFilename = clsName.replace(CLASS_SEP, FILE_SEP);
 	// for source files: remove names of inner classes 
 	localFilename = clsSrc.trimInnerClass(localFilename);
 	// append the appropriate file ending 
@@ -429,7 +437,7 @@ public class JavaPath {
 	for (File candParent : this.roots) {
 	    if (candParent.isDirectory()) {
 		// find directly in the directory candParent
-		cand = new File(candParent,localFilename);
+		cand = new File(candParent, localFilename);
 		if (cand.exists() && cand.isFile()) {
 		    return new OrdFileWrapper(cand);
 		}
@@ -468,7 +476,7 @@ public class JavaPath {
 	for (File cand : this.roots) {
 
 	    if (fileName.startsWith(cand.getPath())) {
-		fileName = fileName.substring(cand.getPath().length()+1,
+		fileName = fileName.substring(cand.getPath().length() + 1,
 					      fileName      .length());
 		return fileName;
 	    }
@@ -477,31 +485,31 @@ public class JavaPath {
 	return null;
     }
 
-    public String locFile2cls(String locFileName,ClsSrc clsSrc) {
+    public String locFile2cls(String locFileName, ClsSrc clsSrc) {
 	if (!locFileName.endsWith(clsSrc.fileEnding())) {
 	    throw new IllegalArgumentException
 		("Expected filename with ending \"" + clsSrc.fileEnding() 
 		 + "\" but found \"" + locFileName + "\". ");
 	}
 	locFileName = locFileName.substring(0,
-					    /*    */locFileName.length()-
+					    /*    */locFileName.length() - 
 					    clsSrc.fileEnding().length());
-	 locFileName = locFileName.replace(FILE_SEP,CLASS_SEP);
+	 locFileName = locFileName.replace(FILE_SEP, CLASS_SEP);
 	 return locFileName;
     }
 
-    public String absFile2cls(File absFile,ClsSrc clsSrc) {
+    public String absFile2cls(File absFile, ClsSrc clsSrc) {
 	String locFileName = getLocFileName(absFile);
-System.out.println("locFileName: "+locFileName);
+System.out.println("locFileName: " + locFileName);
 	
 	if (locFileName == null) {
 	    return null;
 	}
-	return locFile2cls(locFileName,clsSrc);
+	return locFile2cls(locFileName, clsSrc);
     }
 
     public String toString() {
-	StringBuffer ret = new StringBuffer(25);
+	StringBuffer ret = new StringBuffer();
 	ret.append("<JavaPath>");
 	ret.append(this.roots);
 	ret.append("</JavaPath>");
@@ -511,15 +519,15 @@ System.out.println("locFileName: "+locFileName);
     public static void main(String[] args) {
 	//System.out.println("tt: "+new JavaPath(":"));
 	//System.out.println("tt: "+new JavaPath(""));
-	System.out.println("tt: "+new JavaPath("/home/ernst"));
-	System.out.println("tt: "+new JavaPath("/home/ernst:/usr/bin"));
+	System.out.println("tt: " + new JavaPath("/home/ernst"));
+	System.out.println("tt: " + new JavaPath("/home/ernst:/usr/bin"));
 
 	//JavaPath jPath = new JavaPath("/home/ernst/.../src/");
 /*
 	System.out.println("tt: "+
-			   jPath.getFile(AddArrays.class,ClsSrc.Class));
+			   jPath.getFile(AddArrays.class, ClsSrc.Class));
 	System.out.println("tt: "+
-			   jPath.getFile(AddArrays.class,ClsSrc.Source));
+			   jPath.getFile(AddArrays.class, ClsSrc.Source));
 
 */
     }

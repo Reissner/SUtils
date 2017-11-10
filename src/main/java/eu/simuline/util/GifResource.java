@@ -24,7 +24,7 @@ import org.javalobby.icons20x20.Hammer;
  *
  * Created: Sun Jun  4 20:50:12 2006
  *
- * @author <a href="mailto:ernst@">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public abstract class GifResource {
@@ -38,24 +38,24 @@ public abstract class GifResource {
      * Note that this is unified unlike file separators 
      * which depend on the operating system. 
      */
-    private final static String URL_SEP = "/";
+    private static final String URL_SEP = "/";
 
     /**
      * The ending of a java class file. 
      */
-    private final static String CLASS_END = "class";
+    private static final String CLASS_END = "class";
 
     /**
      * The ending of a gif file. 
      */
-    private final static String GIF_END = "gif";
+    private static final String GIF_END = "gif";
 
     /**
      * <code>target/classes/</code>: the directory of the classfiles 
      * within the simuline-developing environment. 
      * **** bad: path is hardcoded **** 
      */
-    private final static String CLASS    = URL_SEP + "target" 
+    private static final String CLASS    = URL_SEP + "target" 
 	+ URL_SEP  + "classes" + URL_SEP;
 
     /**
@@ -63,14 +63,14 @@ public abstract class GifResource {
      * within simuline-developing environment. 
      * **** bad: path is hardcoded **** 
      */
-    private final static String RESOURCE = 
-	URL_SEP + "src/main/resources" + URL_SEP;// **** URL_SEP and /
+    private static final String RESOURCE = 
+	URL_SEP + "src/main/resources" + URL_SEP; // **** URL_SEP and /
 
     /**
      * A cache for gif-files represented by GifResources. 
      */
-    private final static Map<Class<?>,ImageIcon> gifs = 
-	new HashMap<Class<?>,ImageIcon>();
+    private static final Map<Class<?>, ImageIcon> GIFS = 
+	new HashMap<Class<?>, ImageIcon>();
 
     /* -------------------------------------------------------------------- *
      * fields.                                                              *
@@ -132,9 +132,9 @@ public abstract class GifResource {
     /**
      * Converts a GifResource class into the corresponding icon. 
      * This is done in the following steps: 
-     * If the image is cached in {@link #gifs}, take this one. 
-     * Else load it into {@link #gifs}as described below 
-     * before taking it from {@link #gifs}. 
+     * If the image is cached in {@link #GIFS}, take this one. 
+     * Else load it into {@link #GIFS}as described below 
+     * before taking it from {@link #GIFS}. 
      * <p>
      * Loading an image consists in 
      * loading the class-file associated with the image, 
@@ -152,16 +152,16 @@ public abstract class GifResource {
      *    which is an undocumented property. 
      */
     public static ImageIcon getIcon(Class<? extends GifResource> res) {
-	ImageIcon ret = gifs.get(res);
+	ImageIcon ret = GIFS.get(res);
 	if (ret == null) {
 	    // Here the icon is not yet loaded. 
 
 	    // transform class into path of class file name... 
-	    String path = res.getName().replace('.','/') + "." + CLASS_END;
+	    String path = res.getName().replace('.', '/') + "." + CLASS_END;
 	    //***NO PURE JAVA
 	    // ... and further into an URL (ensuring that this class exists) 
 	    URL url = ClassLoader.getSystemResource(path);
-	    assert url != null;// because class exists 
+	    assert url != null; // because class exists 
 
 	    // The class URL into the gif-image url 
 	    path = url.toString().replaceAll(CLASS_END + "\\z", GIF_END);
@@ -177,19 +177,17 @@ public abstract class GifResource {
 
 	    // **** the following works even 
 	    // if the url does not point to any file.
-	    gifs.put(res, new ImageIcon(url));
-	    ret = gifs.get(res);
+	    GIFS.put(res, new ImageIcon(url));
+	    ret = GIFS.get(res);
 	}
-	assert ret == gifs.get(res);
+	assert ret == GIFS.get(res);
 
 	return ret;
     }
 
-    public final static void main(String[] args) {
+    public static final void main(String[] args) {
 	ImageIcon icon = getIcon(Hammer.class);
-	System.out.println("icon: "+icon.getImage());
-	System.out.println("icon: "+icon.getIconWidth());
-	
+	System.out.println("icon: " + icon.getImage());
+	System.out.println("icon: " + icon.getIconWidth());
     }
-
 }

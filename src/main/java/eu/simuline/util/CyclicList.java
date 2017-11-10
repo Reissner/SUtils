@@ -69,7 +69,10 @@ import java.util.Iterator;
  * the <code>equals</code> and <code>hashCode</code> 
  * methods are no longer well defined on a such a list. 
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @param <E>
+ *    the class of the elements of this list. 
+ *
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public interface CyclicList<E> extends Collection<E> {
@@ -196,7 +199,7 @@ public interface CyclicList<E> extends Collection<E> {
      *    is not a supertype of the runtime type 
      *    of every element in this list. 
      */
-    <E> E[] toArray(int index,E[] array);
+    <E> E[] toArray(int index, E[] array);
 
     /**
      * Returns a List containing all of the elements in this cyclic list 

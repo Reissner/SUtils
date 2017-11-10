@@ -16,7 +16,7 @@ public abstract class Strings {
     /**
      * An ever growing buffer of blanks used by {@link #getBlanks(int)}. 
      */
-    private static WeakReference<StringBuilder> BLANKS = 
+    private static WeakReference<StringBuilder> bLANKS = 
 	new WeakReference<StringBuilder>(new StringBuilder());
 
 
@@ -28,10 +28,10 @@ public abstract class Strings {
      * Returns a string consisting of the given number of blanks. 
      */
     public static String getBlanks(int num) {
-	StringBuilder blanks = BLANKS.get();
+	StringBuilder blanks = bLANKS.get();
 	if (blanks == null) {
 	    blanks = new StringBuilder();
-	    BLANKS = new WeakReference<StringBuilder>(blanks);
+	    bLANKS = new WeakReference<StringBuilder>(blanks);
 	}
 
 	while (blanks.length() < num) {

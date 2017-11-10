@@ -8,9 +8,9 @@ import org.xml.sax.Attributes;
 
 /**
  * A <code>ContentHandler</code> which reports certain events 
- * to {@link System#out}
+ * to {@link System#out}. 
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 class ReportContentHandler implements ContentHandler {

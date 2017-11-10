@@ -94,7 +94,8 @@ public enum DetOs {
 	System.out.println(System.getProperties());
 
 // {java.runtime.name=OpenJDK Runtime Environment, 
-// 	sun.boot.library.path=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/amd64, 
+// 	sun.boot.library.path=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/
+//             jre/lib/amd64, 
 // java.vm.version=24.0-b50, 
 // chooseClasspath=...
 //  java.vm.vendor=Oracle Corporation, 
@@ -109,7 +110,8 @@ public enum DetOs {
 //  user.dir=...
 //  java.runtime.version=1.7.0_40-b31, 
 //  java.awt.graphicsenv=sun.awt.X11GraphicsEnvironment, 
-//  java.endorsed.dirs=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/endorsed, 
+//  java.endorsed.dirs=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/
+//             jre/lib/endorsed, 
 //  os.arch=amd64, 
 //  java.io.tmpdir=/tmp, 
 //  line.separator=
@@ -117,7 +119,8 @@ public enum DetOs {
 //  java.vm.specification.vendor=Oracle Corporation, 
 //  os.name=Linux, 
 //  sun.jnu.encoding=UTF-8, 
-//  java.library.path=/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib, 
+//  java.library.path=/usr/java/packages/lib/amd64:/usr/lib64:
+//             /lib64:/lib:/usr/lib, 
 //  java.specification.name=Java Platform API Specification, 
 //  java.class.version=51.0, 
 //  sun.management.compiler=HotSpot 64-Bit Tiered Compilers, 
@@ -138,14 +141,28 @@ public enum DetOs {
 //  awt.toolkit=sun.awt.X11.XToolkit, 
 //  java.vm.info=mixed mode, 
 //  java.version=1.7.0_40, 
-//  java.ext.dirs=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/ext:/usr/java/packages/lib/ext, 
-//  sun.boot.class.path=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/resources.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/rt.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/sunrsasign.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/jsse.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/jce.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/charsets.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/netx.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/plugin.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/rhino.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/jfr.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/classes, 
+//  java.ext.dirs=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/ext:
+//             /usr/java/packages/lib/ext, 
+//  sun.boot.class.path=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/
+//             jre/lib/resources.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/rt.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0jre/lib/sunrsasign.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/jsse.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/jce.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/charsets.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/netx.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/plugin.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/rhino.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/jfr.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/classes, 
 //  java.vendor=Oracle Corporation, 
 //  sourcepath=..., 
 //  file.separator=/, 
 //  java.vendor.url.bug=http://bugreport.sun.com/bugreport/, 
-//  sun.io.unicode.encoding=UnicodeLittl{java.runtime.name=OpenJDK Runtime Environment, 
-//  sun.boot.library.path=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/amd64, 
+//  sun.io.unicode.encoding=UnicodeLittl{java.runtime.name=
+//             OpenJDK Runtime Environment, 
+//  sun.boot.library.path=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/
+//             jre/lib/amd64, 
 //  java.vm.version=24.0-b50, 
 //  chooseClasspath=..., 
 //  java.vm.vendor=Oracle Corporation, 
@@ -160,7 +177,8 @@ public enum DetOs {
 //  user.dir=..., 
 //  java.runtime.version=1.7.0_40-b31, 
 //  java.awt.graphicsenv=sun.awt.X11GraphicsEnvironment, 
-//  java.endorsed.dirs=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/endorsed, 
+//  java.endorsed.dirs=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/
+//             jre/lib/endorsed, 
 //  os.arch=amd64, 
 //  java.io.tmpdir=/tmp, 
 //  line.separator=
@@ -168,7 +186,8 @@ public enum DetOs {
 //  java.vm.specification.vendor=Oracle Corporation, 
 //  os.name=Linux, 
 //  sun.jnu.encoding=UTF-8, 
-//  java.library.path=/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib, 
+//  java.library.path=/usr/java/packages/lib/amd64:/usr/lib64:
+//             /lib64:/lib:/usr/lib, 
 //  java.specification.name=Java Platform API Specification, 
 //  java.class.version=51.0, 
 //  sun.management.compiler=HotSpot 64-Bit Tiered Compilers, 
@@ -189,8 +208,20 @@ public enum DetOs {
 //  awt.toolkit=sun.awt.X11.XToolkit, 
 //  java.vm.info=mixed mode, 
 //  java.version=1.7.0_40, 
-//  java.ext.dirs=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/ext:/usr/java/packages/lib/ext, 
-//  sun.boot.class.path=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/resources.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/rt.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/sunrsasign.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/jsse.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/jce.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/charsets.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/netx.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/plugin.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/rhino.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/jfr.jar:/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/classes, 
+//  java.ext.dirs=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/ext:
+//             /usr/java/packages/lib/ext, 
+//  sun.boot.class.path=/usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/
+//             jre/lib/resources.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/rt.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/sunrsasign.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/jsse.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/jce.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/charsets.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/netx.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/plugin.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/rhino.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/lib/jfr.jar:
+//             /usr/lib64/jvm/java-1.7.0-openjdk-1.7.0/jre/classes, 
 //  java.vendor=Oracle Corporation, 
 //  sourcepath=..., 
 //  file.separator=/, 

@@ -145,7 +145,7 @@ public abstract class SoftEnum<E extends SoftEnum<E>>
      *
      * @return the name of this enum constant
      */
-    public String toString() {
+    public final String toString() {
         return name;
     }
 
@@ -158,7 +158,7 @@ public abstract class SoftEnum<E extends SoftEnum<E>>
      *          enum constant.
      */
     public final boolean equals(Object other) {
-        return this==other;
+        return this == other;
     }
 
     /**
@@ -259,10 +259,11 @@ public abstract class SoftEnum<E extends SoftEnum<E>>
     /**
      * enum classes cannot have finalize methods.
      */
-    protected final void finalize() { }// NOPMD
+    protected final void finalize() { // NOPMD
+    }
 
     /**
-     * prevent default deserialization
+     * Prevent default deserialization.
      */
     @SuppressWarnings("PMD.UnusedFormalParameter")
     private void readObject(ObjectInputStream stream) 

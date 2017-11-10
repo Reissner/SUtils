@@ -26,10 +26,15 @@ import java.util.Objects;
  * Did not use {@link java.util.AbstractMap}, 
  * e.g. because {@link #keySet()} shall return more than just a {@link Set}. 
  *
- * @author <a href="mailto:e.reissner@rose.de">Ernst Reissner</a>
+ * @param <K>
+ *    the class of keys for this map. 
+ * @param <V>
+ *    the class of values for this map. 
+ *
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class ListMap<K,V> implements SortedMap<K,V> {
+public final class ListMap<K, V> implements SortedMap<K, V> {
 
     /* -------------------------------------------------------------------- *
      * Inner classes.                                                       *
@@ -40,7 +45,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
      * **** I wonder whether there is no generic implementation 
      * for {@link java.util.Map.Entry}. 
      */
-    private class Entry implements Map.Entry<K,V> {
+    private final class Entry implements Map.Entry<K, V> {
 
 	/* ------------------------------------------------------------------ *
 	 * fields.                                                            *
@@ -103,7 +108,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 
 	// fits with method equals 
 	public int hashCode() {
-	    return this.getKey().hashCode()+this.getValue().hashCode();
+	    return this.getKey().hashCode() + this.getValue().hashCode();
 	}
 
 	// **** seems to be a bug in javadoc 
@@ -119,7 +124,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 		return false;
 	    }
 
-	    Map.Entry<?,?> other = (Map.Entry<?,?>)obj;
+	    Map.Entry<?, ?> other = (Map.Entry<?, ?>) obj;
 	    return Objects.equals(this.getKey(),   other.getKey()) 
 		&& Objects.equals(this.getValue(), other.getValue());
 	}
@@ -256,8 +261,8 @@ public class ListMap<K,V> implements SortedMap<K,V> {
      * @see ListMap#entrySet
      */
     private class Entries
-	extends  AbstractSet<Map.Entry<K,V>> 
-	implements SortedSet<Map.Entry<K,V>> {
+	extends  AbstractSet<Map.Entry<K, V>> 
+	implements SortedSet<Map.Entry<K, V>> {
 
 	/* ------------------------------------------------------------------ *
 	 * methods implementing Set based on AbstractSet.                     *
@@ -266,7 +271,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 	/**
 	 * Returns actually an instance of {@link ListMap.EntriesIterator}. 
 	 */
-        public Iterator<Map.Entry<K,V>> iterator() {
+        public Iterator<Map.Entry<K, V>> iterator() {
             return new EntriesIterator();
 	}
 
@@ -289,7 +294,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 	 *    nor an instance of {@link java.util.Map.Entry}. 
 	 */
 	private Object getKey(Object obj) {
-	    Map.Entry<?,?> entry = (Map.Entry<?,?>) obj;
+	    Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
 	    return entry.getKey();
 	}
 
@@ -324,7 +329,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 	    if (!(obj instanceof Map.Entry)) {
 		return false;
 	    }
-	    Map.Entry<?,?> entry = (Map.Entry<?,?>)obj;
+	    Map.Entry<?, ?> entry = (Map.Entry<?, ?>) obj;
 	    entry.getClass().getTypeParameters();
 	    return ListMap.this.keysSet.remove(getKey(entry));
         }
@@ -341,39 +346,39 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 	 * methods implementing SortedSet.                                    *
 	 * ------------------------------------------------------------------ */
 
-	public Comparator<? super Map.Entry<K,V>> comparator() {
-	    return new Comparator<Map.Entry<K,V>>() {
-		public int compare(Map.Entry<K,V> entry1, 
-				   Map.Entry<K,V> entry2) {
+	public Comparator<? super Map.Entry<K, V>> comparator() {
+	    return new  Comparator<Map.Entry<K, V>>() {
+		public int compare(Map.Entry<K, V> entry1, 
+				   Map.Entry<K, V> entry2) {
 		    return ListMap.this.comparator()
 			.compare(entry1.getKey(), entry2.getKey());
 		}
 	    };
 	}
 
-	private Map.Entry<K,V> key2entry(K key) {
-	    return new ListMap<K,V>.Entry(key, get(key));
+	private Map.Entry<K, V> key2entry(K key) {
+	    return new ListMap<K, V>.Entry(key, get(key));
 	}
 
-	public Map.Entry<K,V> first() {
+	public Map.Entry<K, V> first() {
 	    return key2entry(ListMap.this.keys.first());
 	}
 
-	public Map.Entry<K,V> last() {
+	public Map.Entry<K, V> last() {
 	    return key2entry(ListMap.this.keys.last());
 	}
 
-	public SortedSet<Map.Entry<K,V>> subSet(Map.Entry<K,V> fromElement, 
-						Map.Entry<K,V>   toElement) {
+	public SortedSet<Map.Entry<K, V>> subSet(Map.Entry<K, V> fromElement, 
+					         Map.Entry<K, V>   toElement) {
 	    return ListMap.this.subMap(fromElement.getKey(),
 				       toElement  .getKey()).entrySet();
 	}
 
-	public SortedSet<Map.Entry<K,V>> headSet(Map.Entry<K,V>  toElement) {
+	public SortedSet<Map.Entry<K, V>> headSet(Map.Entry<K, V>  toElement) {
 	    return ListMap.this.headMap(toElement  .getKey()).entrySet();
 	}
 
-	public SortedSet<Map.Entry<K,V>> tailSet(Map.Entry<K,V> fromElement) {
+	public SortedSet<Map.Entry<K, V>> tailSet(Map.Entry<K, V> fromElement) {
 	    return ListMap.this.tailMap(fromElement.getKey()).entrySet();
 	}
 
@@ -385,9 +390,9 @@ public class ListMap<K,V> implements SortedMap<K,V> {
      * @see ListMap.Entries#iterator()
      */
     private class EntriesIterator extends XIterator 
-	implements Iterator<Map.Entry<K,V>> {
+	implements Iterator<Map.Entry<K, V>> {
 
-    	public Map.Entry<K,V> next() {
+    	public Map.Entry<K, V> next() {
 	    int idx = this.lIter.nextIndex();
 	    return new Entry(this.lIter.next(), 
 			     ListMap.this.values.get(idx));
@@ -493,7 +498,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 	 * @see ListMap#keys
 	 * @see ListSet#getList()
 	 */
-	final ListIterator<K> lIter;
+	protected final ListIterator<K> lIter;
 
 	/* ------------------------------------------------------------------ *
 	 * constructors.                                                      *
@@ -572,7 +577,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
      * The set of entries of this map returned by {@link #entrySet()}. 
      * Note that each <code>ListMap</code> has a single entry set. 
      */
-    private final SortedSet<Map.Entry<K,V>> entrySet;
+    private final SortedSet<Map.Entry<K, V>> entrySet;
 
     /* -------------------------------------------------------------------- *
      * constructors and auxiliary methods.                                  *
@@ -595,7 +600,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
      * @see #map2keys(Map)
      * @see #map2values(Map)
      */
-    public ListMap(Map<K,V> map) {
+    public ListMap(Map<K, V> map) {
 	this(map2keys(map), map2values(map));
     }
 
@@ -606,7 +611,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
      * This ordering reflects the ordering 
      * given by the iteration on the key set of <code>map</code>. 
      */
-    private static <K,V> ListSet<K> map2keys(Map<K,V> map) {
+    private static <K, V> ListSet<K> map2keys(Map<K, V> map) {
 	ListSet<K> res = ListSet.sortedAsAdded();
 	res.addAll(map.keySet());
 	return res;
@@ -620,7 +625,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
      * that this ordering is the same as the one 
      * of the value collection {@link Map#values() map#values()}. **** 
      */
-    private static <K,V> List<V> map2values(Map<K,V> map) {
+    private static <K, V> List<V> map2values(Map<K, V> map) {
 	List<V> res = new ArrayList<V>();
 	// **** using entrySet() would be more elegant, 
 	// but seems not to guarantee an ordering of iteration. 
@@ -676,7 +681,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 	return this.values.contains(val);
     }
 
-    public SortedSet<Map.Entry<K,V>> entrySet() {
+    public SortedSet<Map.Entry<K, V>> entrySet() {
 	return this.entrySet;
     }
 
@@ -711,12 +716,12 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 	return this.values.set(idx, value);
     }
 
-    public void putAll(Map<? extends K,? extends V> other) {
+    public void putAll(Map<? extends K, ? extends V> other) {
 	Iterator<? extends K> iter = other.keySet().iterator();
 	K key;
 	while (iter.hasNext()) {
 	    key = iter.next();
-	    this.put(key,other.get(key));
+	    this.put(key, other.get(key));
 	}
     }
 
@@ -768,7 +773,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
     // offering just a view, not a copy of part of this map 
     // public Map<K,V> subMap(Set<K> someKeys) {
     // 	V val;
-    // 	ListMap<K,V> res = new ListMap<K,V>();
+    // 	ListMap<K, V> res = new ListMap<K, V>();
     // 	for (K key : someKeys) {
     // 	    val = get(key);
     // 	    res.put(key, val);
@@ -776,23 +781,23 @@ public class ListMap<K,V> implements SortedMap<K,V> {
     // 	return res;
     // }
 
-    public ListMap<K,V> headMap(K toKey) {
-	return subMap(0, this.keys.obj2idx(  toKey));
+    public ListMap<K, V> headMap(K toKey) {
+	return subMap(0, this.keys.obj2idx(toKey));
     }
 
-    public ListMap<K,V> tailMap(K fromKey) {
+    public ListMap<K, V> tailMap(K fromKey) {
  	return subMap(this.keys.obj2idx(fromKey), size());
    }
 
-    ListMap<K,V> subMap(int fromIdx, int toIdx) {
-	ListSet<K> subKeys   = this.keys  .subSetIdx(fromIdx,toIdx);
-	List   <V> subValues = this.values.subList  (fromIdx,toIdx);
+    ListMap<K, V> subMap(int fromIdx, int toIdx) {
+	ListSet<K> subKeys   = this.keys  .subSetIdx(fromIdx, toIdx);
+	List   <V> subValues = this.values.subList  (fromIdx, toIdx);
 
-	return new ListMap<K,V>(subKeys,subValues);
+	return new ListMap<K, V>(subKeys, subValues);
     }
 
-    public ListMap<K,V> subMap(K fromKey, K toKey) {
-	return subMap(this.keys.obj2idx(fromKey), this.keys.obj2idx(  toKey));
+    public ListMap<K, V> subMap(K fromKey, K toKey) {
+	return subMap(this.keys.obj2idx(fromKey), this.keys.obj2idx(toKey));
     }
 
     public boolean equals(Object obj) {
@@ -800,7 +805,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
 	    return false;
 	}
 
-	Map<?,?> other = (Map<?,?>)obj;
+	Map<?, ?> other = (Map<?, ?>) obj;
 	return this.entrySet().equals(other.entrySet());
     }
 
@@ -809,7 +814,7 @@ public class ListMap<K,V> implements SortedMap<K,V> {
     }
 
     public String toString() {
-	StringBuffer result = new StringBuffer(40);
+	StringBuffer result = new StringBuffer();
 	result.append("<ListMap>\n");
 	for (int i = 0; i < size(); i++) {
 	    result.append("[" + this.keys.getList().get(i) 

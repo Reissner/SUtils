@@ -47,12 +47,15 @@ import java.util.ArrayList;
  * like {@link #firstIndex()}, {@link #minFreeIndex()} 
  * and it is possible to shift a list using {@link #shiftRight(int)}. 
  *
+ * @param <E>
+ *    the class of the elements of this list. 
+ *
  * Created: Sun Aug 26 23:25:26 2007
  *
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class TwoSidedList<E> implements List<E> {
+public final class TwoSidedList<E> implements List<E> {
 
     /* -------------------------------------------------------------------- *
      * inner classes.                                                       *
@@ -70,7 +73,7 @@ public class TwoSidedList<E> implements List<E> {
 		list.checkRange("",
 				ind,
 				list.firstIndex(),
-				list.minFreeIndex()+1);
+				list.minFreeIndex() + 1);
 	    }
 	    // api-docs provided by javadoc 
 	    void checkAdd1(TwoSidedList<?> list) {
@@ -84,7 +87,7 @@ public class TwoSidedList<E> implements List<E> {
 	    void checkRange(int ind, TwoSidedList<?> list) {
 		list.checkRange("",
 				ind,
-				list.firstIndex()-1,
+				list.firstIndex() - 1,
 				list.minFreeIndex());
 	    }
 	    // api-docs provided by javadoc 
@@ -114,7 +117,8 @@ public class TwoSidedList<E> implements List<E> {
 	 *    </ul>
 	 *    The message is always the same: 
 	 *    <code>
-	 * "Index: &lt;ind&gt; Range: &lt;firstIndex&gt; - &lt;minFreeIndex()&gt; exclusively. "
+	 * "Index: &lt;ind&gt; Range: &lt;firstIndex&gt; 
+	 *       - &lt;minFreeIndex()&gt; exclusively. "
 	 *    </code>. 
 	 * @see #add   (int, Object,     Direction)
 	 * @see #addAll(int, Collection, Direction)
@@ -266,7 +270,7 @@ public class TwoSidedList<E> implements List<E> {
      *    the list wrapped by this twosided list. 
      */
     public TwoSidedList(List<E> list) {
-	this(list,0);
+	this(list, 0);
     }
 
     /**
@@ -292,7 +296,7 @@ public class TwoSidedList<E> implements List<E> {
      *    another <code>TwoSidedList</code>. 
      */
     public TwoSidedList(TwoSidedList<E> other) {
-	this(other.list,other.firstIndex);
+	this(other.list, other.firstIndex);
 
     }
 
@@ -323,7 +327,7 @@ public class TwoSidedList<E> implements List<E> {
      *    the index where this list starts growing. 
      */
     public TwoSidedList(int firstIndex) {
-	this(new ArrayList<E>(),firstIndex);
+	this(new ArrayList<E>(), firstIndex);
     }
 
     /* -------------------------------------------------------------------- *
@@ -340,7 +344,8 @@ public class TwoSidedList<E> implements List<E> {
      *    if not <code>firstIndex() <= ind &lt; minFreeIndex()</code> 
      *    with message 
      *    <code>
-     * "Index: &lt;ind&gt; Range: &lt;firstIndex&gt; - &lt;minFreeIndex()&gt; exclusively. "
+     * "Index: &lt;ind&gt; Range: &lt;firstIndex&gt; 
+     *       - &lt;minFreeIndex()&gt; exclusively. "
      *    </code>. 
      * <!-- used by 
      * get(int), 
@@ -349,7 +354,7 @@ public class TwoSidedList<E> implements List<E> {
      * -->
      */
     void checkRange(int ind) {
-	checkRange("",ind,this.firstIndex,minFreeIndex());
+	checkRange("", ind, this.firstIndex, minFreeIndex());
     }
 
     /**
@@ -369,7 +374,8 @@ public class TwoSidedList<E> implements List<E> {
      *    </ul>
      *    The message is always the same: 
      *    <code>
-     * "Index: &lt;ind&gt;Range:&lt;firstIndex&gt;-&lt;minFreeIndex()&gt;exclusively. "
+     * "Index: &lt;ind&gt;Range:&lt;firstIndex&gt;
+     *       - &lt;minFreeIndex()&gt;exclusively. "
      *    </code>. 
      * @see #add(int, Object, Direction)
      * @see #addAll(int, Collection, Direction)
@@ -380,7 +386,7 @@ public class TwoSidedList<E> implements List<E> {
      * -->
      */
     private void checkRange(int ind, Direction dir) {
-	dir.checkRange(ind,this);
+	dir.checkRange(ind, this);
     }
 
     /**
@@ -402,7 +408,8 @@ public class TwoSidedList<E> implements List<E> {
      *    if not <code>min &gt;= ind &lt; maxP</code>. 
      *    The message is 
      *    <code>
-     * "Index: &lt;ind&gt; Range: &lt;firstIndex&gt; - &lt;minFreeIndex()&gt; exclusively. "
+     * "Index: &lt;ind&gt; Range: &lt;firstIndex&gt; 
+     *       - &lt;minFreeIndex()&gt; exclusively. "
      *    </code> preceeded by <code>fromToNothing</code>. 
      *
      * <!--used by 
@@ -491,7 +498,7 @@ public class TwoSidedList<E> implements List<E> {
      *    would cause underrun of {@link #firstIndex}. 
      */
      private void subFirstIndex(int numAdded) {
-	if (this.firstIndex < this.firstIndex-numAdded) {
+	if (this.firstIndex < this.firstIndex - numAdded) {
 	    throw new IllegalStateException
 		("Adding " + numAdded + " objects at top of this list " + 
 		 "would cause index underrun. ");
@@ -511,7 +518,7 @@ public class TwoSidedList<E> implements List<E> {
      */
     void checkMinFreeIndex(int numAdded) {
 	assert  numAdded >= 0;
-	if (minFreeIndex() > minFreeIndex()+numAdded) {
+	if (minFreeIndex() > minFreeIndex() + numAdded) {
 	    throw new IllegalStateException
 		("Adding " + numAdded + " objects at the tail of this list " + 
 		 "would cause index overrun. ");
@@ -554,21 +561,22 @@ public class TwoSidedList<E> implements List<E> {
      */
     public int shiftRight(int num) {
 	if (num > 0) {
-	    if (minFreeIndex() > minFreeIndex()+num) {
+	    if (minFreeIndex() > minFreeIndex() + num) {
 		throw new IllegalStateException
 		    ("Shifting this list by " + num + 
 		     " would cause index overrun. ");
 	    }
 	} else {
 	    assert num <= 0;
-	    if (this.firstIndex < this.firstIndex+num) {
+	    if (this.firstIndex < this.firstIndex + num) {
 		throw new IllegalStateException
 		    ("Shifting this list by " + num + 
 		     " would cause index underrun. ");
 	    }
 	}
 
-	return this.firstIndex += num;
+	this.firstIndex += num;
+	return this.firstIndex;
     }
 
     // caution: not wrapped. 
@@ -590,7 +598,7 @@ public class TwoSidedList<E> implements List<E> {
      * @return 
      *    an <code>int</code> value
      */
-    public final int size() {
+    public int size() {
 	return this.list.size();
     }
 
@@ -601,7 +609,7 @@ public class TwoSidedList<E> implements List<E> {
      *    whether this list contains no elements 
      *    as a <code>boolean</code> value. 
      */
-    public final boolean isEmpty() {
+    public boolean isEmpty() {
 	return this.list.isEmpty();
     }
 
@@ -622,7 +630,7 @@ public class TwoSidedList<E> implements List<E> {
      *    if <code>obj == null</code> 
      *    and {@link #list} does not permit <code>null</code> elements. 
      */
-    public final boolean contains(final Object obj) {
+    public boolean contains(final Object obj) {
 	return this.list.contains(obj);
     }
 
@@ -663,8 +671,8 @@ public class TwoSidedList<E> implements List<E> {
      *    <code>firstIndex()-1</code> if <code>obj</code> is not in this list. 
      *    </ul>
      */
-    public final int indexOf(final Object obj) {
-	return this.list.indexOf(obj)+this.firstIndex;
+    public int indexOf(final Object obj) {
+	return this.list.indexOf(obj) + this.firstIndex;
     }
 
     /**
@@ -708,8 +716,8 @@ public class TwoSidedList<E> implements List<E> {
      *    <code>firstIndex()-1</code> if <code>obj</code> is not in this list. 
      *    </ul>
      */
-    public final int lastIndexOf(final Object obj) {
-	return this.list.lastIndexOf(obj)+this.firstIndex;
+    public int lastIndexOf(final Object obj) {
+	return this.list.lastIndexOf(obj) + this.firstIndex;
     }
 
     /**
@@ -723,7 +731,7 @@ public class TwoSidedList<E> implements List<E> {
      *    an <code>Object[]</code> containing all elements in proper sequence. 
      */
     // api-docs provided by javadoc. 
-    public final Object[] toArray(){
+    public Object[] toArray() {
 	return this.list.toArray();
     }
 
@@ -740,7 +748,7 @@ public class TwoSidedList<E> implements List<E> {
      *    an <code>Object[]</code> value
      */
     // api-docs provided by javadoc. 
-    public final <E> E[] toArray(final E[] objArr) {
+    public <E> E[] toArray(final E[] objArr) {
 	return this.list.toArray(objArr);
     }
 
@@ -754,9 +762,9 @@ public class TwoSidedList<E> implements List<E> {
      * @throws IndexOutOfBoundsException
      *    as described for {@link #checkRange(int)}
      */
-    public final E get(final int ind) {
+    public E get(final int ind) {
 	checkRange(ind);
-	return this.list.get(ind-this.firstIndex);
+	return this.list.get(ind - this.firstIndex);
     }
 
     /**
@@ -784,9 +792,9 @@ public class TwoSidedList<E> implements List<E> {
      * @throws IndexOutOfBoundsException
      *    as described for {@link #checkRange(int)}
      */
-    public final E set(final int ind, final E obj) {
+    public E set(final int ind, final E obj) {
 	checkRange(ind);
-	return this.list.set(ind-this.firstIndex,obj);
+	return this.list.set(ind - this.firstIndex, obj);
     }
 
 
@@ -796,7 +804,7 @@ public class TwoSidedList<E> implements List<E> {
      * @throws UnsupportedOperationException
      *    use {@link #addFirst} and {@link #addLast} instead. 
      */
-    public final boolean add(final E obj) {
+    public boolean add(final E obj) {
 	throw new UnsupportedOperationException
 	    ("Use addFirst(Object) or addLast(E) instead. ");
     }
@@ -826,10 +834,10 @@ public class TwoSidedList<E> implements List<E> {
      *    if <code>{@link #firstIndex} == Integer.MIN_VALUE</code> 
      *    adding an element would cause index underrun. 
      */
-    public final boolean addFirst(final E obj) {
+    public boolean addFirst(final E obj) {
 	// may throw an IllegalStateException 
 	decFirstIndex();
-	this.list.add(0,obj);
+	this.list.add(0, obj);
 	return true;
     }
 
@@ -857,7 +865,7 @@ public class TwoSidedList<E> implements List<E> {
      *    if adding objects to this list 
      *    would cause overrun of {@link #minFreeIndex()}. 
      */
-    public final boolean addLast(final E obj) {
+    public boolean addLast(final E obj) {
 	checkIncMinFreeIndex();
 	return this.list.add(obj);
     }
@@ -868,7 +876,7 @@ public class TwoSidedList<E> implements List<E> {
      * @throws UnsupportedOperationException
      *    use {@link #add(int,Object,Direction)} instead. 
      */
-    public final void add(final int ind, final E obj) {
+    public void add(final int ind, final E obj) {
 	throw new UnsupportedOperationException
 	    ("Use add(int,E,Direction) instead. ");
     }
@@ -913,10 +921,10 @@ public class TwoSidedList<E> implements List<E> {
      * @throws IndexOutOfBoundsException
      *    as described for {@link #checkRange(int,Direction)}
      */
-    public final void add(final int ind, final E obj, final Direction dir) {
-	checkRange(ind,dir);
+    public void add(final int ind, final E obj, final Direction dir) {
+	checkRange(ind, dir);
 	dir.checkAdd1(this);
-	this.list.add(ind-this.firstIndex, obj);
+	this.list.add(ind - this.firstIndex, obj);
     }
 
     /**
@@ -925,7 +933,7 @@ public class TwoSidedList<E> implements List<E> {
      * @throws UnsupportedOperationException
      *    use {@link #remove(int,Direction)} instead. 
      */
-    public final E remove(final int ind) {
+    public E remove(final int ind) {
 	throw new UnsupportedOperationException
 	    ("Use remove(int,Direction) instead. ");
     }
@@ -949,9 +957,9 @@ public class TwoSidedList<E> implements List<E> {
      * @throws IndexOutOfBoundsException
      *    as described for {@link #checkRange(int)}
      */
-    public final E remove(final int ind, Direction dir) {
+    public E remove(final int ind, Direction dir) {
 	checkRange(ind);
-	E res = this.list.remove(ind-this.firstIndex);
+	E res = this.list.remove(ind - this.firstIndex);
 	if (dir == Direction.Right2Left) {
 	    // Note that this may not throw any exception in this case. 
 	    incFirstIndex();
@@ -964,9 +972,10 @@ public class TwoSidedList<E> implements List<E> {
      * Not supported by this implementation. **** breaks contract 
      *
      * @throws UnsupportedOperationException
-     *    use {@link #removeFirst(Object)} and {@link #removeLast(Object)} instead. 
+     *    use {@link #removeFirst(Object)} 
+     *    and {@link #removeLast(Object)} instead. 
      */
-    public final boolean remove(final Object obj) {
+    public boolean remove(final Object obj) {
 	throw new UnsupportedOperationException
 	    ("Use removeFirst(E) or removeLast(E) instead. ");
     }
@@ -990,7 +999,7 @@ public class TwoSidedList<E> implements List<E> {
      *    if the <code>remove(Object)</code> operation is not supported 
      *    by {@link #list}. 
      */
-    public final boolean removeFirst(final Object obj) {
+    public boolean removeFirst(final Object obj) {
 	return this.list.remove(obj);
     }
 
@@ -1016,7 +1025,7 @@ public class TwoSidedList<E> implements List<E> {
      *    operation is not supported 
      *    by {@link #list}. 
      */
-    public final boolean removeLast(final Object obj) {
+    public boolean removeLast(final Object obj) {
 	int ind = this.list.lastIndexOf(obj);
 	if (ind == -1) {
 	    // obj \notin this 
@@ -1038,7 +1047,7 @@ public class TwoSidedList<E> implements List<E> {
      * @throws UnsupportedOperationException 
      *    if the clear operation is not supported by {@link #list}. 
      */
-    public final void clear() {
+    public void clear() {
 	this.list.clear();
     }
 
@@ -1048,7 +1057,7 @@ public class TwoSidedList<E> implements List<E> {
      * @throws UnsupportedOperationException
      *    use {@link #addAllFirst} and {@link #addAllLast} instead. 
      */
-    public final boolean addAll(final Collection<? extends E> coll) {
+    public boolean addAll(final Collection<? extends E> coll) {
 	throw new UnsupportedOperationException
 	    ("Use addAllFirst or addAllLast instead. ");
     }
@@ -1088,9 +1097,9 @@ public class TwoSidedList<E> implements List<E> {
      *    at the head of this list 
      *    would cause underrun of {@link #firstIndex}. 
      */
-    public final boolean addAllFirst(final Collection<? extends E> coll) {
+    public boolean addAllFirst(final Collection<? extends E> coll) {
 	subFirstIndex(coll.size());
-	return this.list.addAll(0,coll);
+	return this.list.addAll(0, coll);
     }
 
     /**
@@ -1128,7 +1137,7 @@ public class TwoSidedList<E> implements List<E> {
      *    to this list **** or at the tail of this list 
      *    would cause overrun of {@link #minFreeIndex()}. 
      */
-    public final boolean addAllLast(final Collection<? extends E> coll) {
+    public boolean addAllLast(final Collection<? extends E> coll) {
 	checkMinFreeIndex(coll.size());
 	return this.list.addAll(coll);
     }
@@ -1139,8 +1148,8 @@ public class TwoSidedList<E> implements List<E> {
      * @throws UnsupportedOperationException
      *    use {@link #addAll(int,Collection,Direction)} instead. 
      */
-    public final boolean addAll(final int ind, 
-				final Collection<? extends E> coll) {
+    public boolean addAll(final int ind, 
+			  final Collection<? extends E> coll) {
 	throw new UnsupportedOperationException
 	    ("Use addAll(int,Collection,Direction) instead. ");
     }
@@ -1204,12 +1213,12 @@ public class TwoSidedList<E> implements List<E> {
      *    would cause underrun of {@link #firstIndex} 
      *    or overrun of {@link #minFreeIndex}. 
      */
-    public final boolean addAll(final int ind, 
-				final Collection<? extends E> coll, 
-				final Direction dir) {
-	checkRange(ind,dir);
-	dir.checkAddAll(coll.size(),this);
-	return this.list.addAll(ind-this.firstIndex, coll);
+    public boolean addAll(final int ind, 
+			  final Collection<? extends E> coll, 
+			  final Direction dir) {
+	checkRange(ind, dir);
+	dir.checkAddAll(coll.size(), this);
+	return this.list.addAll(ind - this.firstIndex, coll);
     }
 
     /*
@@ -1219,7 +1228,7 @@ public class TwoSidedList<E> implements List<E> {
      *    an iterator over the elements in this list in proper sequence. 
      */
     // api-docs provided by javadoc. 
-    public final Iterator<E> iterator() {
+    public Iterator<E> iterator() {
 	return this.list.iterator();
     }
 
@@ -1231,7 +1240,7 @@ public class TwoSidedList<E> implements List<E> {
      *    a <code>ListIterator</code> 
      */
     // api-docs provided by javadoc 
-    public final ListIterator<E> listIterator() {
+    public ListIterator<E> listIterator() {
 	return this.list.listIterator();
     }
 
@@ -1246,12 +1255,13 @@ public class TwoSidedList<E> implements List<E> {
      *    if not <code>firstIndex() &lt;= ind &lt;= minFreeIndex()</code> 
      *    with message 
      *    <code>
-     * "Index: &lt;ind&gt; Range: &lt;firstIndex&gt; - &lt;minFreeIndex()&gt; exclusively. "
+     * "Index: &lt;ind&gt; Range: &lt;firstIndex&gt; - 
+     * &lt;minFreeIndex()&gt; exclusively. "
      *    </code>. 
      */
-    public final ListIterator<E> listIterator(final int ind) {
-	checkRange("",ind,this.firstIndex,minFreeIndex()+1);
-	return this.list.listIterator(ind-this.firstIndex);
+    public ListIterator<E> listIterator(final int ind) {
+	checkRange("", ind, this.firstIndex, minFreeIndex() + 1);
+	return this.list.listIterator(ind - this.firstIndex);
     }
 
     /**
@@ -1270,7 +1280,7 @@ public class TwoSidedList<E> implements List<E> {
      *    and {@link #list} is incompatible with <code>null</code> elements 
      *    or if <code>coll == null</code>. 
      */
-    public final boolean containsAll(final Collection<?> coll) {
+    public boolean containsAll(final Collection<?> coll) {
 	return this.list.containsAll(coll);
     }
 
@@ -1280,7 +1290,7 @@ public class TwoSidedList<E> implements List<E> {
      * @throws UnsupportedOperationException
      *    use {@link #removeAll(Collection,Direction)} instead. 
      */
-    public final boolean removeAll(final Collection<?> coll) {
+    public boolean removeAll(final Collection<?> coll) {
 	throw new UnsupportedOperationException
 	    ("Use removeAll(Collection,Direction) instead. ");
     }
@@ -1323,7 +1333,7 @@ public class TwoSidedList<E> implements List<E> {
      *    and {@link #list} does not permit <code>null</code> elements 
      *    or if <code>coll == null</code>. 
      */
-    public final boolean removeAll(final Collection<?> coll, Direction dir) {
+    public boolean removeAll(final Collection<?> coll, Direction dir) {
 	switch (dir) {
 	    case Left2Right:
 		return this.list.removeAll(coll);
@@ -1345,7 +1355,7 @@ public class TwoSidedList<E> implements List<E> {
      * @throws UnsupportedOperationException
      *    use {@link #retainAll(Collection,Direction)} instead. 
      */
-    public final boolean retainAll(final Collection<?> coll) {
+    public boolean retainAll(final Collection<?> coll) {
 	throw new UnsupportedOperationException
 	    ("Use retainAll(Collection,Direction) instead. ");
     }
@@ -1390,7 +1400,7 @@ public class TwoSidedList<E> implements List<E> {
      *    and {@link #list} does not permit <code>null</code> elements 
      *    or if <code>coll == null</code>. 
      */
-    public final boolean retainAll(final Collection<?> coll, Direction dir) {
+    public boolean retainAll(final Collection<?> coll, Direction dir) {
 	switch (dir) {
 	    case Left2Right:
 		return this.list.retainAll(coll);
@@ -1424,17 +1434,18 @@ public class TwoSidedList<E> implements List<E> {
      *    if not 
      *    <code>firstIndex() <= indStart <= indEnd <= minFreeIndex()</code>
      */
-    public final List<E> subList(final int indStart, final int indEnd) {
+    public List<E> subList(final int indStart, final int indEnd) {
 	if (indStart > indEnd) {
 	    throw new IndexOutOfBoundsException
 		("fromIndex(" + indStart + ") > toIndex(" + indEnd + ")");
 	}
 	// only one invocation can throw an exception. 
-	checkRange("from",indStart,this.firstIndex,minFreeIndex()+1);
-	checkRange("to",  indEnd,  this.firstIndex,minFreeIndex()+1);
-	return this.list.subList(indStart-this.firstIndex, 
-				 indEnd  -this.firstIndex);
+	checkRange("from", indStart, this.firstIndex, minFreeIndex() + 1);
+	checkRange("to",   indEnd,   this.firstIndex, minFreeIndex() + 1);
+	return this.list.subList(indStart - this.firstIndex, 
+				 indEnd   - this.firstIndex);
     }
+
     /**
      * Returns a view of the portion of this twosided list 
      * between the specified <code>fromIndex</code>, inclusive, 
@@ -1452,9 +1463,9 @@ public class TwoSidedList<E> implements List<E> {
      * @throws IndexOutOfBoundsException
      *    see {@link #subList(int,int)} 
      */
-    public final TwoSidedList<E> subList2(final int indStart, 
-					  final int indEnd) {
-	return new TwoSidedList<E>(subList(indStart,indEnd),indStart);
+    public TwoSidedList<E> subList2(final int indStart, 
+				    final int indEnd) {
+	return new TwoSidedList<E>(subList(indStart, indEnd), indStart);
     }
 
     /**
@@ -1473,11 +1484,11 @@ public class TwoSidedList<E> implements List<E> {
      * @return 
      *    a <code>boolean</code> value
      */
-    public final boolean equals(final Object obj) {
+    public boolean equals(final Object obj) {
 	if (!(obj instanceof TwoSidedList)) {
 	    return false;
 	}
-	TwoSidedList<?> other = (TwoSidedList<?>)obj;
+	TwoSidedList<?> other = (TwoSidedList<?>) obj;
 
 	return this.list.equals(other.list) 
 	    && this.firstIndex == other.firstIndex;
@@ -1489,7 +1500,7 @@ public class TwoSidedList<E> implements List<E> {
      * @return 
      *    the hash code as an <code>int</code> value. 
      */
-    public final int hashCode() {
+    public int hashCode() {
 	return this.list.hashCode() + this.firstIndex;
     }
 

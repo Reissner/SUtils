@@ -12,18 +12,18 @@ import org.xml.sax.Attributes;
 /**
  * Saves all events in a list to be returned by {@link #getEvents}. 
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class SavingHandler 
+public final class SavingHandler 
     implements ContentHandler, ParseExceptionHandler {
 
     /* --------------------------------------------------------------------- *
      * class constants                                                       *
      * --------------------------------------------------------------------- */
 
-    public final static String START_OF_DOCUMENT = "start of document";
-    public final static String   END_OF_DOCUMENT =   "end of document";
+    public static final String START_OF_DOCUMENT = "start of document";
+    public static final String   END_OF_DOCUMENT =   "end of document";
 
     /* --------------------------------------------------------------------- *
      * fields                                                                *
@@ -153,7 +153,7 @@ public class SavingHandler
 
     public void foundMultipleAttribute(String attrName,
 				       Object oldAttrValue) {
-	StringBuffer buf = new StringBuffer(55);
+	StringBuilder buf = new StringBuilder();
 	buf.append("Found second value for attribute \"");
 	buf.append(attrName);
 	buf.append("\"; overwritten ");

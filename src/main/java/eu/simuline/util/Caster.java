@@ -29,8 +29,7 @@ public abstract class Caster {
      * A trivial caster for which compatibility 
      * is assignment compatibility. 
      */
-    public final static Caster ASSIGNEMENT_COMPATIBLE = new Trivial() {
-	     
+    public static final Caster ASSIGNEMENT_COMPATIBLE = new Trivial() {
 	    public boolean areCompatible(final Class<?> cls, final Object obj) {
 		return cls.isInstance(obj);
 	    }
@@ -40,7 +39,7 @@ public abstract class Caster {
      * A trivial caster for which compatibility 
      * is equality of classes. 
      */
-    public final static Caster STRICT = new Trivial() {
+    public static final Caster STRICT = new Trivial() {
 	    public boolean areCompatible(final Class<?> cls, final Object obj) {
 		return cls == obj.getClass();
 	    }
@@ -55,7 +54,7 @@ public abstract class Caster {
      * as a special case of 
      * {@link CollectionsExt#recToArray(Object,Class,Caster)}. 
      */
-    public final static Caster BASIC_TYPES = new Trivial() {
+    public static final Caster BASIC_TYPES = new Trivial() {
 
 	    /**
 	     * Behaves like 
@@ -69,7 +68,7 @@ public abstract class Caster {
 	     *    see {@link BasicTypesCompatibilityChecker#areCompatible}. 
 	     */
 	    public boolean areCompatible(final Class<?> cls, final Object obj) {
-		return BasicTypesCompatibilityChecker.areCompatible(cls,obj);
+		return BasicTypesCompatibilityChecker.areCompatible(cls, obj);
 	    }
 	}; // BASIC_TYPES 
 
@@ -77,7 +76,7 @@ public abstract class Caster {
      * This is a trivial caster. 
      * Method {@link #areCompatible} is still to be implemented. 
      */
-    abstract static class Trivial extends Caster {// NOPMD
+    abstract static class Trivial extends Caster { // NOPMD
 
 	    /**
 	     * Returns the input parameter unchanged. 

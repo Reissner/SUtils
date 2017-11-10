@@ -15,12 +15,15 @@ import java.util.Iterator;
  * addAll's implementation seems strange, 
  * add seems to be buggy, 
  * Problem with overflow of multiplicities. 
-
  *
+ * @param <MAP>
+ *    the map assigning to each element of this multi-set its multiplicity. 
+ * @param <T>
+ *    the class of the elements of this multi-set. 
  *
  * Created: Sun Nov 23 23:32:06 2014
  *
- * @author <a href="mailto:ernst@">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T> 
@@ -39,7 +42,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
     // **** this implementation is not optimal: 
     // better would be immutable multiplicities 
     // or just using Integers with checks moved towards enclosing class 
-    public static class MyMultiplicity implements Multiplicity {
+    public static final class MyMultiplicity implements Multiplicity {
 
 	/* ---------------------------------------------------------------- *
 	 * fields.                                                          *
@@ -155,7 +158,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	 *    nor an instance of {@link Multiplicity}. 
 	 */
 	public int compareTo(Multiplicity mult) {
-	    return this.get()-mult.get();
+	    return this.get() - mult.get();
 	}
 
 	// api-docs provided by javadoc. 
@@ -182,7 +185,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	    if (!(obj instanceof Multiplicity)) {
 		return false;
 	    }
-	    return ((Multiplicity)obj).get() == this.get();
+	    return ((Multiplicity) obj).get() == this.get();
 	}
 
 	// api-docs provided by javadoc. 
@@ -196,6 +199,12 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      * defining also the methods modifying the underlying {@link MultiSet}, 
      * namely {@link #remove()}, {@link #setMult(int)} 
      * and {@link #removeMult(int)}. 
+     * <p>
+     * This class is overwritten by anonymous class 
+     * in {@link TreeMultiSet.Immutable}. 
+     *
+     * @param <T>
+     *    the class of the elements of the underlying multi-set. 
      */
     protected static class MultiSetIteratorImpl<T> 
 	implements MultiSetIterator<T> {
@@ -210,7 +219,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	 * associating each element of the underlying {@link MultiSet} 
 	 * with its multiplicity. 
 	 */
-	private final Iterator<Map.Entry<T,Multiplicity>> entrySetIter;
+	private final Iterator<Map.Entry<T, Multiplicity>> entrySetIter;
 
 	/**
 	 * The element returned last by invoking {@link #next()} 
@@ -220,7 +229,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	 * has been removed in the meantime 
 	 * invoking a method of this iterator (instance). 
 	 */
-	private Map.Entry<T,Multiplicity> last;
+	private Map.Entry<T, Multiplicity> last;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
@@ -235,7 +244,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	 * methods.                                                         *
 	 * ---------------------------------------------------------------- */
 
-	public boolean hasNext() {
+	public final boolean hasNext() {
 	    return this.entrySetIter.hasNext();
 	}
 
@@ -244,8 +253,9 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	 * and, as a side effect, sets {@link #last} 
 	 * with the mapping of that element to its current multiplicity. 
 	 */
-	public T next() {
-	    return (this.last = this.entrySetIter.next()).getKey();
+	public final T next() {
+	    this.last = this.entrySetIter.next();
+	    return this.last.getKey();
 	}
 
 	/**
@@ -255,7 +265,12 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	 * and this method is supported by this iterator. 
 	 * As a side effect, sets {@link #last} to <code>null</code> 
 	 * indicating that this element has been removed. 
+	 *
+	 * @throws UnsupportedOperationException
+	 *    this implementation does not throw the exception 
+	 *    but the iterator of an immutable multi set of course do.  
 	 */
+	@Override
 	public void remove()  {
 	    // throws IllegalStateException if no longer present 
 	    this.entrySetIter.remove();
@@ -267,7 +282,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	 * last read by {@link #next()}, 
 	 * provided that element was not removed in the meantime. 
 	 */
-	public int getMult() {
+	public final int getMult() {
 	    if (this.last == null) {
 		// no message as for method remove() 
 		throw new IllegalStateException();
@@ -276,6 +291,14 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	    return this.last.getValue().get();
 	}
 
+	/**
+	 *
+	 *
+	 * @throws UnsupportedOperationException
+	 *    this implementation does not throw the exception 
+	 *    but the iterator of an immutable multi set of course do.  
+	 */
+	@Override
 	public int setMult(int setMult) {
 	    if (this.last == null) {
 		// no message as for method remove() 
@@ -298,6 +321,14 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	    return this.last.getValue().set(setMult);
 	}
 
+	/**
+	 *
+	 *
+	 * @throws UnsupportedOperationException
+	 *    this implementation does not throw the exception 
+	 *    but the iterator of an immutable multi set of course do.  
+	 */
+	@Override
 	public int removeMult(int removeMult)  {
 	    if (this.last == null) {
 		// no message as for method remove() 
@@ -369,7 +400,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      *    each multiple element counted as a single one. 
      * @see #sizeWithMult()
      */
-    public int size() {
+    public final int size() {
 	// works only, since multiplicities 0 are not allowed 
 	// (null-elements in turn would still work here) 
 	return this.obj2mult.size();
@@ -389,7 +420,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      *    otherwise just {@link Integer#MAX_VALUE}. 
      * @see #size()
      */
-    public int sizeWithMult() {
+    public final int sizeWithMult() {
 	int result = 0;
 	for (Multiplicity mult : this.obj2mult.values()) {
 	    result += mult.get();
@@ -408,7 +439,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      * @return 
      *    whether this multiple set contains no element. 
      */
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
 	return this.obj2mult.isEmpty();
     }
 
@@ -438,14 +469,14 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      * @see #getObjWithMaxMult()
      * @see #getMaxMult()
      */
-    private Map.Entry<T,Multiplicity> getMaxObjWithMult() {
+    private Map.Entry<T, Multiplicity> getMaxObjWithMult() {
 	// return value for empty set.
-	Map.Entry<T,Multiplicity> maxCand = null;
+	Map.Entry<T, Multiplicity> maxCand = null;
 
 	// search for greater value than maxVal
 	int maxVal = 0;
 	int cmpVal;
-	for (Map.Entry<T,Multiplicity> cand : this.obj2mult.entrySet()) {
+	for (Map.Entry<T, Multiplicity> cand : this.obj2mult.entrySet()) {
 	    cmpVal = cand.getValue().get();
 	    if (maxVal < cmpVal) {
 		maxCand = cand;
@@ -466,7 +497,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      *    or <code>null</code> if this multiple set is empty. 
      * @see #isEmpty
      */
-    public Object getObjWithMaxMult() {
+    public final T getObjWithMaxMult() {
 	if (isEmpty()) {
 	    return null;
 	}
@@ -483,7 +514,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      *    In particular this is <code>0</code> 
      *    if and only if this set is empty. 
      */
-    public int getMaxMult() {
+    public final int getMaxMult() {
 	if (isEmpty()) {
 	    return 0;
 	}
@@ -506,7 +537,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      * @see #setMultiplicity(Object, int)
      * @see #getMultiplicityObj(Object)
      */
-    public int getMultiplicity(Object obj) {
+    public final int getMultiplicity(Object obj) {
 	// throws NullPointerException for obj==null 
 	Multiplicity result = getMultiplicityObj(obj);
 	return result == null ? 0 : result.get();
@@ -527,9 +558,11 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      *    for <code>obj==null</code>. 
      * @see #getMultiplicity(Object)
      */
+    // **** CAUTION: this shall not be allowed for immutable multisets, 
+    // because multiplicities may be modified. 
     public Multiplicity getMultiplicityObj(Object obj) {
 	if (obj == null) {
-	    throw new NullPointerException();// NOPMD 
+	    throw new NullPointerException(); // NOPMD 
 	}
 	// Here, obj != null. 
 	return this.obj2mult.get(obj);
@@ -551,7 +584,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      * @throws NullPointerException
      *    for <code>obj==null</code>. 
      */
-    public boolean contains(Object obj) {
+    public final boolean contains(Object obj) {
 	// throws NullPointerException for obj==null 
 	return getMultiplicityObj(obj) != null;
     }
@@ -723,7 +756,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	    if (addMult != 0) {
 		assert addMult > 0;
 		mult = MyMultiplicity.create(addMult);
-		this.obj2mult.put(obj,mult);
+		this.obj2mult.put(obj, mult);
 	    }
 	    return addMult;
 	}
@@ -777,7 +810,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	Multiplicity mult = getMultiplicityObj(obj);
 	if (mult == null) {
 	    mult = MyMultiplicity.create(1);
-	    this.obj2mult.put(obj,mult);
+	    this.obj2mult.put(obj, mult);
 	    return true;
 	}
 	mult.add(1);
@@ -805,7 +838,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      */
     public int removeWithMult(Object obj) {
 	// throws NullPointerException for obj==null 
-	return removeWithMult(obj,1);
+	return removeWithMult(obj, 1);
    }
 
     /**
@@ -831,7 +864,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      */
-    public int removeWithMult(Object obj,int removeMult) {
+    public int removeWithMult(Object obj, int removeMult) {
 	if (removeMult < 0) {
 	    throw new IllegalArgumentException
 		("Expected non-negative multiplicity; found " + 
@@ -862,7 +895,8 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      * Removes <em>all</em> instances of the specified element from this 
      * <code>MultiSet</code>, if it is present with nontrivial multiplicity. 
      * More formally,
-     * immediately after having (successively) invoked <code>s.remove(o)</code>, 
+     * immediately after having (successively) 
+     * invoked <code>s.remove(o)</code>, 
      * the condition <code>s.contains(o) == false</code> is satisfied. 
      * Returns true if this <code>MultiSet</code> contained the specified 
      * element (or equivalently, if (the underlying set of) 
@@ -881,7 +915,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      */
     public boolean remove(Object obj) {
 	if (obj == null) {
-	    throw new NullPointerException();// NOPMD
+	    throw new NullPointerException(); // NOPMD
 	}
 	// Here, obj != null. 
 
@@ -905,7 +939,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      *    if this <code>MultiSet</code> does not support this method. 
      * @see #getMultiplicity(Object)
      */
-    public int setMultiplicity(T obj,int newMult) {
+    public int setMultiplicity(T obj, int newMult) {
 	if (obj == null) {
 	    throw new IllegalArgumentException
 		("Found null element. ");
@@ -940,7 +974,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      *    if the specified collection is <tt>null</tt>.
      * @see #contains(Object)
      */
-    public boolean containsAll(Collection<?> coll) {
+    public final boolean containsAll(Collection<?> coll) {
 	for (Object cand : coll) {
 	    // throws NullPointerException if cand == null
 	    if (!contains(cand)) {
@@ -1107,7 +1141,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      * It does not support the methods 
      * {@link #add(Object)} or {@link Set#addAll(Collection)}. 
      */
-    public Set<Map.Entry<T,Multiplicity>> getSetWithMults() {
+    public Set<Map.Entry<T, Multiplicity>> getSetWithMults() {
 	return this.obj2mult.entrySet();
     }
 
@@ -1125,21 +1159,19 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
      *    and contains the same elements with the same multiplicities 
      *    as this one. 
      */
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
 	if (!(obj instanceof MultiSet)) {
 	    return false;
 	}
-	MultiSet<?> other = (MultiSet)obj;
+	MultiSet<?> other = (MultiSet) obj;
 	return this.getSetWithMults().equals(other.getSetWithMults());
     }
 
-    public int hashCode() {
+    public final int hashCode() {
 	int result = 0;
 	for (T cand : getSet()) {
-	    result += cand.hashCode()*getMultiplicity(cand);
+	    result += cand.hashCode() * getMultiplicity(cand);
 	}
 	return result;
     }
-
-
 }

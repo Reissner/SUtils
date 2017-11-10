@@ -18,15 +18,15 @@ import java.util.Locale;
 /**
  * A rudimentary <code>SGML</code> parser with something like a SAX-api. 
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class SGMLParser {
+public final class SGMLParser {
 
-    private final static String QUOTE_DOT = "\". ";
-    private final static char   SYMB_EQ   = '=';
-    private final static char   SYMB_COMMENT = '-';
-    private final static char   SYMB_TAG = '<';
+    private static final String QUOTE_DOT = "\". ";
+    private static final char   SYMB_EQ   = '=';
+    private static final char   SYMB_COMMENT = '-';
+    private static final char   SYMB_TAG = '<';
 
     /* --------------------------------------------------------------------- *
      * inner classes                                                         *
@@ -118,7 +118,7 @@ public class SGMLParser {
 	/**
 	 * See {@link AttributesImpl#name2value}. 
 	 */
-	private final ListMap<String,String> name2value;
+	private final ListMap<String, String> name2value;
 
 	/* ----------------------------------------------------------------- *
 	 * constructors                                                      *
@@ -129,7 +129,7 @@ public class SGMLParser {
 	 * which represents an empty attribute list. 
 	 */
 	AttributesWrapper() {
-	    this.name2value = new ListMap<String,String>();
+	    this.name2value = new ListMap<String, String>();
 	}
 
 	/* ----------------------------------------------------------------- *
@@ -301,7 +301,7 @@ public class SGMLParser {
 	     */
 	    public boolean testChar(char chr) {		
 		if (END_OF_COMMENT.charAt(index++) == chr) {
-		    if (this.index == END_OF_COMMENT.length()-1) {
+		    if (this.index == END_OF_COMMENT.length() - 1) {
 			this.index = 0;
 			return true;
 		    } else {
@@ -424,7 +424,7 @@ public class SGMLParser {
 	    this.reader = reader;
 	    this.bufferArray = new char[length];
 	    this.start = 0;
-	    this.end = this.start;// signifies: reading necessary. 
+	    this.end = this.start; // signifies: reading necessary. 
 	}
 
 	/* ----------------------------------------------------------------- *
@@ -665,7 +665,7 @@ public class SGMLParser {
     /**
      * Contains the <code>HTML</code>-specific part of the parser. 
      */
-    private final XMLsGMLspecifica HTML_ATTRIBUTE_PARSER = 
+    private final XMLsGMLspecifica htmlAttributeParser = 
     new XMLsGMLspecifica() {
 
 	public void parseAttribute(AttributesWrapper attributes) 
@@ -680,16 +680,18 @@ public class SGMLParser {
 	    qName.insert(0, (char) SGMLParser.this.currChar);
 	    attName = qName.toString().toLowerCase(Locale.ENGLISH);
 //System.out.println("attName: |"+attName+"|");
-	    
+
 	    // Here, the attribute may have a value or not. 
 
 	    // Skip whitespace either after having parsed the attribute 
 	    // or between its name and its value. 
-	    SGMLParser.this.currChar = SGMLParser.this.buffer.readChar();//NOPMD
+	    SGMLParser.this.currChar = 
+		SGMLParser.this.buffer.readChar(); //NOPMD
 	    if (Character.isWhitespace((char) SGMLParser.this.currChar)) {
 		qName = SGMLParser.this.buffer.
 		    readStringBuffer(TEST_NO_WHITESPACE, WHITESP_IN_ATTR);
-		SGMLParser.this.currChar = SGMLParser.this.buffer.readChar();//NOPMD
+		SGMLParser.this.currChar = 
+		    SGMLParser.this.buffer.readChar(); //NOPMD
 	    }
 
 	    // Here is the decision whether a value is provided or not. 
@@ -705,8 +707,8 @@ public class SGMLParser {
 	    // Skip whitespaces 
 	    qName = SGMLParser.this.buffer.
 		readStringBuffer(TEST_NO_WHITESPACE, WHITESP_IN_ATTR);
-	    SGMLParser.this.currChar = SGMLParser.this.buffer.readChar();//NOPMD
-
+	    SGMLParser.this.currChar = 
+		SGMLParser.this.buffer.readChar(); //NOPMD
 
 	    // Parse the attribute value. 
 	    switch (SGMLParser.this.currChar) {
@@ -744,7 +746,8 @@ public class SGMLParser {
 		    break;
 	    }
 	    // read the character after the attribute value 
-	    SGMLParser.this.currChar = SGMLParser.this.buffer.readChar();//NOPMD
+	    SGMLParser.this.currChar = 
+		SGMLParser.this.buffer.readChar(); //NOPMD
 
 	    attValue = qName.toString();
 	    attributes.addAttribute(attName, attValue);
@@ -790,7 +793,7 @@ public class SGMLParser {
 			 + "Recently read: \"" + qName + QUOTE_DOT, 
 			 null);
 		}
-		
+
 		SGMLParser.this.buffer.getStartAndMove();
 	    } while (SGMLParser.this.buffer.isEmpty());
 /*
@@ -815,7 +818,7 @@ public class SGMLParser {
     /**
      * Contains the <code>XML</code>-specific part of the parser. 
      */
-    private final XMLsGMLspecifica XML_ATTRIBUTE_PARSER = 
+    private final XMLsGMLspecifica xmlAttributeParser = 
     new XMLsGMLspecifica() {
 
 	public void parseAttribute(AttributesWrapper attributes) 
@@ -830,16 +833,18 @@ public class SGMLParser {
 	    qName.insert(0, (char) SGMLParser.this.currChar);
 	    attName = qName.toString();
 //System.out.println("attName: |"+attName+"|");
-	    
+
 	    // Here, the attribute may have a value or not. 
 
 	    // Skip whitespace either after having parsed the attribute 
 	    // or between its name and its value. 
-	    SGMLParser.this.currChar = SGMLParser.this.buffer.readChar();//NOPMD
+	    SGMLParser.this.currChar = 
+		SGMLParser.this.buffer.readChar(); //NOPMD
 	    if (Character.isWhitespace((char) SGMLParser.this.currChar)) {
 		qName = SGMLParser.this.buffer.
 		    readStringBuffer(TEST_NO_WHITESPACE, WHITESP_IN_ATTR);
-		SGMLParser.this.currChar = SGMLParser.this.buffer.readChar();//NOPMD
+		SGMLParser.this.currChar = 
+		    SGMLParser.this.buffer.readChar(); //NOPMD
 	    }
 
 	    // Here is the decision whether a value is provided or not. 
@@ -855,7 +860,8 @@ public class SGMLParser {
 	    // Skip whitespaces 
 	    qName = SGMLParser.this.buffer.
 		readStringBuffer(TEST_NO_WHITESPACE, WHITESP_IN_ATTR);
-	    SGMLParser.this.currChar = SGMLParser.this.buffer.readChar();//NOPMD
+	    SGMLParser.this.currChar = 
+		SGMLParser.this.buffer.readChar(); //NOPMD
 
 
 	    // Parse the attribute value. 
@@ -892,7 +898,8 @@ public class SGMLParser {
 			 null);
 	    }
 	    // read the character after the attribute value 
-	    SGMLParser.this.currChar = SGMLParser.this.buffer.readChar();//NOPMD
+	    SGMLParser.this.currChar = 
+		SGMLParser.this.buffer.readChar(); //NOPMD
 
 	    attValue = qName.toString();
 	    attributes.addAttribute(attName, attValue);
@@ -911,7 +918,8 @@ public class SGMLParser {
 	
 	    //this.buffer.getStart();
 //System.out.println("-qName: |"+qName+"|");
-	    SGMLParser.this.currChar = SGMLParser.this.buffer.readChar();//NOPMD
+	    SGMLParser.this.currChar = 
+		SGMLParser.this.buffer.readChar(); //NOPMD
 	    //assert this.currChar == '>';
 	    SGMLParser.this.contentHandler.processingInstruction(null, null);
 	}
@@ -926,7 +934,8 @@ public class SGMLParser {
 	
 	    //this.buffer.getStart();
 //System.out.println("-qName: |"+qName+"|");
-	    SGMLParser.this.currChar = SGMLParser.this.buffer.readChar();//NOPMD
+	    SGMLParser.this.currChar = 
+		SGMLParser.this.buffer.readChar(); //NOPMD
 	    //assert this.currChar == '>';
 	    SGMLParser.this.contentHandler.processingInstruction(null, null);
 	}
@@ -998,7 +1007,7 @@ public class SGMLParser {
     /**
      * Contains class with methods specific for xml and sgml, respectively. 
      */
-    private XMLsGMLspecifica xmlSgmlSpecifica = HTML_ATTRIBUTE_PARSER;
+    private XMLsGMLspecifica xmlSgmlSpecifica = htmlAttributeParser;
 
     /**
      * The current character or <code>-1</code> 
@@ -1070,7 +1079,7 @@ public class SGMLParser {
 	// notify handler that first part of document was successfully read. 
 	this.contentHandler.startDocument();
 	while (numRead != -1) {
-	    this.currChar = this.buffer.readChar();// the '<' char? 
+	    this.currChar = this.buffer.readChar(); // the '<' char? 
 	    if (this.currChar == SYMB_TAG) {
 		// a tag or a PI. 
 		numRead = parseTagOrPI();
@@ -1113,7 +1122,7 @@ public class SGMLParser {
     }
 
     /**
-     * Parses an end-tag notifying the underlying handler 
+     * Parses an end-tag notifying the underlying handler. 
      *
      * @exception IOException 
      *     if an error reading the stream occurs. 
@@ -1121,7 +1130,6 @@ public class SGMLParser {
      *    if an error with the sgml-syntax occurs. 
      */
     void parseEndTag() throws IOException, SAXException {
-
 	StringBuffer qName = this.buffer.readStringBuffer(TEST_GT, END_TAG);
 	// Here, also the empty tag would be possible. 
 	
@@ -1164,9 +1172,9 @@ this.handler.processingInstruction(null, null);
 
 	// ***** Better read the name of the tag and 
 	// then single out problems with chars by a handler
-	if (!Character.isLetter((char)this.currChar)) {
+	if (!Character.isLetter((char) this.currChar)) {
 	    this.parseExceptionHandler
-		.foundIllegalCharInTag((char)this.currChar);
+		.foundIllegalCharInTag((char) this.currChar);
 	    // Ignore the previously read char. 
 	    this.currChar = this.buffer.readChar();
 	}
@@ -1209,7 +1217,7 @@ this.handler.processingInstruction(null, null);
 		// start-end-tag called empty tag
 
 		// skip illegal characters between "/" and ">" **** 
-	skipped: while (true) {//NOPMD
+	skipped: while (true) { //NOPMD
 		    this.currChar = this.buffer.readChar();
 		    switch (this.currChar) {
 			case '>':
@@ -1225,7 +1233,7 @@ this.handler.processingInstruction(null, null);
 			    break;
 		    } // switch
 		}
-		
+
 		this.contentHandler.startElement(null,
 						 null,
 						 qName.toString(),
@@ -1316,7 +1324,7 @@ this.handler.processingInstruction(null, null);
 	if (isXMLParser()) {
 	    return this.contentHandler;
 	} else {
-	    return ((SGMLFilter)this.contentHandler).getWrapped();
+	    return ((SGMLFilter) this.contentHandler).getWrapped();
 	}
     }
 
@@ -1354,14 +1362,14 @@ this.handler.processingInstruction(null, null);
      *    this parser was used as an xml-parser
      */
     public boolean parseXML(boolean xml) {
-	boolean result = this.xmlSgmlSpecifica == XML_ATTRIBUTE_PARSER;
+	boolean result = this.xmlSgmlSpecifica == xmlAttributeParser;
 	this.xmlSgmlSpecifica = xml 
-	    ? XML_ATTRIBUTE_PARSER 
-	    : HTML_ATTRIBUTE_PARSER;
+	    ? xmlAttributeParser 
+	    : htmlAttributeParser;
 	return result;
     }
 
     public boolean isXMLParser() {
-	return this.xmlSgmlSpecifica == XML_ATTRIBUTE_PARSER;
+	return this.xmlSgmlSpecifica == xmlAttributeParser;
     }
 }

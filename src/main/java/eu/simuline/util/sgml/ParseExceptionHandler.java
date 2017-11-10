@@ -5,7 +5,7 @@ package eu.simuline.util.sgml;
  * The idea is that for html-parsers one needs a notify 
  * rather than throwing an exception as it is appropriate for xml. 
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public interface ParseExceptionHandler {
@@ -82,5 +82,4 @@ public interface ParseExceptionHandler {
 
     // ****** would need an argument 
     void foundUnexpectedEndOfDocument();
-    
 } // ParseExceptionHandler

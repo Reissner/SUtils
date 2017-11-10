@@ -25,8 +25,8 @@ public abstract class BasicTypesCompatibilityChecker {
      *
      * @see #areCompatible(Class, Object)
      */
-    private final static Map<Class<?>,Class<?>> MAP_WRAPPER2BASIC_TYPE = 
-	new HashMap<Class<?>,Class<?>>();
+    private static final Map<Class<?>, Class<?>> MAP_WRAPPER2BASIC_TYPE = 
+	new HashMap<Class<?>, Class<?>>();
 
     /**
      * Maps basic classes to the corresponding wrapper classes. 
@@ -35,8 +35,8 @@ public abstract class BasicTypesCompatibilityChecker {
      *
      * @see #areCompatible (Class, Object)
      */
-    private final static Map<Class<?>,Class<?>> MAP_BASIC_TYPE2WRAPPER = 
-	new HashMap<Class<?>,Class<?>>();
+    private static final Map<Class<?>, Class<?>> MAP_BASIC_TYPE2WRAPPER = 
+	new HashMap<Class<?>, Class<?>>();
 
 
     /* -------------------------------------------------------------------- *

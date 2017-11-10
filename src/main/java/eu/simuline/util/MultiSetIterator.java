@@ -12,9 +12,12 @@ import java.util.Iterator;
  * Problem is also that {@link MultiSet} is not (yet) a collection. 
  *
  *
+ * @param <E>
+ *    the class of the elements of this multi-set. 
+ *
  * Created: Fri Oct  3 21:37:29 2014
  *
- * @author <a href="mailto:ernst@">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public interface MultiSetIterator<E> extends Iterator<E> {

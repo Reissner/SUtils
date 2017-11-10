@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
  *
  * Created: Wed Nov 21 17:29:41 2012
  *
- * @author <a href="mailto:ernst@">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public abstract class Finder {
@@ -108,13 +108,12 @@ public abstract class Finder {
 	    if (file.isDirectory()) {
 		File[] list = file.listFiles();
 		if (list == null) {
-		    System.out.println("cannot read "+file);
+		    System.out.println("cannot read " + file);
 		} else {
 		    // push in inverse order 
-		    for (int i = list.length-1; i>=0; i--) {
+		    for (int i = list.length - 1; i >= 0; i--) {
 			this.files.push(list[i]);
 		    }
-		    
 		    //this.files.addAll(Arrays.asList(list));
 		}
 	    }
@@ -139,19 +138,19 @@ public abstract class Finder {
 	 * i.e. if  {@link #hasNext()} returns <code>true</code>; 
 	 * otherwise this field is <code>null</code>. 
 	 */
-	protected File next;
+	private File next;
 
 	/**
 	 * The source finder from which the stream of files is read. 
 	 * **** this is superfluous if this is not static 
 	 */
-	Finder encl;
+	private Finder encl;
 
 	/**
 	 * The filter to be passed 
 	 * before a file is returned by {@link #next()}. 
 	 */
-	Filter filter;
+	private Filter filter;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
@@ -198,6 +197,13 @@ public abstract class Finder {
 	    updateNext();
 	    return res;
 	}
+
+	protected File getNext() {
+	    assert hasNext();
+	    File res = this.next;
+	    assert res != null;
+	    return res;
+	}
     } // class Secondary 
 
     /**
@@ -229,10 +235,10 @@ public abstract class Finder {
 
 	public File next() {
 	    assert hasNext();
-	    File res = this.next;
+	    File res = getNext();
 	    assert res != null;
 	    this.idx++;
-	    this.str.println(idx+" "+res.toString());
+	    this.str.println(idx + " " + res.toString());
 	    updateNext();
 	    return res;
 	}
@@ -241,7 +247,7 @@ public abstract class Finder {
     /**
      * Represents a file filter. 
      */
-    static abstract class Filter {
+    abstract static class Filter {
 
 	/**
 	 * Returns for the given file whether this file passes this filter. 
@@ -396,7 +402,7 @@ public abstract class Finder {
 	    String[] cmd = new String[this.cmd.length];
 	    System.arraycopy(this.cmd, 0, cmd, 0, this.cmd.length);
 	    // the 0th entry should not be EXEC_ARG 
-	    for (int idx=0; idx < this.cmd.length; idx++) {
+	    for (int idx = 0; idx < this.cmd.length; idx++) {
 		if (cmd[idx] == Finder.EXEC_ARG) {
 		    cmd[idx] = nextStr;
 		}
@@ -406,13 +412,13 @@ public abstract class Finder {
 		//System.out.println(":"+(this.cmdName+" "+this.next));
 		proc = Runtime.getRuntime().exec(cmd);
 	    } catch (IOException e) {
-		System.out.println("exec: "+e.getMessage());
+		System.out.println("exec: " + e.getMessage());
 		return false;
 	    }
 	    try {
-		exitVal = proc.waitFor();// exitValue
+		exitVal = proc.waitFor(); // exitValue
 	    } catch (InterruptedException e) {
-		System.out.println("exec:"+e.getMessage());
+		System.out.println("exec:" + e.getMessage());
 		return false;
 	    }
 	    return exitVal == 0;
@@ -458,7 +464,7 @@ public abstract class Finder {
 	 * Parameters are passed to the callable when creating the instance 
 	 * or later by a setter method, depending on the implementation. 
 	 */
-	Callable callable;
+	private Callable callable;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
@@ -647,14 +653,14 @@ public abstract class Finder {
      * CAUTION: It must be used this instance 
      * and no other equivalent string <code>{}</code>. 
      */
-    public final static String EXEC_ARG = "{}";
+    public static final String EXEC_ARG = "{}";
 
     /**
      * A filter passing all files. 
      * This corresponds the test <code>-true</code> 
      * in the original find command. 
      */
-    public final static Filter TRUE = new Filter() {
+    public static final Filter TRUE = new Filter() {
 	    public boolean pass(File file) {
 		return true;
 	    }
@@ -665,7 +671,7 @@ public abstract class Finder {
      * This corresponds the test <code>-false</code> 
      * in the original find command. 
      */
-    public final static Filter FALSE = new Filter() {
+    public static final Filter FALSE = new Filter() {
 	    public boolean pass(File file) {
 		return false;
 	    }
@@ -677,7 +683,7 @@ public abstract class Finder {
      * in the original find command. 
      * Do not mix up with {@link Finder.ExecFilter}. 
      */
-    public final static Filter CAN_EXEC  = new Filter() {
+    public static final Filter CAN_EXEC  = new Filter() {
 	    public boolean pass(File file) {
 		return file.canExecute();
 	    }
@@ -688,7 +694,7 @@ public abstract class Finder {
      * This corresponds the test <code>-readable</code> 
      * in the original find command. 
       */
-    public final static Filter CAN_READ  = new Filter() {
+    public static final Filter CAN_READ  = new Filter() {
 	    public boolean pass(File file) {
 		return file.canRead();
 	    }
@@ -699,7 +705,7 @@ public abstract class Finder {
      * This corresponds the test <code>-writable</code> 
      * in the original find command. 
      */
-    public final static Filter CAN_WRITE  = new Filter() {
+    public static final Filter CAN_WRITE  = new Filter() {
 	    public boolean pass(File file) {
 		return file.canWrite();
 	    }
@@ -710,7 +716,7 @@ public abstract class Finder {
      * This corresponds the test <code>-type f</code> 
      * in the original find command. 
      */
-    public final static Filter IS_FILE  = new Filter() {
+    public static final Filter IS_FILE  = new Filter() {
 	    public boolean pass(File file) {
 		return file.isFile();
 	    }
@@ -721,7 +727,7 @@ public abstract class Finder {
      * This corresponds the test <code>-type d</code> 
      * in the original find command. 
      */
-    public final static Filter IS_DIR  = new Filter() {
+    public static final Filter IS_DIR  = new Filter() {
 	    public boolean pass(File file) {
 		return file.isDirectory();
 	    }

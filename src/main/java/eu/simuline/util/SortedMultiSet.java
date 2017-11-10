@@ -3,17 +3,19 @@ package eu.simuline.util;
 import java.util.SortedSet;
 import java.util.NavigableMap;
 import java.util.Comparator;
-import java.util.NoSuchElementException;// for javadoc only 
+import java.util.NoSuchElementException; // for javadoc only 
 
 /**
  * Represents a sorted set with multiplicities. 
  *
  * If MultiSet extend Set, SortedMultiSet shall extend SortedSet
  *
+ * @param <T>
+ *    the class of the elements of this multi-set. 
  *
  * Created: Sun Nov 23 22:36:30 2014
  *
- * @author <a href="mailto:ernst@">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public interface SortedMultiSet<T> extends MultiSet<T> {

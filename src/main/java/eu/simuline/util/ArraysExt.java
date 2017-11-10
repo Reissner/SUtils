@@ -11,10 +11,13 @@ import java.util.Comparator;
  * An add on to the class {@link java.util.Arrays}. 
  * Partially this is influenced by {@link java.util.Collections}. 
  *
- * @author <a href="mailto:ernst@rig29.rose.de">Ernst Reissner</a>
+ * @param <E>
+ *    The type of the entry of the array under consideration. 
+ *
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class ArraysExt<E> {
+public final class ArraysExt<E> {
 
     /* -------------------------------------------------------------------- *
      * class constants.                                                     *
@@ -23,14 +26,14 @@ public class ArraysExt<E> {
     /**
      * The class <code>double[]</code>. 
      */
-    //public final static Class<?> DOUBLE_ARRAY1 = getArrayCls(Double.TYPE,1);
+    //public static final Class<?> DOUBLE_ARRAY1 = getArrayCls(Double.TYPE,1);
 
     /**
      * The class <code>double[][]</code>. 
      */
-    //public final static Class<?> DOUBLE_ARRAY2 = getArrayCls(Double.TYPE,2);
+    //public static final Class<?> DOUBLE_ARRAY2 = getArrayCls(Double.TYPE,2);
 
-    public final static Object[] EMPTY = new Object[] {};
+    public static final Object[] EMPTY = new Object[] {};
 
     /* -------------------------------------------------------------------- *
      * constructors.                                                        *
@@ -52,10 +55,10 @@ public class ArraysExt<E> {
      */
     public static void reverse(Object[] array) {
 	Object tmp;
-	for (int i = 0; i < array.length/2; i++) {
+	for (int i = 0; i < array.length / 2; i++) {
 	    tmp = array[i];
-	    array[i] = array[array.length-1-i];
-	    array[array.length-1-i] = tmp;
+	    array[i] = array[array.length - 1 - i];
+	    array[array.length - 1 - i] = tmp;
 	}
     }
 
@@ -98,7 +101,7 @@ public class ArraysExt<E> {
 	}
 	
 	Object[] result = new Object[num];
-	fill(result,obj);
+	fill(result, obj);
 	return result;
     }
 
@@ -121,7 +124,7 @@ public class ArraysExt<E> {
 	List<Object> result = new ArrayList<Object>();
 	for (int i = 0; i < array.length; i++) {
 	    if (array[i] instanceof Object[]) {
-		result.add(recAsList((Object[])array[i]));
+		result.add(recAsList((Object[]) array[i]));
 	    } else {
 		result.add(array[i]);		 
 	    }
@@ -260,7 +263,7 @@ public class ArraysExt<E> {
 	/// ***** problem: 
 	// what about double[][][]? --- wrong caster?!? 
 	// should use: Class compType = cls.getComponentType();
-	if (caster.areCompatible(cls,source)) {
+	if (caster.areCompatible(cls, source)) {
 	    // Here, either source == null || cls.isInstance(source) 
 	    // or source wraps something of type cls. 
 	    return caster.cast(source);
@@ -345,7 +348,7 @@ public class ArraysExt<E> {
 	}
 	assert !type.isArray();
 	assert type != null;
-	assert counter > 0;// if not, elemArray is no array or overflow 
+	assert counter > 0; // if not, elemArray is no array or overflow 
 
 	// throws IllegalArgumentException if type is not primitive or void 
 	Class<?> wrapperCls = BasicTypesCompatibilityChecker
@@ -358,7 +361,7 @@ public class ArraysExt<E> {
 	    // no exception because class is neither null nor Void.TYPE 
 	    result = Array.newInstance(result.getClass(), 0);
 	}
-	return (Object[])result;
+	return (Object[]) result;
     }
 
     /**
@@ -388,7 +391,7 @@ public class ArraysExt<E> {
 	}
 	assert !type.isArray();
 	assert type != null;
-	assert counter > 0;// except if overflow 
+	assert counter > 0; // except if overflow 
 	
 	// throws IllegalArgumentException 
 	// if type is void or doesn't wrap a primitive type
@@ -440,7 +443,7 @@ public class ArraysExt<E> {
 	}
 	assert arrCls.isArray();
 
-	int len = Array.getLength(elemArray);// no exception 
+	int len = Array.getLength(elemArray); // no exception 
 
 	// Here, elemArray is an array and so compType is not null. 
 	Class<?> compType = arrCls.getComponentType();
@@ -449,7 +452,8 @@ public class ArraysExt<E> {
 	    // e.g. elemArray has type int[]. 
 	    Class<?> compWrapperType = BasicTypesCompatibilityChecker
 		.getWrapperCls(compType, false);
-	    Object[] result = (Object[])Array.newInstance(compWrapperType,len);
+	    Object[] result = (Object[]) 
+		Array.newInstance(compWrapperType, len);
 	    for (int i = 0; i < len; i++) {
 		// Automatically wrapped. 
 		result[i] = Array.get(elemArray, i);
@@ -620,12 +624,12 @@ public class ArraysExt<E> {
 		      wrappedArray + ". ");
 	    }
 	    // Here, compType is an array type. 
-	    Object unWrap0th = unWrapArray((Object[])wrappedArray[0]);
-	    Object[] result = (Object[])Array
-		.newInstance(unWrap0th.getClass(),len);
+	    Object unWrap0th = unWrapArray((Object[]) wrappedArray[0]);
+	    Object[] result = (Object[]) Array
+		.newInstance(unWrap0th.getClass(), len);
 	    result[0] = unWrap0th;
 	    for (int i = 1; i < len; i++) {
-		result[i] = unWrapArray((Object[])wrappedArray[i]);
+		result[i] = unWrapArray((Object[]) wrappedArray[i]);
 	    }
 	    return result;
 	}
@@ -636,15 +640,18 @@ public class ArraysExt<E> {
      * which implements a kind of lexical ordering on arrays 
      * based on the ordering of the components 
      * defined by <code>atomic</code>. 
+     *
+     * @param <O>
+     *    Some object type to be compared. 
      */
-    static class ArrayComparator<Object> implements Comparator<Object[]> {
+    static class ArrayComparator<O> implements Comparator<O[]> {
 
 	/**
 	 * A <code>Comparator</code> for components of an array. 
 	 * This is allocated by the constructor 
 	 * {@link #ArraysExt.ArrayComparator}. 
 	 */
-	Comparator<Object> atomic;
+	private Comparator<Object> atomic;
 
 	/**
 	 * Creates a new <code>ArrayComparator</code> 
@@ -677,7 +684,7 @@ public class ArraysExt<E> {
 	 *    <ul>
 	 *    <li><code>0</code>
 	 *    if and only if <code>o1.length == o2.length</code> 
-	 *    and <code>atomic.compare(o1[i],o2[i]) == 0</code> 
+	 *    and <code>atomic.compare(o1[i], o2[i]) == 0</code> 
 	 *    for all indices <code>i</code>. 
 	 *    Hence this comparator is consistent with equals 
 	 *    if and only if this is true for {@link #atomic}. 
@@ -686,9 +693,9 @@ public class ArraysExt<E> {
 	 *    if <code>o1</code> is a true prefix of <code>o2</code> 
 	 *    res. the other way round. 
 	 *
-	 *    <li><code>atomic.compare(o1[i],o2[i])</code> 
+	 *    <li><code>atomic.compare(o1[i], o2[i])</code> 
 	 *    where <code>i</code> is the lowest index such that 
-	 *    <code>atomic.compare(o1[i],o2[i]) != 0</code>. 
+	 *    <code>atomic.compare(o1[i], o2[i]) != 0</code>. 
 	 *    (Provided such an index in the common range exists. )
 	 *    </ul>
 	 * @throws NullPointerException 
@@ -699,15 +706,15 @@ public class ArraysExt<E> {
 	 */
 	public int compare(Object[] arr1, Object[] arr2) {
 	    // throws NullPointerException if one of the arguments is null 
-	    int minLen = Math.min(arr1.length,arr2.length);
+	    int minLen = Math.min(arr1.length, arr2.length);
 	    int result;
 	    for (int i = 0; i < minLen; i++) {
-		result = this.atomic.compare(arr1[i],arr2[i]);
+		result = this.atomic.compare(arr1[i], arr2[i]);
 		if (result != 0) {
 		    return result;
 		}
 	    } // end of for ()
-	    return arr1.length-arr2.length;
+	    return arr1.length - arr2.length;
 	}
 
     } // class ArrayComparator 
@@ -723,7 +730,8 @@ public class ArraysExt<E> {
      * @return 
      *    a <code>Comparator</code> for arrays. 
      */
-    public static Comparator<Object[]> getComparator(Comparator<Object> atomic) {
+    public 
+	static Comparator<Object[]> getComparator(Comparator<Object> atomic) {
 	return new ArrayComparator<Object>(atomic);
     }
 }

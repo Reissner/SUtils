@@ -81,10 +81,10 @@ public class RealRepresentation {
      * @see #alignLeft
      * @see #alignRight
      */
-    public final static Cutter ALIGN_CUT_OFF_LEFT = new Cutter() {
-	    public String cut(String str,int len) {
+    public static final Cutter ALIGN_CUT_OFF_LEFT = new Cutter() {
+	    public String cut(String str, int len) {
 		int strLen = str.length();
-		return str.substring(strLen-len,strLen);
+		return str.substring(strLen - len, strLen);
 	    }
 	};
 
@@ -95,9 +95,9 @@ public class RealRepresentation {
      * @see #alignLeft
      * @see #alignRight
      */
-    public final static Cutter ALIGN_CUT_OFF_RIGHT = new Cutter() {
-	    public String cut(String str,int len) {
-		return str.substring(0,len);
+    public static final Cutter ALIGN_CUT_OFF_RIGHT = new Cutter() {
+	    public String cut(String str, int len) {
+		return str.substring(0, len);
 	    }
 	};
 
@@ -109,8 +109,8 @@ public class RealRepresentation {
      * @see #alignRight
      * @see #trimExponent
      */
-    public final static Cutter ALIGN_EXCEPTION = new Cutter() {
-	    public String cut(String str,int len) {
+    public static final Cutter ALIGN_EXCEPTION = new Cutter() {
+	    public String cut(String str, int len) {
 		throw new IllegalArgumentException
 		    ("String \"" + str + "\" longer than expected (" + 
 		     len + "). ");
@@ -126,8 +126,8 @@ public class RealRepresentation {
      * @see #alignRight
      * @see #trimExponent
      */
-    public final static Cutter ALIGN_LEAVE_UNCHANGED = new Cutter() {
-	    public String cut(String str,int len) {
+    public static final Cutter ALIGN_LEAVE_UNCHANGED = new Cutter() {
+	    public String cut(String str, int len) {
 		return str;
 	    }
 	};
@@ -139,14 +139,14 @@ public class RealRepresentation {
      *
      * @see #fill
      */
-    private final static Map<Character,String> FILL_STRINGS = 
-	new HashMap<Character,String>();
+    private static final Map<Character, String> FILL_STRINGS = 
+	new HashMap<Character, String>();
 
     /**
      * A string containing the character signifying an exponent. 
      * This is <code>e</code> but could also be <code>E</code>.
      */
-    public  final static String EXP_CHAR = "e";
+    public  static final String EXP_CHAR = "e";
 
     /**
      * Substitutes the place for the point 
@@ -161,17 +161,17 @@ public class RealRepresentation {
     /**
      * A string constant containing the decimal point. 
      */
-    private final static String    POINT_S = ".";
+    private static final String    POINT_S = ".";
 
     /**
      * A character constant containing <code>+</code>. 
      */
-    private final static String SIGN_PLUS  = "+";
+    private static final String SIGN_PLUS  = "+";
 
     /**
      * A character constant containing <code>+</code>. 
      */
-    private final static String SIGN_MINUS = "-";
+    private static final String SIGN_MINUS = "-";
 
     /**
      * Sets {@link #noPointS} according to the parameter: 
@@ -201,7 +201,7 @@ public class RealRepresentation {
      * @author <a href="mailto:e.reissner@rose.de">Ernst Reissner</a>
      * @version 1.0
      */
-    private static class BigDecimalRep extends RealRepresentation {
+    private static final class BigDecimalRep extends RealRepresentation {
 
 	/**
 	 * The number of digits right of the point 
@@ -210,7 +210,7 @@ public class RealRepresentation {
 	 * in {@link Double#toString(double)} and is used by 
 	 * {@link #RealRepresentation.BigDecimalRep(BigDecimal)}. 
 	 */
-	private final static int MAX_FRAC_DIGITS_NO_EXP = -3;
+	private static final int MAX_FRAC_DIGITS_NO_EXP = -3;
 
 	/**
 	 * The number of digits left of the point 
@@ -219,7 +219,7 @@ public class RealRepresentation {
 	 * in {@link Double#toString(double)} and is used by 
 	 * {@link #RealRepresentation.BigDecimalRep(BigDecimal)}. 
 	 */
-	private final static int MAX_INT_DIGITS_NO_EXP = 7;
+	private static final int MAX_INT_DIGITS_NO_EXP = 7;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
@@ -233,7 +233,7 @@ public class RealRepresentation {
 	 *    the value to be represented 
 	 *    by this <code>BigDecimalRep</code>. 
 	 */
-	public BigDecimalRep(BigDecimal dec) {
+	BigDecimalRep(BigDecimal dec) {
 	    switch (dec.signum()) {
 	    case -1:
 		this.sign = SIGN_MINUS;
@@ -259,36 +259,38 @@ public class RealRepresentation {
 	    int exp = -dec.scale();
 	    String mantissa = dec.unscaledValue().toString();
 
-	    if (new BigDecimal("1.0e"+MAX_FRAC_DIGITS_NO_EXP).compareTo(dec) <= 0 && 
-		new BigDecimal("1.0e"+ MAX_INT_DIGITS_NO_EXP).compareTo(dec) > 0) {
+	    if (new BigDecimal("1.0e" + MAX_FRAC_DIGITS_NO_EXP).compareTo(dec)
+		<= 0 && 
+		new BigDecimal("1.0e" +  MAX_INT_DIGITS_NO_EXP).compareTo(dec)
+		> 0) {
 		// the representation is xxx.yyy without exponent. 
 		this.exponent = "";
 		if (BigDecimal.valueOf(1).compareTo(dec) > 0) {
 		    // Here, 0 < d < 1. 
 		    mantissa = alignRight(mantissa,
-					  1-exp,
+					  1 - exp,
 					  '0',
 					  ALIGN_EXCEPTION);
 		}
 		// the representation xxx.yyy with nontrivial integer part. 
 		this.integer  = mantissa
 		    . substring(0,
-				mantissa.length()+exp);
+				mantissa.length() + exp);
 		this.fraction = mantissa
-		    . substring(mantissa.length()+exp,
+		    . substring(mantissa.length() + exp,
 				mantissa.length());
 	    } else {
-		// representation a.yyyezzz with exponent where a is a digit != 0. 
+		// representation a.yyyezzz with exponent 
+		// where a is a digit != 0. 
 		this.exponent = Integer
-		    .toString(exp + mantissa.length()-1);
-		this.integer  = mantissa.substring(0,1);
+		    .toString(exp + mantissa.length() - 1);
+		this.integer  = mantissa.substring(0, 1);
 		this.fraction = mantissa
-		    . substring(1,
-				mantissa.length());
+		    . substring(1, mantissa.length());
 	    }
-	    
+
 	    // remove trailing zeros. 
-	    this.fraction = this.fraction.replaceFirst("0*$","");
+	    this.fraction = this.fraction.replaceFirst("0*$", "");
 	    // add a zero if nothing else is left. 
 	    if (this.fraction.length() == 0) {
 		this.fraction = "0";
@@ -310,7 +312,7 @@ public class RealRepresentation {
 	 *    to a <code>BigDecimalRep</code>. 
 	 * @see Double#Double(String)
 	 */
-	public BigDecimalRep(String dStr) {
+	BigDecimalRep(String dStr) {
 	    this(new BigDecimal(dStr));
 	}
     } // class BigDecimalRep
@@ -325,7 +327,7 @@ public class RealRepresentation {
      * @author <a href="mailto:e.reissner@rose.de">Ernst Reissner</a>
      * @version 1.0
      */
-    private static class DoubleRep extends RealRepresentation {
+    private static final class DoubleRep extends RealRepresentation {
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
@@ -343,7 +345,7 @@ public class RealRepresentation {
 	 * @throws NumberFormatException
 	 *    if <code>d</code> is either infinite or not a number. 
 	 */
-	public DoubleRep(double dbl) {
+	DoubleRep(double dbl) {
 
 	    // Exclude that d is NaN or infinite 
 	    if (Double.isNaN(dbl) || Double.isInfinite(dbl)) {
@@ -369,8 +371,8 @@ public class RealRepresentation {
 		mantissa = str;
 	    } else {
 		// Here, an exponent is given. 
-		this.exponent = str.substring(index+1,str.length());
-		mantissa = str.substring(0,index);
+		this.exponent = str.substring(index + 1, str.length());
+		mantissa = str.substring(0, index);
 		initSignExp();
 	    }
 	    // Here, mantissa and exponent are separated 
@@ -391,8 +393,8 @@ public class RealRepresentation {
 		    ("Unlike specified for Double.toString(double) " + 
 		     "found no decimal point in \"" + mantissa + "\". ");
 	    }
-	    this.integer  = mantissa.substring(0,index);
-	    this.fraction = mantissa.substring(index+1,
+	    this.integer  = mantissa.substring(0, index);
+	    this.fraction = mantissa.substring(index + 1,
 					       mantissa.length());
 	    // Here, mantissa is separated into integer and fraction. 
 	}
@@ -414,7 +416,7 @@ public class RealRepresentation {
 	 * @throws NumberFormatException
 	 *    if <code>d</code> has not the appropriate number format. 
 	 */
-	public DoubleRep(String dStr) {
+	DoubleRep(String dStr) {
 	    this(Double.parseDouble(dStr));
 	}
 
@@ -427,7 +429,7 @@ public class RealRepresentation {
 	 * @throws IllegalArgumentException
 	 *    if <code>d</code> is either infinite or not a number. 
 	 */
-	public DoubleRep(Double dbl) {
+	DoubleRep(Double dbl) {
 	    this(dbl.doubleValue());
 	}
 
@@ -455,7 +457,7 @@ public class RealRepresentation {
 	 * @throws RuntimeException
 	 *    by need if the cut is not allowed. 
 	 */
-	String cut(String str,int len);
+	String cut(String str, int len);
     } // interface Cutter 
 
     /**
@@ -490,17 +492,17 @@ public class RealRepresentation {
 	    case '+':
 		// explicit + sign 
 		this.sign = SIGN_PLUS;
-		this.unSigned = signed.substring(1,signed.length());
+		this.unSigned = signed.substring(1, signed.length());
 		break;
 	    case '-':
 		// explicit - sign 
 		this.sign = SIGN_MINUS;
-		this.unSigned = signed.substring(1,signed.length());
+		this.unSigned = signed.substring(1, signed.length());
 		break;
 	    default:
 		// implicit + sign 
 		// Here, one should have some digit at the 0th place. 
-		if (!signed.substring(0,1).matches("\\d")) {
+		if (!signed.substring(0, 1).matches("\\d")) {
 		    throw new NumberFormatException
 			("Expected unsigned number found " + signed + ". ");
 		}
@@ -536,36 +538,36 @@ public class RealRepresentation {
 	 * to cut off parts of the integer will result in an exception; 
 	 * otherwise it is just ignored. 
 	 */
-	public boolean strictInteger = false;
+	private boolean strictInteger = false;
 
 	/**
 	 * Signifies whether an attempt 
 	 * to cut off parts of the exponent will result in an exception; 
 	 * otherwise it is just ignored. 
 	 */
-	public boolean strictExponent = false;
+	private boolean strictExponent = false;
 
-	public Cutter fractionCutter = ALIGN_CUT_OFF_RIGHT;
+	private  Cutter fractionCutter = ALIGN_CUT_OFF_RIGHT;
 
 	/**
 	 * The maximal length of the integer part of a number
 	 * displayed in a specific column of the table.
 	 */
-	public int lenI;
+	private int lenI;
 
 	/**
 	 * The maximal length of the mantissa of a number
 	 * displayed in a specific column of the table.
 	 * @see #lenI
 	 */
-	public int lenM;
+	private int lenM;
 
 	/**
 	 * The maximal length of the exponent part of a number
 	 * displayed in a specific column of the table.
 	 * @see #lenI
 	 */
-	public int lenE;
+	private int lenE;
 
 
 	/* ---------------------------------------------------------------- *
@@ -616,15 +618,15 @@ public class RealRepresentation {
      */
     protected String exponent;
 
-    protected String signOfExp;
+    private String signOfExp;
 
-    protected String unsignedExp;
+    private String unsignedExp;
 
     /* -------------------------------------------------------------------- *
      * create methods: out of Strings, doubles, Doubles and BigDecimals.    *
      * -------------------------------------------------------------------- */
 
-    protected void initSignExp() {
+    protected final void initSignExp() {
 	Number2SignUnsigned sus = new Number2SignUnsigned(this.exponent);
 	this.signOfExp = sus.getSign();
 	this.unsignedExp = sus.getUnSigned();
@@ -648,12 +650,8 @@ public class RealRepresentation {
      *   if <code>val</code> is not the string representation of a double 
      *   or if it is <code>NaN</code> or represents an infinite value. 
      */
-    public static RealRepresentation create(String val,boolean precision) {
-	if (precision) {
-	    return new BigDecimalRep(val);
-	} else {
-	    return new     DoubleRep(val);
-	}
+    public static RealRepresentation create(String val, boolean precision) {
+	return precision ? new BigDecimalRep(val) : new     DoubleRep(val);
     }
 
     /**
@@ -679,11 +677,9 @@ public class RealRepresentation {
     public static RealRepresentation create(Number val,
 					    boolean precision) {
 	if (precision) {
-	    if (val instanceof BigDecimal) {
-		return new BigDecimalRep( (BigDecimal)val               );
-	    } else {
-		return new     DoubleRep(((Double    )val).doubleValue());
-	    }
+	    return (val instanceof BigDecimal)
+		? new BigDecimalRep( (BigDecimal) val               )
+		: new     DoubleRep(((Double    ) val).doubleValue());
 	} else {
 	    return new DoubleRep(val.doubleValue());
 	}
@@ -707,7 +703,7 @@ public class RealRepresentation {
      */
     public static RealRepresentation create(double val,
 					    boolean precision) {
-	return create(new Double(val),precision);
+	return create(new Double(val), precision);
     }
 
     /**
@@ -720,16 +716,16 @@ public class RealRepresentation {
      * @return 
      *    a <code>RealRepresentation</code> of the given number 
      *    with the natural precision: 
-     *    <code>create((BigDecimal)val,true)</code> or 
-     *    <code>create((Double    )val,true)</code>. 
+     *    <code>create((BigDecimal)val, true)</code> or 
+     *    <code>create((Double    )val, true)</code>. 
      * @throws ClassCastException 
      *    if <code>val</code> is neither a {@link BigDecimal} 
      *    nor a <code>Double</code>. 
      */
     public static RealRepresentation create(Number val) {
 	return val instanceof BigDecimal 
-	    ? create((BigDecimal)val,true) 
-	    : create((Double    )val,false);
+	    ? create((BigDecimal) val, true) 
+	    : create((Double    ) val, false);
     }
 
     /* -------------------------------------------------------------------- *
@@ -749,14 +745,14 @@ public class RealRepresentation {
      *    a <code>String</code> consisting of <code>len</code> characters 
      *    <code>c</code>. 
      */
-    public static String fill(char chr0,int len) {
+    public static String fill(char chr0, int len) {
 	Character chr = new Character(chr0);
 	String cutString = FILL_STRINGS.get(chr);
 	// by contract, cutString is either null or 
 	// its length is 2^n for some natural number n. 
 	boolean copyBack = false;
 	if (cutString == null) {
-	    cutString = chr.toString();//Character.toString(c);
+	    cutString = chr.toString(); //Character.toString(c);
 	    copyBack  = true;
 	}
 	
@@ -770,15 +766,14 @@ public class RealRepresentation {
 	    }
 	    cutString = cutBuf.toString();
 	}
-	    
 
 	// Here, cutString != null && cutString.length() >= len 
 	if (copyBack) {
-	    FILL_STRINGS.put(chr,cutString);
+	    FILL_STRINGS.put(chr, cutString);
 	}
 	// Here, (String)FILL_STRINGS.get(chr).equals(cutString) again.  
 
-	return cutString.substring(0,len);
+	return cutString.substring(0, len);
     }
 
     /**
@@ -836,8 +831,8 @@ public class RealRepresentation {
 				   Cutter cutter) {
 	int strLen = str.length();
 	return strLen > len 
-	    ? cutter.cut(str,len) 
-	    : str + fill(filler,len-strLen);
+	    ? cutter.cut(str, len) 
+	    : str + fill(filler, len - strLen);
     }
 
     /**
@@ -895,8 +890,8 @@ public class RealRepresentation {
 				    Cutter cutter) {
 	int strLen = str.length();
 	return  strLen > len 
-	    ? cutter.cut(str,len) 
-	    : fill(filler,len-strLen) + str;
+	    ? cutter.cut(str, len) 
+	    : fill(filler, len - strLen) + str;
     }
 
     /* -------------------------------------------------------------------- *
@@ -946,7 +941,7 @@ public class RealRepresentation {
      *    for <code>strict( == true)</code> 
      *    if the length of the integer part exceeds <code>numDigits</code>. 
      */
-    public String trimInteger(int numDigits,
+    public final String trimInteger(int numDigits,
 			      char blankOrNull,
 			      boolean strict) {
 	Cutter cutter = strict ? ALIGN_EXCEPTION : ALIGN_LEAVE_UNCHANGED;
@@ -989,14 +984,15 @@ public class RealRepresentation {
      *    for <code>strict( == true)</code> 
      *    if the length of the exponent part exceeds <code>numDigits</code>. 
      */
-    public String trimExponent(int numDigits,
+    public final String trimExponent(int numDigits,
 			       char blankOrNull,
 			       boolean strict) {
 	Cutter cutter = strict ? ALIGN_EXCEPTION : ALIGN_LEAVE_UNCHANGED;
-	return this.exponent = alignRight(this.exponent,
-					  numDigits,
-					  blankOrNull,
-					  cutter);
+	this.exponent = alignRight(this.exponent,
+				   numDigits,
+				   blankOrNull,
+				   cutter);
+	return this.exponent;
     }
 
     /**
@@ -1029,11 +1025,11 @@ public class RealRepresentation {
      *    if the length of the fractional part 
      *    exceeds <code>numDigits</code>. 
      */
-    public String trimFraction(int numDigits,
+    public final String trimFraction(int numDigits,
 			       char blankOrNull,
 			       Cutter cutter) {
 	this.fraction = 
-	    alignLeft(this.fraction,numDigits,blankOrNull,cutter);
+	    alignLeft(this.fraction, numDigits, blankOrNull, cutter);
 	//updateMantissa();
 	return this.fraction;
     }
@@ -1050,20 +1046,20 @@ public class RealRepresentation {
      * @throws NumberFormatException 
      *    if this representation cannot be written as an integer. 
      */
-    public void asInteger() {
+    public final void asInteger() {
 	String trimmedExponent = this.exponent.trim();
 	BigInteger expVal = "".equals(trimmedExponent) 
 	    ? BigInteger.ZERO 
 	    : new BigInteger(trimmedExponent);
 	// remove trailing 0's and blanks. 
-	String trimmedFraction = this.fraction.replaceAll("0* *$","");
-	expVal = expVal
-	    .subtract(new BigInteger(Integer.toString(trimmedFraction.length())));
+	String trimmedFraction = this.fraction.replaceAll("0* *$", "");
+	expVal = expVal.subtract
+	    (new BigInteger(Integer.toString(trimmedFraction.length())));
 	this.integer += trimmedFraction;
 	// Here the representation this.integer.0EexpVal is without fraction. 
 
-	this.integer = this.integer.replaceAll("^[0 ]*","");
-	if (this.integer.equals("")) {// also possible with "" but to dangerous
+	this.integer = this.integer.replaceAll("^[0 ]*", "");
+	if (this.integer.equals("")) { // also possible with "" but to dangerous
 	    this.integer = "0";
 	}
 	// Here, this.integer has no leading 0's or blanks. 
@@ -1076,7 +1072,7 @@ public class RealRepresentation {
 	    // nothing to do: representation is already without exponent. 
 	    break;
 	case  1:
-	    this.integer += fill('0',expVal.intValue());
+	    this.integer += fill('0', expVal.intValue());
 	    break;
 	default:
 	    throw new IllegalStateException
@@ -1092,11 +1088,11 @@ public class RealRepresentation {
      * get methods.                                                         *
      * -------------------------------------------------------------------- */
 
-    public boolean hasBlankFraction() {
+    public final boolean hasBlankFraction() {
 	return !this.fraction.matches("^ *$");
     }
 
-    public boolean hasFraction() {
+    public final boolean hasFraction() {
 	return !this.fraction.matches("^0* *$");
     }
 
@@ -1104,19 +1100,19 @@ public class RealRepresentation {
 	return !this.integer.matches("^ *0*$");
     }
 
-    public boolean hasExponent() {
+    public final boolean hasExponent() {
 	return !this.exponent.matches("^ *$");
     }
 
-    public String sign() {
+    public final String sign() {
 	return this.sign;
     }
 
-    public String exponent() {
+    public final String exponent() {
 	return this.exponent;
     }
 
-    public String mantissa() {
+    public final String mantissa() {
 	return this.integer +
 	    (hasBlankFraction() ? POINT_S : noPointS) + 
 	    this.fraction;
@@ -1124,11 +1120,11 @@ public class RealRepresentation {
 	//return this.mantissa;
     }
 
-    public String integer() {
+    public final String integer() {
 	return this.integer;
     }
 
-    public String fraction() {
+    public final String fraction() {
 	return this.fraction;
     }
 
@@ -1142,10 +1138,10 @@ public class RealRepresentation {
      *
      * @return 
      *    a <code>Double</code> <code>d</code> satisfying 
-     *    {@link #create(Number,boolean) 
-     *            create(d,false).this2Double().compareTo(d) == 0}. 
+     *    {@link #create(Number, boolean) 
+     *            create(d, false).this2Double().compareTo(d) == 0}. 
      */
-    public Double this2Double() {
+    public final Double this2Double() {
 	return new Double(this.sign + mantissa() + getExpWithE());
     }
 
@@ -1154,9 +1150,9 @@ public class RealRepresentation {
      *
      * @return 
      *    a <code>double</code> <code>d</code> satisfying 
-     *    {@link #create(double,boolean) create(d,false).this2double() == d}. 
+     *    {@link #create(double, boolean) create(d, false).this2double() == d}. 
      */
-    public double this2double() {
+    public final double this2double() {
 	return this2Double().doubleValue();
     }
 
@@ -1165,10 +1161,10 @@ public class RealRepresentation {
      *
      * @return 
      *    a <code>BigDecimal</code> <code>d</code> satisfying 
-     *    {@link #create(Number,boolean) 
-     *            create(d,true).this2BigDecimal().compareTo(d) == 0}. 
+     *    {@link #create(Number, boolean) 
+     *            create(d, true).this2BigDecimal().compareTo(d) == 0}. 
      */
-    public BigDecimal this2BigDecimal() {
+    public final BigDecimal this2BigDecimal() {
 	//**** this does not work with trimmed mantissas
 	return new BigDecimal(this.sign + mantissa() + getExpWithE());
     }
@@ -1201,10 +1197,10 @@ public class RealRepresentation {
 
     public final String toString(Desc desc) {
 
-	trimInteger (desc.lenI,' ',desc.strictInteger);
+	trimInteger (desc.lenI, ' ', desc.strictInteger);
 	trimFraction(desc.lenM - 
-		     desc.lenI,' ',desc.fractionCutter);
-	trimExponent(desc.lenE,' ',desc.strictExponent);
+		     desc.lenI, ' ', desc.fractionCutter);
+	trimExponent(desc.lenE, ' ', desc.strictExponent);
 
 	return 
 	    (this.sign   == SIGN_PLUS ? "" : this.sign) + 
@@ -1219,7 +1215,7 @@ public class RealRepresentation {
      * @return a <code>String</code> value
      * @see #toString
      */
-    public String toStringDecomp() {
+    public final String toStringDecomp() {
 	return 
 	    "sign:     " + this.sign + "\n" + 
 	    "integer:  " + this.integer + "\n" + 

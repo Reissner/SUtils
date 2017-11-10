@@ -3,7 +3,7 @@ package eu.simuline.util;
 
 import java.util.List;
 import java.util.Iterator;
-import java.util.NoSuchElementException;// for javadoc only 
+import java.util.NoSuchElementException; // for javadoc only 
 
 /**
  * An iterator over a {@link CyclicList}. 
@@ -11,9 +11,12 @@ import java.util.NoSuchElementException;// for javadoc only
  * as <code>Iterator</code>s or <code>ListIterator</code>s do 
  * with <code>List</code>s. 
  *
+ * @param <E>
+ *    the class of the elements to iterate over. 
+ *
  * @see CyclicList
  * @see java.util.ListIterator
- * @author <a href="mailto:Ernst.Reissner@rose.de">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
 public interface CyclicIterator<E> extends Iterator<E> {
@@ -71,7 +74,8 @@ public interface CyclicIterator<E> extends Iterator<E> {
      * Returns the next element in the interation.
      * This method may be called  repeatedly to iterate through the list, 
      * or intermixed with calls to <code>previous</code> to go back and forth. 
-     * (Note that alternating calls to <code>next</code> and <code>previous</code> 
+     * (Note that alternating calls to <code>next</code> 
+     * and <code>previous</code> 
      * will return the same element repeatedly.)
      *
      * @return 
@@ -99,7 +103,8 @@ public interface CyclicIterator<E> extends Iterator<E> {
      * This method may be called repeatedly 
      * to iterate through the list backwards, 
      * or intermixed with calls to <code>next</code> to go back and forth. 
-     * (Note that alternating calls to <code>next</code> and <code>previous</code> 
+     * (Note that alternating calls 
+     * to <code>next</code> and <code>previous</code> 
      * will return the same element repeatedly.) 
      *
      * @return 
@@ -142,7 +147,8 @@ public interface CyclicIterator<E> extends Iterator<E> {
      * @return 
      *    <ul>
      *    <li> 
-     *    the index minimal index <code>ind in {0,...,this.list.size()-1}</code> 
+     *    the index minimal index 
+     *    <code>ind in {0,...,this.list.size()-1}</code> 
      *    satisfying <code>obj.equals(this.list.get(ind))</code> 
      *    if possible;
      *    <li>

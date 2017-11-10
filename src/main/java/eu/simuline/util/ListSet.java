@@ -6,7 +6,7 @@ import java.util.SortedSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;// for javadoc only. 
+import java.util.Collections; // for javadoc only. 
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Comparator;
@@ -53,6 +53,12 @@ import java.util.AbstractSet;
  * the iterator fails quickly and cleanly, rather than risking arbitrary, 
  * non-deterministic behavior at an undetermined time in the future. 
  *
+ * @param <E> 
+ *    The type of the entries. 
+ *
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
+ * @version 1.0
+ *
  * @see java.util.Collection
  * @see java.util.List
  * @see java.util.ArrayList#add
@@ -62,7 +68,7 @@ import java.util.AbstractSet;
  * @see java.util.AbstractSet
  * @see java.util.Collections
  */
-public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
+public final class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 
     /* -------------------------------------------------------------------- *
      * inner classes.                                                       *
@@ -154,8 +160,8 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 		// throws a ClassCastException if not comparable. 
 		// **** it is not easy to eliminate the compiler warning. 
 		// to that end, compare with TreeSet 
-		public int compare(E obj1,E obj2) {
-		    return ((Comparable<E>)obj1).compareTo(obj2);
+		public int compare(E obj1, E obj2) {
+		    return ((Comparable<E>) obj1).compareTo(obj2);
 		}
 	    };
 	} else {
@@ -213,9 +219,9 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      * @throws NullPointerException
      *    if the specified collection is <code>null</code>. 
      */
-    public ListSet(Collection<? extends E> coll) {//,boolean isSortedAsAdded
-	this((Comparator<? super E>)null);
-	addAll(coll);// NOPMD 
+    public ListSet(Collection<? extends E> coll) { //,boolean isSortedAsAdded
+	this((Comparator<? super E>) null);
+	addAll(coll); // NOPMD 
 	//this(new OrderingDesc<E>(coll,isSortedAsAdded));
     }
     /*
@@ -276,7 +282,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      * see {@link #ListSet(Comparator)}. 
      */
     public ListSet() {
-	this((Comparator<? super E>)null);
+	this((Comparator<? super E>) null);
     }
 
     /* -------------------------------------------------------------------- *
@@ -288,7 +294,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      * so changes in the returned list are reflected in this set, 
      * and vice-versa. 
      */
-    public final List<E> getList() {
+    public List<E> getList() {
 	return this.list;
     }
 
@@ -338,7 +344,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	 // int lastIdx = this.list.size()-1;
 	 // return this.innerCmp.compare(this.list.get(0      ), eObj) <= 0
 	 //     && this.innerCmp.compare(this.list.get(lastIdx), eObj) >= 0;
-	 
+
 	//return obj == null : containsNull : this.list.contains(obj);
 	 return this.list.contains(obj);
     }
@@ -426,14 +432,14 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      *    <code>true</code> if this set did not already contain the specified
      *    element.
      */
-    public final boolean add(E obj) {
-	int index = Collections.binarySearch(this.list,obj,this.innerCmp);
+    public boolean add(E obj) {
+	int index = Collections.binarySearch(this.list, obj, this.innerCmp);
 	if (index >= 0) {
 	    return false;
 	}
-	index = -index-1;
+	index = -index - 1;
 
-	this.list.add(index,obj);
+	this.list.add(index, obj);
 	return true;
     }
 
@@ -486,8 +492,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	// 	} catch (ClassCastException cce) {
 	// 	    return false;
 	// 	}
-		
-		
+
 	// 	index = Collections.binarySearch(this.list.subList(min,sup),
 	// 					 elem,
 	// 					 this.innerCmp);
@@ -533,7 +538,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	if (!(coll instanceof SortedSet)) {
 	    return false;
 	}
-	SortedSet<?> sSet = (SortedSet)coll;
+	SortedSet<?> sSet = (SortedSet) coll;
 	return  sSet.comparator() == this.comparator() || 
 	    (this.comparator() != null && 
 	     this.comparator().equals(sSet.comparator()));
@@ -554,7 +559,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      *    <code>true</code> if this set changed as a result of the call. 
      * @see #add
      */
-    public final boolean addAll(Collection<? extends E> coll) {
+    public boolean addAll(Collection<? extends E> coll) {
 	if (isSortedWithSameComparator(coll)) {
 	    List<E> cList;
 //   	    if (coll instanceof ListSet) {
@@ -562,7 +567,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 //	    } else {
 		cList = new ArrayList<E>(coll);
 //	    }
-	    return addList(this.list,cList);
+	    return addList(this.list, cList);
 	} else {
 	    boolean modified = false;
 	    for (E entry : coll) {
@@ -591,7 +596,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      */
     private boolean addList(List<E> list1, List<E> list2) {
 	
-	switch (list2.size()) {// NOPMD
+	switch (list2.size()) { // NOPMD
 	    case  0:
 		return false;
 	    case  1:
@@ -601,17 +606,17 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 		if (index >= 0) {
 		    return false;
 		} else {
-		    index = -1-index;
-		    list1.add(index,list2.get(0));
+		    index = -1 - index;
+		    list1.add(index, list2.get(0));
 		    return true;
 		}
 	    default:
 		// fall through 
 	} // end of switch 
-	int index2 = list2.size()/2;
+	int index2 = list2.size() / 2;
 	int index1 = Collections
-	    .binarySearch(list1,list2.get(index2),this.innerCmp);
-	    
+	    .binarySearch(list1, list2.get(index2), this.innerCmp);
+
 	if (index1 >= 0) {
 	    boolean isModified;
 	    int index1b = index1, 
@@ -625,18 +630,17 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 		     this.innerCmp.compare(list1.get(index1b),
 					   list2.get(index2b)) == 0);
 	    if (index1b == list1.size()) {
-		list1.addAll(list2.subList(index2b,list2.size()));
-		return  addList(list1.subList(0,index1),
-				list2.subList(0,index2));
+		list1.addAll(list2.subList(index2b, list2.size()));
+		return  addList(list1.subList(0, index1),
+				list2.subList(0, index2));
 	    } else {
-		isModified  = addList(list1.subList(index1b,list1.size()),
-				      list2.subList(index2b,list2.size()));
-		isModified |= addList(list1.subList(0,index1),
-				      list2.subList(0,index2));
+		isModified  = addList(list1.subList(index1b, list1.size()),
+				      list2.subList(index2b, list2.size()));
+		isModified |= addList(list1.subList(0, index1),
+				      list2.subList(0, index2));
 		return isModified;
- 
-	    } 
-		
+	    }
+
 	    /*
 	      isModified  = addList(l1.subList(index1b,l1.size()),
 	      l2.subList(index2b,l2.size()));
@@ -652,45 +656,42 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	      return isModified;
 	    */
 	} else {
-	    index1 = -1-index1;
+	    index1 = -1 - index1;
 	    if (index1 < list1.size()) {
 
-		int index2b = index2+1;
+		int index2b = index2 + 1;
 		E obj = list1.get(index1);
 		Comparator<? super E> cmp = this.innerCmp;
 		while (index2b < list2.size() &&
-		       cmp.compare(obj,list2.get(index2b)) > 0) {
+		       cmp.compare(obj, list2.get(index2b)) > 0) {
 		    index2b++;
 		}
 
-		addList(list1.subList(index1 ,list1.size()),
-			list2.subList(index2b,list2.size()));
-		if (index2b > 1+index2) {
-		    list1.addAll(index1,list2.subList(index2,index2b));
+		addList(list1.subList(index1 , list1.size()),
+			list2.subList(index2b, list2.size()));
+		if (index2b > 1 + index2) {
+		    list1.addAll(index1, list2.subList(index2, index2b));
 		} else {
-		    list1.add(index1,list2.get(index2));
+		    list1.add(index1, list2.get(index2));
 		}
-		    
-		    
+
 		//l1.addAll(index1,l2.subList(index2,index2b));
-//System.out.println("string:: "+(index2b-index2));
-		    
-		addList(list1.subList(0,index1),
-			list2.subList(0,index2));
+//System.out.println("string:: " + (index2b-index2));
+
+		addList(list1.subList(0, index1),
+			list2.subList(0, index2));
 		return true;
 
 	    } else {
-		list1.addAll(list2.subList(index2,list2.size()));
+		list1.addAll(list2.subList(index2, list2.size()));
 		/*
 		  addList(l1.subList(index1,l1.size()),
 		  l2.subList(index2,l2.size()));
 		*/
-		addList(list1.subList(0,index1),
-			list2.subList(0,index2));
+		addList(list1.subList(0, index1),
+			list2.subList(0, index2));
 		return true;
-
 	    } // end of else
-		
 
 	    /*
 	      addList(l1.subList(index1,l1.size()),
@@ -764,10 +765,10 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
     }
 
     // also used in {@link ListMap} 
-    final int obj2idx(E obj) {
-	int idx = Collections.binarySearch(this.list,obj,this.innerCmp);
+    int obj2idx(E obj) {
+	int idx = Collections.binarySearch(this.list, obj, this.innerCmp);
 	if (idx < 0) {
-	    idx = -idx-1;
+	    idx = -idx - 1;
 	}
 	assert idx >= 0;
 	return idx;
@@ -809,7 +810,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	if (isEmpty()) {
 	    throw new NoSuchElementException();
 	}
-	return this.list.get(size()-1);
+	return this.list.get(size() - 1);
     }
 
     /*----------------------------------------------------------------------*/
@@ -837,7 +838,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	if (!(obj instanceof Set)) {
 	    return false;
 	}
-	Set<?> other = (Set<?>)obj;
+	Set<?> other = (Set<?>) obj;
 
 	if (this.size() != other.size()) {
 	    return false;
@@ -911,7 +912,7 @@ public class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 
 	aSet = ListSet.sortedAsListed(java.util.Arrays.asList(new Integer[] {
 		    3, 2, 1}));
-	System.out.println(": "+aSet.getList());
+	System.out.println(": " + aSet.getList());
 
 	
 	/*	

@@ -9,10 +9,10 @@ import org.xml.sax.Attributes;
  * of the SAX-interface <code>Attributes</code> 
  * which allows attributes without values using {@link #NO_VALUE}. 
  *
- * @author <a href="mailto:ernst@local">Ernst Reissner</a>
+ * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class AttributesImpl implements Attributes {
+public final class AttributesImpl implements Attributes {
 
     /* ----------------------------------------------------------------- *
      * class constants                                                   *
@@ -25,7 +25,7 @@ public class AttributesImpl implements Attributes {
      * The latter would not allow to rule out a multiple attribute 
      * without a value. 
      */
-    public static final String NO_VALUE = new String();// NOPMD
+    public static final String NO_VALUE = new String(); // NOPMD
 
     /* ----------------------------------------------------------------- *
      * fields                                                            *
@@ -38,7 +38,7 @@ public class AttributesImpl implements Attributes {
      * the value is also a string value. 
      * Otherwise it is {@link #NO_VALUE}. 
      */
-    private final ListMap<String,String> name2value;
+    private final ListMap<String, String> name2value;
 
     /* ----------------------------------------------------------------- *
      * constructors                                                      *
@@ -52,7 +52,7 @@ public class AttributesImpl implements Attributes {
      *    a <code>ListMap</code> representing an attribute list, 
      *    as specified for {@link #name2value}. 
      */
-    AttributesImpl(ListMap<String,String> name2value) {
+    AttributesImpl(ListMap<String, String> name2value) {
 	this.name2value = name2value;
     }
 
@@ -75,7 +75,7 @@ public class AttributesImpl implements Attributes {
      *    </ul>
      */
     private static String noValueToNull(Object valueOrNot) {
-	return valueOrNot == NO_VALUE ? null : (String) valueOrNot;// NOPMD
+	return valueOrNot == NO_VALUE ? null : (String) valueOrNot; // NOPMD
     }
 
     /* ----------------------------------------------------------------- *

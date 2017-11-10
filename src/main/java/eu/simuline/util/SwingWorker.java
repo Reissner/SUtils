@@ -2,17 +2,19 @@ package eu.simuline.util;
 
 import javax.swing.SwingUtilities;
 
-/** *********FROM SUN but FREE *************
+/* ********FROM SUN but FREE ************* */
+
+/** 
  * This is the 3rd version of SwingWorker (also known as
  * SwingWorker 3), an abstract class that you subclass to
- * perform GUI-related work in a dedicated thread.  For
- * instructions on using this class, see:
+ * perform GUI-related work in a dedicated thread. 
+ * For instructions on using this class, see:
  * 
  * http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html
  *
  * Note that the API changed slightly in the 3rd version:
  * You must now invoke start() on the SwingWorker after
- * creating it.
+ * creating it. 
  */
 public abstract class SwingWorker {
     private Object value;  // see getValue(), setValue()
@@ -24,9 +26,15 @@ public abstract class SwingWorker {
      */
     private static class ThreadVar {
         private Thread thread;
-        ThreadVar(Thread thr) { thread = thr; }
-        synchronized Thread get() { return thread; }
-        synchronized void clear() { thread = null; }
+        ThreadVar(Thread thr) {
+	    thread = thr;
+	}
+        synchronized Thread get() {
+	    return thread;
+	}
+        synchronized void clear() {
+	    thread = null;
+	}
     }
 
     private final ThreadVar threadVar;
@@ -35,15 +43,15 @@ public abstract class SwingWorker {
      * Get the value produced by the worker thread, or null if it 
      * hasn't been constructed yet.
      */
-    protected synchronized Object getValue() { 
-        return value; 
+    protected final synchronized Object getValue() { 
+        return this.value; 
     }
 
     /** 
-     * Set the value produced by worker thread 
+     * Set the value produced by worker thread. 
      */
     private synchronized void setValue(Object obj) { 
-        value = obj; 
+        this.value = obj; 
     }
 
     /** 
@@ -63,7 +71,7 @@ public abstract class SwingWorker {
      * A new method that interrupts the worker thread.  Call this method
      * to force the worker to stop what it's doing.
      */
-    public void interrupt() {
+    public final void interrupt() {
         Thread thr = threadVar.get();
         if (thr != null) {
             thr.interrupt();
@@ -78,7 +86,7 @@ public abstract class SwingWorker {
      * 
      * @return the value created by the <code>construct</code> method
      */
-    public Object get() {
+    public final Object get() {
         while (true) {  
             Thread thr = threadVar.get();
             if (thr == null) {
@@ -86,8 +94,7 @@ public abstract class SwingWorker {
             }
             try {
                 thr.join();
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // propagate
                 return null;
             }
@@ -101,15 +108,16 @@ public abstract class SwingWorker {
      */
     public SwingWorker() {
         final Runnable doFinished = new Runnable() {
-           public void run() { finished(); }
+           public void run() {
+	       finished();
+	   }
         };
 
         Runnable doConstruct = new Runnable() { 
             public void run() {
                 try {
                     setValue(construct());
-                }
-                finally {
+                } finally {
                     threadVar.clear();
                 }
 
@@ -124,7 +132,7 @@ public abstract class SwingWorker {
     /**
      * Start the worker thread.
      */
-    public void start() {
+    public final void start() {
         Thread thr = threadVar.get();
         if (thr != null) {
             thr.start();

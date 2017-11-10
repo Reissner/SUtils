@@ -15,13 +15,14 @@ import java.util.BitSet;
  * @author <a href="mailto:ernst@">Ernst Reissner</a>
  * @version 1.0
  */
-public class BitSetList extends AbstractList<Integer> implements Cloneable {
+public final class BitSetList extends AbstractList<Integer> 
+    implements Cloneable {
 
     /* -------------------------------------------------------------------- *
      * fields.                                                              *
      * -------------------------------------------------------------------- */
 
-    public BitSet wrapped;
+    private BitSet wrapped;
     private int size;
     //private List<Integer> test;
     //private int ones;// equals wrapped.cardinality() ****
@@ -50,7 +51,7 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
      *     other than <code>0</code> or <code>1</code>. 
      */
     public BitSetList(Collection<? extends Integer> coll) {
-	this(coll.size()/2);
+	this(coll.size() / 2);
 	this.addAll(coll);
 	//assert this.test.equals(this);
     }
@@ -144,12 +145,12 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
 */
 
 /*
-    public final void setW(final int index, final Integer integer) {
+    public void setW(int index, Integer integer) {
 	this.wrapped.set(index,int2bool(integer));
     }
 */
 /*
-    public final Integer setW(final int index, final Integer integer) {
+    public Integer setW(int index, Integer integer) {
 	Integer ret = getW(index);
 
 	switch (integer.intValue()) {
@@ -177,16 +178,16 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
      *
      * @return an <code>int</code> value
      */
-    public final int hashCode() {
+    public int hashCode() {
 	int hashCode = 1;
 	for (Integer cand : this) {
-	    hashCode = 31*hashCode + cand;
+	    hashCode = 31 * hashCode + cand;
 	}
 	return hashCode;
     }
 
 
-    public boolean equals(Object other) {// NOPMD
+    public boolean equals(Object other) { // NOPMD
 	return super.equals(other);
     }
 
@@ -222,7 +223,7 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
      * @return a <code>boolean</code> value
      */
 /*
-    public final boolean add(final Integer integer) {
+    public boolean add(Integer integer) {
 	// throws a NullPointerException for integer == null as specified. 
 // System.out.println("1this.test"+this.test);
 // System.out.println("1this.wrapped"+this.wrapped);
@@ -262,7 +263,7 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
      * @param index an <code>int</code> value
      * @param integer an <code>Integer</code> value
      */
-    public final void add(final int index, final Integer integer) {
+    public void add(final int index, final Integer integer) {
 //	assert this.test.size() == this.size;
 
 	if (index <  0 || index > size()) {
@@ -284,10 +285,10 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
 
 	// **** not quite optimal ****
 	for (int i = size(); i > index; i--) {
-	    this.wrapped.set(i,this.wrapped.get(i-1));
+	    this.wrapped.set(i, this.wrapped.get(i - 1));
 	}
 
-	this.wrapped.set(index,int2bool(integer));
+	this.wrapped.set(index, int2bool(integer));
 
 // 	assert this.test.equals(this);
     }
@@ -296,7 +297,7 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
      * Describe <code>clear</code> method here.
      *
      */
-    public final void clear() {
+    public void clear() {
 	this.wrapped.clear();
 	this.size = 0;
 
@@ -322,8 +323,8 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
      * @param object an <code>Object</code> value
      * @return a <code>boolean</code> value
      */
-    public final boolean contains(final Object object) {
-	int cand = ((Integer)object).intValue();
+    public boolean contains(final Object object) {
+	int cand = ((Integer) object).intValue();
 	switch (cand) {
 	    case 0:
 		return this.wrapped.length() == this.wrapped.cardinality()
@@ -344,7 +345,7 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
      * @return an <code>int</code> value
      */
 /*
-    public final int indexOf(final Object object) {
+    public int indexOf(final Object object) {
 	return 0;
     }
 */
@@ -356,7 +357,7 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
      * @return an <code>int</code> value
      */
 /*
-    public final int lastIndexOf(final Object object) {
+    public int lastIndexOf(final Object object) {
 	return 0;
     }
 */
@@ -368,7 +369,7 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
      * @return a <code>boolean</code> value
      */
 /*
-    public final boolean addAll(final Collection<? extends E> collection) {
+    public boolean addAll(final Collection<? extends E> collection) {
 	return false;
     }
 */
@@ -381,8 +382,8 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
      * @return a <code>boolean</code> value
      */
 /*
-    public final boolean addAll(final int n, 
-    final Collection<? extends E> collection) {
+    public boolean addAll(final int n, 
+    Collection<? extends E> collection) {
 	return false;
     }
 */
@@ -393,7 +394,7 @@ public class BitSetList extends AbstractList<Integer> implements Cloneable {
      * @param index an <code>int</code> value
      * @return an <code>Object</code> value
      */
-    public final Integer get(final int index) {
+    public Integer get(final int index) {
 // 	assert this.test.size() == this.size;
 	if (index < 0 || index >= size()) {
 	    throw new IndexOutOfBoundsException();
@@ -409,7 +410,7 @@ System.out.println("ret"+ret);
 */
 //assert ret == this.test.get(index);
 	//assert this.test.equals(this);
-	return ret;// NOPMD
+	return ret; // NOPMD
     }
 
     /**
@@ -418,7 +419,7 @@ System.out.println("ret"+ret);
      * @return an <code>Iterator</code> value
      */
 /*
-    public final Iterator<Integer> iterator() {
+    public Iterator<Integer> iterator() {
 	return null;
     }
 */
@@ -428,7 +429,7 @@ System.out.println("ret"+ret);
      *
      * @return an <code>int</code> value
      */
-    public final int size() {
+    public int size() {
 // 	assert this.size == this.test.size();
 	return this.size;
     }
@@ -439,7 +440,7 @@ System.out.println("ret"+ret);
      * @return an <code>Object[]</code> value
      */
 /*
-    public final Integer[] toArray() {
+    public Integer[] toArray() {
 	return null;
     }
 */
@@ -451,7 +452,7 @@ System.out.println("ret"+ret);
      * @return an <code>Object[]</code> value
      */
 /*
-    public final <E> E[] toArray(final E[] objectArray) {
+    public <E> E[] toArray(final E[] objectArray) {
 	return null;
     }
 */
@@ -465,9 +466,9 @@ System.out.println("ret"+ret);
      *    the <code>boolean</code> value <code>true</code> 
      *    if this list contained the specified element. 
      */
-    public final boolean remove(final Object object) {
+    public boolean remove(final Object object) {
 
-	int cand = ((Integer)object).intValue();
+	int cand = ((Integer) object).intValue();
 
 	switch (cand) {
 	    case 0:
@@ -489,7 +490,7 @@ System.out.println("ret"+ret);
 		    // contains no 1's
 		    return false;
 		}
-		this.wrapped.clear(this.wrapped.length()-1);
+		this.wrapped.clear(this.wrapped.length() - 1);
 // 	assert this.test.equals(this);
 		return true;
 	    default:
@@ -505,14 +506,14 @@ System.out.println("ret"+ret);
      * @param index an <code>int</code> value
      * @return an <code>Object</code> value
      */
-    public final Integer remove(final int index) {
+    public Integer remove(final int index) {
 	if (index < 0 || index >= size()) {
 	    throw new IndexOutOfBoundsException();
 	}
 	Integer ret = bool2int(this.wrapped.get(index));
 	// **** not quite optimal ****
-	for (int i = index; i < size()-1; i++) {
-	    this.wrapped.set(i,this.wrapped.get(i+1));
+	for (int i = index; i < size() - 1; i++) {
+	    this.wrapped.set(i, this.wrapped.get(i + 1));
 	}
 
 //	this.wrapped.clear(this.wrapped.length()-1);
@@ -531,7 +532,7 @@ System.out.println("ret"+ret);
      * @return a <code>boolean</code> value
      */
 /*
-    public final boolean isEmpty() {
+    public boolean isEmpty() {
 	return false;
     }
 */
@@ -543,7 +544,7 @@ System.out.println("ret"+ret);
      * @param integer an <code>Object</code> value
      * @return an <code>Object</code> value
      */
-    public final Integer set(final int index, final Integer integer) {
+    public Integer set(final int index, final Integer integer) {
 /*
 	if (0 != System.currentTimeMillis()) {
 	    throw new NullPointerException();
@@ -551,7 +552,7 @@ System.out.println("ret"+ret);
 */
 	// may throw IndexOutOfBoundsException 
 	Integer ret = get(index);
-	this.wrapped.set(index,int2bool(integer));
+	this.wrapped.set(index, int2bool(integer));
 
 
 // 	assert ret == this.test.set(index,integer);
@@ -578,7 +579,7 @@ System.out.println("ret"+ret);
      * @return a <code>boolean</code> value
      */
 /*
-    public final boolean containsAll(final Collection<?> collection) {
+    public boolean containsAll(final Collection<?> collection) {
 	return false;
     }
 */
@@ -590,7 +591,7 @@ System.out.println("ret"+ret);
      * @return a <code>boolean</code> value
      */
 /*
-    public final boolean removeAll(final Collection<?> collection) {
+    public boolean removeAll(final Collection<?> collection) {
 	return false;
     }
 */
@@ -602,7 +603,7 @@ System.out.println("ret"+ret);
      * @return a <code>boolean</code> value
      */
 /*
-    public final boolean retainAll(final Collection<?> collection) {
+    public boolean retainAll(final Collection<?> collection) {
 	return false;
     }
 */
@@ -615,7 +616,7 @@ System.out.println("ret"+ret);
      * @return a <code>List</code> value
      */
 /*
-    public final List<Integer> subList(final int n, final int n1) {
+    public List<Integer> subList(final int n, final int n1) {
 	return null;
     }
 */
@@ -626,7 +627,7 @@ System.out.println("ret"+ret);
      * @return a <code>ListIterator</code> value
      */
 /*
-    public final ListIterator<Integer> listIterator() {
+    public ListIterator<Integer> listIterator() {
 	return null;
     }
 */
@@ -638,15 +639,15 @@ System.out.println("ret"+ret);
      * @return a <code>ListIterator</code> value
      */
 /*
-    public final ListIterator<Integer> listIterator(final int n) {
+    public ListIterator<Integer> listIterator(final int n) {
 	return null;
     }
 */
 
 
     public BitSetList clone() throws CloneNotSupportedException {
-	BitSetList res = (BitSetList)super       .clone();
-	res.wrapped    = (BitSet    )this.wrapped.clone();
+	BitSetList res = (BitSetList) super       .clone();
+	res.wrapped    = (BitSet    ) this.wrapped.clone();
 
 // 	res.test = (List<Integer>)((ArrayList<Integer>)this.test).clone();
  	assert res.size == this.size;

@@ -1,4 +1,3 @@
-
 package eu.simuline.util;
 
 import java.lang.reflect.Array;
@@ -16,16 +15,22 @@ import java.util.Comparator;
 import java.util.WeakHashMap;
 import java.util.EnumSet;
 
+import java.util.function.Predicate;
+import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
+
 /**
  * An add on of the core class {@link java.util.Collections}. 
  * This class provides various kinds of immutable collections, 
- * where immutability is configurable. 
- * Also this class yields weak has sets via {@link #weakHashSet()}. 
+ * where immutability is configurable 
+ * via a {@link CollectionsExt.Modification} object. 
+ * <p>
+ * Also this class yields weak hash sets via {@link #weakHashSet()}. 
  * Moreover, there are methods to convert arrays and lists in one another 
  * also recursively. 
  * Finally, there are methods {@link #getUnique(Collection)} 
- * to retrieve the unique element, 
- * to reverse a list via {@link #reverse(List)}. 
+ * to retrieve the unique element and {@link #reverse(List)}
+ * reverses a list. 
  *
  * @param <E>
  *    the class of the elements of collections under consideration. 
@@ -54,62 +59,43 @@ public abstract class CollectionsExt<E> {
      */
     public enum Modification {
 	/**
-	 * Modification by {@link Collection#add(Object)} 
-	 * and by {@link List#add(int, Object)}. 
+	 * Modification adding an element 
+	 * which may be by {@link Collection#add(Object)}, 
+	 * {@link Collection#addAll(Collection)},  
+	 * by {@link List#add(int, Object)}, 
+	 * {@link List#addAll(int, Collection)}, 
+	 * <p>
+. 	 * Modification by {@link ListIterator#add(Object)} 
+	 * of (list)-iterator attached with underlying {@link List} 
+	 * via {@link List#listIterator()} or {@link List#listIterator(int)}. 
 	 */
 	AddObj, 
-	/**
-	 * Modification by {@link Collection#remove(Object)} 
-	 * and by {@link List#remove(int)}. 
-	 */
-	RemoveObj, 
-	/**
-	 * Modification by {@link List#set(int, Object)}. 
-	 */
-	SetObj,
-	// not clear whether this is needed: 
-	// maybe retainAll and removeAll shall be defined iff so is remove. 
-	// same for clear. 
-	// on the other hand, maybe useful for debugging. 
-	/**
-	 * Modification by {@link Collection#clear()}. 
-	 */
-	Clear, 
 
 	/**
-	 * Modification by {@link Collection#addAll(Collection)} 
-	 * and by {@link List#addAll(int, Collection)}. 
-	 */
-	AddAll, 
-	/**
-	 * Modification by {@link Collection#retainAll(Collection)}. 
-	 */
-	RetainAll, 
-	/**
-	 * Modification by {@link Collection#removeAll(Collection)}. 
-	 */
-	RemoveAll, 
-	//Iterator, // seems not appropriate: iterator as such does not change 
-	/**
+	 * Modification by {@link Collection#remove(Object)}, 
+	 * {@link Collection#removeAll(Collection)}, 
+	 * {@link Collection#retainAll(Collection)}, 
+	 * {@link Collection#removeIf(Predicate)}, 
+	 * {@link Collection#clear()} 
+	 * and by {@link List#remove(int)}. 
+	 * <p>
 	 * Modification by {@link Iterator#remove()} 
 	 * of iterator attached with underlying {@link Collection} 
 	 * via {@link Collection#iterator()}, {@link List#listIterator()} 
 	 * or {@link List#listIterator(int)}. 
 	 */
-	RemoveIter,
-	// occurs for Lists only via ListIterators 
+	RemoveObj, 
+
 	/**
-	 * Modification by {@link ListIterator#add(Object)} 
-	 * of iterator attached with underlying {@link List} 
-	 * via {@link List#listIterator()} or {@link List#listIterator(int)}. 
-	 */
-	AddIter, 
-	/**
+	 * Modification by {@link List#set(int, Object)}, 
+	 * {@link List#replaceAll(UnaryOperator)} and 
+	 * {@link List#sort(Comparator)}. 
+	 * <p>
 	 * Modification by {@link ListIterator#set(Object)} 
 	 * of iterator attached with underlying {@link List} 
 	 * via {@link List#listIterator()} or {@link List#listIterator(int)}. 
 	 */
-	SetIter;
+	SetObj;
     } // enum Modification 
 
     /**
@@ -117,10 +103,41 @@ public abstract class CollectionsExt<E> {
      * extending <code>C</code> 
      * initially throwing an <code>UnsupportedOperationException</code> 
      * when trying to modify the collection 
-     * either directly or via its iterator or via a transparent sight 
+     * either directly or via its iterator(s) 
+     * or via a transparent view 
      * like {@link List#subList(int, int)}. 
+     * Note that neither arrays given e.g. by {@link Collection#toArray()} 
+     * nor {@link Spliterator}s given by {@link Collection#spliterator()} 
+     * nor {@link Stream}s given by {@link Collection#parallelStream()} 
+     * give no rise to modifications of the underlying collection. 
+     * **** currently, replacing (done for lists, e.g.), 
+     * is not considered a modification but the objects are transformed... 
+     * very esotheric... 
+     * **** what must be done is overwrite the default implementation. 
+     * Since it is not clear whether the wrapped collection did also overwrite, 
+     * it is not clear which kind of operation is done. 
+     * Thus it seems appropriate to define another kind of modification: 
+     * SetAll
+
+     * New releases of the jdk may add default methods to interfaces 
+     * and may thus add ways to modify a list. 
+     * The problem is not so much a default implementation of the interface 
+     * since this is based on elementary methods of that interface 
+     * but if a class overwrites this 
+     * using internal methods or direct access to fields. 
+     * In particular, a each default method must be reimplemented: 
+     * E.g. {@link Collection#removeIf(Predicate)} 
+     * uses method {@link Collection#remove(Object)} 
+     * but it is possible to implement {@link Collection#removeIf(Predicate)} 
+     * without invoking {@link Collection#remove(Object)} 
+     * in implementations of implementing classes of {@link Collection}. 
+     * 
+     * it is possible, although not likely, 
+     * that 
+
+
      * <p>
-     * Instances of this class can be created vial creator methods like 
+     * Instances of this class can be created via creator methods like 
      * {@link #getImmutableCollection(Collection)}. 
      * The collection with the original restrictions can be regained 
      * by {@link #unrestricted()}. 
@@ -164,10 +181,23 @@ public abstract class CollectionsExt<E> {
     	 * constructors.                                                    *
     	 * ---------------------------------------------------------------- */
 
+	/**
+	 * Creates an empty collection with no allowed modifications. 
+	 *
+	 * @see #AbstractImmutableCollection(Set)
+	 */
     	private AbstractImmutableCollection() {
    	    this(EnumSet.noneOf(Modification.class));
     	}
 
+	/**
+	 * Creates an empty collection with the allowed modifications 
+	 * given by <code>mods</code>. 
+	 * CAUTION: This is not a collection containing <code>mods</code>. 
+	 *
+	 * @param mods
+	 *    The modifications currently allowed. 
+	 */
     	AbstractImmutableCollection(Set<Modification> mods) {
    	    this.mods = mods;
     	}
@@ -177,7 +207,11 @@ public abstract class CollectionsExt<E> {
     	 * ---------------------------------------------------------------- */
 
 	/**
-	 * Returns this set but with additional modification <code>mod</code>. 
+	 * Allows in addition modification <code>mod</code> 
+	 * for this set, does not alter contents and returns <code>this</code>. 
+	 *
+	 * @param mod
+	 *    A modification which shall be allowed in addition. 
 	 */
     	public final AbstractImmutableCollection<C, E> 
 	    allowModification(Modification mod) {
@@ -185,12 +219,29 @@ public abstract class CollectionsExt<E> {
     	    return this;
     	}
 
+	/**
+	 * Allows in addition modifications in <code>mods</code> 
+	 * for this set, does not alter contents and returns <code>this</code>. 
+	 *
+	 * @param mods
+	 *    modifications which shall be allowed in addition. 
+	 */
     	public final void allowModifications(Set<Modification> mods) {
     	    this.mods.addAll(mods);
     	}
 
+	// This method allows handling modifications more tightly 
+	// so that the other methods are mere convenience methods. 
 	/**
-	 * Returns the set of allowed modification of this set. 
+	 * Returns the set of allowed modification of this set 
+	 * without backup: Changing the returned set 
+	 * changes the allowed modifications for this set. 
+	 * Also applying {@link #allowModifications(Set)} 
+	 * or {@link #allowModifications(Modification)} 
+	 * modifies the returned set. 
+	 *
+	 * @return
+	 *    the set of currently allowed modifications. 
 	 */
     	public final Set<Modification> allowedModifications() {
     	    return this.mods;
@@ -205,19 +256,44 @@ public abstract class CollectionsExt<E> {
 	 */
 	public abstract C unrestricted();
 
+	// from iterable 
+	// forEach 
+
+	// query operations 
+
+	// iterator comes below 
+
+	/**
+	 * Returns the size of this collection. 
+	 */
 	public final int size() {
 	    return unrestricted().size();
 	}
 
-    	/**
+	// inherited from AbstractCollection: 
+	// isEmpty() 
+	// boolean contains(Object o) 
+	// Object[] toArray() 
+	// T[] toArray(T[] a) 
+
+
+	// Modification Operations
+
+     	/**
     	 * @throws UnsupportedOperationException
 	 *    if either {@link #unrestricted()} does not allow this operation 
 	 *    or {@link CollectionsExt.Modification#AddObj AddObj} 
 	 *    is no allowed operation 
 	 *    according to {@link #allowedModifications()}. 
+	 *    In the latter case it does not matter, 
+	 *    whether effectively it is tried to add an object 
+	 *    which is the case only <code>this</code> 
+	 *    does not already contain <code>obj</code>. 
     	 */
+	// overwrites method that throws UnsupportedOperationException
     	public final boolean add(E obj) {
     	    if (this.mods.contains(Modification.AddObj)) {
+		// may throw UnsupportedOperationException
     		return unrestricted().add(obj);
     	    }
 
@@ -230,42 +306,65 @@ public abstract class CollectionsExt<E> {
 	 *    or {@link CollectionsExt.Modification#RemoveObj RemoveObj} 
 	 *    is no allowed operation 
 	 *    according to {@link #allowedModifications()}. 
-    	 */
+	 *    In the latter case it does not matter, 
+	 *    whether effectively it is tried to remove an object 
+	 *    which is the case only <code>this</code> 
+	 *    contains <code>obj</code>. 
+      	 */
     	public final boolean remove(Object obj) {
     	    if (this.mods.contains(Modification.RemoveObj)) {
+		// may throw UnsupportedOperationException
     		return unrestricted().remove(obj);
     	    }
     	    throw new UnsupportedOperationException();
     	}
 
+	// inherited from AbstractCollection: 
+	// containsAll() 
+
     	/**
     	 * @throws UnsupportedOperationException
 	 *    if either {@link #unrestricted()} does not allow this operation 
-	 *    or {@link CollectionsExt.Modification#Clear Clear} 
+	 *    or {@link CollectionsExt.Modification#RemoveObj RemoveObj} 
 	 *    is no allowed operation 
 	 *    according to {@link #allowedModifications()}. 
-    	 */
+	 *    In the latter case it does not matter, 
+	 *    whether effectively it is tried to clear <code>this</code> 
+	 *    which is the case only if <code>this</code> is not empty already. 
+     	 */
     	public final void clear() {
-    	    if (this.mods.contains(Modification.Clear)) {
+    	    if (this.mods.contains(Modification.RemoveObj)) {
+		// may throw UnsupportedOperationException
     		unrestricted().clear();
     	    }
     	    throw new UnsupportedOperationException();
     	}
 
+
+	// Bulk Operations
+
+	// inherited from AbstractCollection: 
+	// boolean containsAll(Collection<?> c)
+
     	/**
     	 * @throws UnsupportedOperationException
 	 *    if either {@link #unrestricted()} does not allow this operation 
-	 *    or {@link CollectionsExt.Modification#AddAll AddAll} 
+	 *    or {@link CollectionsExt.Modification#AddObj AddObj} 
 	 *    is no allowed operation 
 	 *    according to {@link #allowedModifications()}. 
+	 *    In the latter case it does not matter, 
+	 *    whether effectively it is tried to add objects 
+	 *    which is the case only if <code>coll</code> 
+	 *    is not a subcollection of <code>this</code>. 
     	 */
 	// **** if modifications do not distinguish between add and addAll, 
 	// this method need not be implemented: 
 	// Extending AbstractSet, this method is supported 
 	// iff so is add(E) 
-    	public final boolean addAll(Collection<? extends E> cmp) {
-    	    if (this.mods.contains(Modification.AddAll)) {
-    		return unrestricted().addAll(cmp);
+    	public final boolean addAll(Collection<? extends E> coll) {
+    	    if (this.mods.contains(Modification.AddObj)) {
+		// may throw UnsupportedOperationException
+    		return unrestricted().addAll(coll);
     	    }
     	    throw new UnsupportedOperationException();
     	}
@@ -273,18 +372,23 @@ public abstract class CollectionsExt<E> {
     	/**
     	 * @throws UnsupportedOperationException
 	 *    if either {@link #unrestricted()} does not allow this operation 
-	 *    or {@link CollectionsExt.Modification#RetainAll RetainAll} 
+	 *    or {@link CollectionsExt.Modification#RemoveObj RemoveObj} 
 	 *    is no allowed operation 
 	 *    according to {@link #allowedModifications()}. 
+	 *    In the latter case it does not matter, 
+	 *    whether effectively it is tried to remove objects 
+	 *    which is the case only if <code>this</code> 
+	 *    is not a subcollection of <code>coll</code>. 
     	 */
 	// **** if modifications do not distinguish 
 	// between remove and removeAll and retainAll, 
 	// this method need not be implemented: 
 	// Extending AbstractSet, this method is supported 
 	// iff so is remove(E) 
-    	public final boolean retainAll(Collection<?> cmp) {
-    	    if (this.mods.contains(Modification.RetainAll)) {
-    		return unrestricted().retainAll(cmp);
+    	public final boolean retainAll(Collection<?> coll) {
+    	    if (this.mods.contains(Modification.RemoveObj)) {
+		// may throw UnsupportedOperationException
+    		return unrestricted().retainAll(coll);
     	    }
     	    throw new UnsupportedOperationException();
     	}
@@ -292,17 +396,41 @@ public abstract class CollectionsExt<E> {
     	/**
     	 * @throws UnsupportedOperationException
 	 *    if either {@link #unrestricted()} does not allow this operation 
-	 *    or {@link CollectionsExt.Modification#RemoveAll RemoveAll} 
+	 *    or {@link CollectionsExt.Modification#RemoveObj RemoveObj} 
 	 *    is no allowed operation 
 	 *    according to {@link #allowedModifications()}. 
-    	 */
+	 *    In the latter case it does not matter, 
+	 *    whether effectively it is tried to remove objects 
+	 *    which is the case only if <code>this</code> 
+	 *    and <code>coll</code> are not disjoint. 
+     	 */
 	// **** see retainAll(...) 
     	public final boolean removeAll(Collection<?> cmp) {
-    	    if (this.mods.contains(Modification.RemoveAll)) {
-    		return unrestricted().removeAll(cmp);
+    	    if (this.mods.contains(Modification.RemoveObj)) {
+ 		// may throw UnsupportedOperationException
+   		return unrestricted().removeAll(cmp);
     	    }
     	    throw new UnsupportedOperationException();
     	}
+
+    	/**
+    	 * @throws UnsupportedOperationException
+	 *    if either {@link #unrestricted()} does not allow this operation 
+	 *    or {@link CollectionsExt.Modification#RemoveObj RemoveObj} 
+	 *    is no allowed operation 
+	 *    according to {@link #allowedModifications()}. 
+	 *    In the latter case it does not matter, 
+	 *    whether effectively it is tried to remove objects 
+	 *    which is the case only if <code>filter</code> 
+	 *    accepts an element of <code>this</code>. 
+     	 */
+	public boolean removeIf(Predicate<? super E> filter) {
+    	    if (this.mods.contains(Modification.RemoveObj)) {
+ 		// may throw UnsupportedOperationException
+   		return unrestricted().removeIf(filter);
+    	    }
+    	    throw new UnsupportedOperationException();
+	}
 
     	/**
     	 * Returns an iterator with method {@link Iterator#remove()} 
@@ -317,6 +445,7 @@ public abstract class CollectionsExt<E> {
 	    return new Iterator<E>() {
 		private Iterator<E> wrapped = AbstractImmutableCollection.this
 		    .unrestricted().iterator();
+
 		public boolean hasNext() {
 		    return this.wrapped.hasNext();
 		}
@@ -329,13 +458,14 @@ public abstract class CollectionsExt<E> {
 		 * @throws UnsupportedOperationException
 		 *    if either this iterator does not allow remove  
 		 *    or 
-		 *{@link CollectionsExt.Modification#RemoveItrt RemoveIter} 
+		 *{@link CollectionsExt.Modification#RemoveObj RemoveObj} 
 		 *    is no allowed operation 
 		 *    according to {@link #allowedModifications()}. 
 		 */
 		public void remove() {
 		    if (AbstractImmutableCollection.this.mods
-			.contains(Modification.RemoveIter)) {
+			.contains(Modification.RemoveObj)) {
+			// may throw UnsupportedOperationException
 			this.wrapped.remove();
 		    }
 		    throw new UnsupportedOperationException();
@@ -343,14 +473,24 @@ public abstract class CollectionsExt<E> {
 	    };
     	}
 
-	// **** modifications missing 
+	/**
+	 * Returns a string representation of this set, 
+	 * including the allowed modifications 
+	 * and the wrapped set. 
+	 */
 	public final String toString() {
 	    StringBuilder res = new StringBuilder();
-	    res.append("<Immutable>");
+	    res.append("<Immutable modifications=\"");
+	    res.append(this.mods);
+	    res.append("\">");
 	    res.append(unrestricted().toString());
 	    res.append("</Immutable>");
 	    return res.toString();
 	}
+
+	// default void forEach(Consumer<? super T> action) 
+	// is inherited from AbstractCollection 
+
     } // class AbstractImmutableCollection 
 
 
@@ -369,7 +509,7 @@ public abstract class CollectionsExt<E> {
     	 * fields.                                                          *
     	 * ---------------------------------------------------------------- */
 
-	/**
+	/*
 	 * The enclosed set containing the elements of this set. 
 	 */
 	private final Collection<E> coll;
@@ -418,7 +558,7 @@ public abstract class CollectionsExt<E> {
     	 * fields.                                                          *
     	 * ---------------------------------------------------------------- */
 
-	/**
+	/*
 	 * The enclosed set containing the elements of this set. 
 	 */
 	private final Set<E> set;
@@ -502,16 +642,40 @@ public abstract class CollectionsExt<E> {
 	    return unrestricted().last();
 	}
 
+	/**
+	 * Returns a view of the portion of this set 
+	 * whose elements are strictly less than <code>toElement</code>. 
+	 * For information on backing see {@link #subSet(Object, Object)}. 
+	 */
 	public SortedSet<E> headSet(E toElement) {
 	    SortedSet<E> res0 = unrestricted().headSet(toElement);
 	    return new ImmutableSortedSet<E>(allowedModifications(), res0);
 	}
 
+	/**
+	 * Returns a view of the portion of this set 
+	 * whose elements range from <code>fromElement</code>, 
+	 * inclusive, to <code>toElement</code>, exclusive. 
+	 * (If fromElement and toElement are equal, the returned set is empty.) 
+	 * The returned set is backed by this set, 
+	 * so changes in the returned set are reflected in this set, 
+	 * and vice-versa. 
+	 * The returned set supports all optional set operations 
+	 * that this set supports. 
+	 * In particular, changes of the allowed modifications 
+	 * (returned by {@link #allowedModifications()}) 
+	 * of the returned set are reflected in this set, and vice-versa. 
+	 */
 	public SortedSet<E> subSet(E fromElement, E toElement) {
 	    SortedSet<E> res0 = unrestricted().subSet(fromElement, toElement);
 	    return new ImmutableSortedSet<E>(allowedModifications(), res0);
 	}
 
+	/**
+	 * Returns a view of the portion of this set 
+	 * whose elements are greater than or equal to <code>fromElement</code>.
+	 * For information on backing see {@link #subSet(Object, Object)}. 
+	 */
 	public SortedSet<E> tailSet(E fromElement) {
 	    SortedSet<E> res0 = unrestricted().tailSet(fromElement);
 	    return new ImmutableSortedSet<E>(allowedModifications(), res0);
@@ -565,27 +729,49 @@ public abstract class CollectionsExt<E> {
 	    return this.list;
 	}
 
+    	/**
+    	 * @throws UnsupportedOperationException
+	 *    if either {@link #unrestricted()} does not allow this operation 
+	 *    or {@link CollectionsExt.Modification#AddObj AddObj} 
+	 *    is no allowed operation 
+	 *    according to {@link #allowedModifications()}. 
+    	 */
 	public void add(int index, E obj) {
     	    if (!allowedModifications().contains(Modification.AddObj)) {
 		throw new UnsupportedOperationException();
     	    }
+	    // may throw UnsupportedOperationException
 	    unrestricted().add(index, obj);
  	}
 
+    	/**
+    	 * @throws UnsupportedOperationException
+	 *    if either {@link #unrestricted()} does not allow this operation 
+	 *    or {@link CollectionsExt.Modification#AddObj AddObj} 
+	 *    is no allowed operation 
+	 *    according to {@link #allowedModifications()}. 
+ 	 *    In the latter case it does not matter, 
+	 *    whether effectively it is tried to add objects 
+	 *    which is the case only <code>coll</code> is not empty. 
+   	 */
 	public boolean addAll(int index, Collection<? extends E> coll) {
-	    throw new NotYetImplementedException();
+    	    if (allowedModifications().contains(Modification.AddObj)) {
+		// may throw UnsupportedOperationException
+    		return unrestricted().addAll(index, coll);
+    	    }
+    	    throw new UnsupportedOperationException();
 	}
 
 	public E get(int index) {
 	    return unrestricted().get(index);
 	}
 
-	// must be implemented because contract differs from Collection 
+	// must be implemented because contract differs from that of Collection 
 	public int hashCode() {
 	    return unrestricted().hashCode();
 	}
 
-	// must be implemented because of contract differs from Collection 
+	// must be implemented because hashCode() changed also  
 	public boolean equals(Object obj) {
 	    return unrestricted().equals(obj);
 	}
@@ -604,8 +790,10 @@ public abstract class CollectionsExt<E> {
 
 	public ListIterator<E> 	listIterator(int index) {
 	    return new ListIterator<E>() {
+
 		private ListIterator<E> wrapped = ImmutableList.this
 		    .unrestricted().listIterator();
+
 		public boolean hasNext() {
 		    return this.wrapped.hasNext();
 		}
@@ -624,66 +812,135 @@ public abstract class CollectionsExt<E> {
 		public int previousIndex() {
 		    return this.wrapped.previousIndex();
 		}
+
 		/**
 		 * @throws UnsupportedOperationException
-		 *    if either this iterator does not allow remove  
-		 *    or 
-		 *{@link CollectionsExt.Modification#RemoveIter RemoveIter} 
+		 *    if either this iterator does not allow remove  or 
+		 *    {@link CollectionsExt.Modification#RemoveObj RemoveObj}
 		 *    is no allowed operation 
 		 *    according to {@link #allowedModifications()}. 
 		 */
 		public void remove() {
 		    if (ImmutableList.this.allowedModifications()
-			.contains(Modification.RemoveIter)) {
+			.contains(Modification.RemoveObj)) {
+			// may throw UnsupportedOperationException
 			this.wrapped.remove();
 		    }
 		    throw new UnsupportedOperationException();
 		}
+
 		/**
 		 * @throws UnsupportedOperationException
 		 *    if either this iterator does not allow remove  
-		 *    or 
-		 *{@link CollectionsExt.Modification#AddIter AddIter} 
+		 *    or {@link CollectionsExt.Modification#AddObj AddObj} 
 		 *    is no allowed operation 
 		 *    according to {@link #allowedModifications()}. 
 		 */
 		public void add(E element) {
 		    if (ImmutableList.this.allowedModifications()
-			.contains(Modification.AddIter)) {
+			.contains(Modification.AddObj)) {
+			// may throw UnsupportedOperationException
 			this.wrapped.add(element);
 		    }
 		    throw new UnsupportedOperationException();
 		}
+
 		/**
 		 * @throws UnsupportedOperationException
 		 *    if either this iterator does not allow remove  
-		 *    or 
-		 *{@link CollectionsExt.Modification#SetIter SetIter} 
+		 *    or {@link CollectionsExt.Modification#SetObj SetObj} 
 		 *    is no allowed operation 
 		 *    according to {@link #allowedModifications()}. 
-		 */
+		 *    In the latter case it does not matter, 
+		 *    whether effectively it is tried to set an object 
+		 *    which is the case only if <code>element</code> 
+		 *    is not yet on the place this iterator points to. 
+ 		 */
 		public void set(E element) {
 		    if (ImmutableList.this.allowedModifications()
-			.contains(Modification.SetIter)) {
+			.contains(Modification.SetObj)) {
+			// may throw UnsupportedOperationException
 			this.wrapped.add(element);
 		    }
 		    throw new UnsupportedOperationException();
 		}
 	    };
-	}
+	} // listIterator 
 
+    	/**
+    	 * @throws UnsupportedOperationException
+	 *    if either {@link #unrestricted()} does not allow this operation 
+	 *    or {@link CollectionsExt.Modification#RemoveObj RemoveObj} 
+	 *    is no allowed operation 
+	 *    according to {@link #allowedModifications()}. 
+    	 */
 	public E remove(int index) {
    	    if (allowedModifications().contains(Modification.RemoveObj)) {
+		// may throw UnsupportedOperationException
 		return unrestricted().remove(index);
     	    }
 	    throw new UnsupportedOperationException();
 	}
 
+    	/**
+    	 * @throws UnsupportedOperationException
+	 *    if either {@link #unrestricted()} does not allow this operation 
+	 *    or {@link CollectionsExt.Modification#SetObj SetObj} 
+	 *    is no allowed operation 
+	 *    according to {@link #allowedModifications()}. 
+	 *    In the latter case it does not matter, 
+	 *    whether effectively it is tried to set an object 
+	 *    which is the case only if <code>element</code> 
+	 *    is not at place <code>index</code> in <code>this</code>. 
+     	 */
 	public E set(int index, E element) {
    	    if (allowedModifications().contains(Modification.SetObj)) {
+		// may throw UnsupportedOperationException
 		return unrestricted().set(index, element);
     	    }
 	    throw new UnsupportedOperationException();
+	}
+
+    	/**
+    	 * @throws UnsupportedOperationException
+	 *    if either {@link #unrestricted()} does not allow this operation 
+	 *    or {@link CollectionsExt.Modification#SetObj SetObj} 
+	 *    is no allowed operation 
+	 *    according to {@link #allowedModifications()}. 
+	 *    In the latter case it does not matter, 
+	 *    whether effectively it is tried to replace an object 
+	 *    which is the case only if <code>operator</code> 
+	 *    really changes an object. 
+     	 */
+	public void replaceAll(UnaryOperator<E> operator) {
+   	    if (!allowedModifications().contains(Modification.SetObj)) {
+		throw new UnsupportedOperationException();
+  	    }
+	    // may throw UnsupportedOperationException
+	    unrestricted().replaceAll(operator);
+  	}
+
+    	/**
+    	 * @throws UnsupportedOperationException
+	 *    if either {@link #unrestricted()} does not allow this operation 
+	 *    or {@link CollectionsExt.Modification#SetObj SetObj} 
+	 *    is no allowed operation 
+	 *    according to {@link #allowedModifications()}. 
+	 *    In the latter case it does not matter, 
+	 *    whether effectively it is tried to replace an object 
+	 *    which is the case only if <code>this</code> 
+	 *    is not completely sorted according to <code>cmp</code>. 
+	 *    This definition is in conjunction with the requirement, 
+	 *    of {@link List#sort(Comparator)} 
+	 *    that this exception is thrown iff the list iterator 
+	 *    does not permit the {@link ListIterator@set(Object)} method. 
+     	 */
+	public void sort(Comparator<? super E> cmp) {
+   	    if (!allowedModifications().contains(Modification.SetObj)) {
+		throw new UnsupportedOperationException();
+    	    }
+	    // may throw UnsupportedOperationException
+	    unrestricted().sort(cmp);
 	}
 
 	public List<E> subList(int fromIndex, int toIndex) {
@@ -1156,7 +1413,9 @@ public abstract class CollectionsExt<E> {
      *    </ul>
      * @see ArraysExt#recAsList(Object, Class, Caster)
      */
-    public static Object recToArray(Object source, Class cls, Caster caster) {
+    public static Object recToArray(Object source, 
+				    Class<?> cls, 
+				    Caster caster) {
 
 	if (caster.areCompatible(cls, source)) {
 	    // Here, either source == null || cls.isInstance(source) 

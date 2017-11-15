@@ -509,7 +509,7 @@ public abstract class CollectionsExt<E> {
     	 * fields.                                                          *
     	 * ---------------------------------------------------------------- */
 
-	/*
+	/**
 	 * The enclosed set containing the elements of this set. 
 	 */
 	private final Collection<E> coll;
@@ -558,7 +558,7 @@ public abstract class CollectionsExt<E> {
     	 * fields.                                                          *
     	 * ---------------------------------------------------------------- */
 
-	/*
+	/**
 	 * The enclosed set containing the elements of this set. 
 	 */
 	private final Set<E> set;

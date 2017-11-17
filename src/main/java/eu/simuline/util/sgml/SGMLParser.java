@@ -1038,6 +1038,7 @@ public final class SGMLParser {
      * Creates a new <code>SGMLParser</code> 
      * with the default handlers for content and exceptions. 
      */
+    @SuppressWarnings("checkstyle:nowhitespaceafter")
     public SGMLParser() {
 	this.       contentHandler = new TrivialContentHandler();
 	this.parseExceptionHandler = new ParseExceptionHandler.Impl();

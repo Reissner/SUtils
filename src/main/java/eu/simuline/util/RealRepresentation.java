@@ -233,6 +233,8 @@ public class RealRepresentation {
 	 *    the value to be represented 
 	 *    by this <code>BigDecimalRep</code>. 
 	 */
+	@SuppressWarnings({"checkstyle:nowhitespacebefore",
+		"checkstyle:nowhitespaceafter"})
 	BigDecimalRep(BigDecimal dec) {
 	    switch (dec.signum()) {
 	    case -1:
@@ -259,6 +261,7 @@ public class RealRepresentation {
 	    int exp = -dec.scale();
 	    String mantissa = dec.unscaledValue().toString();
 
+	    int lenMant = mantissa.length();
 	    if (new BigDecimal("1.0e" + MAX_FRAC_DIGITS_NO_EXP).compareTo(dec)
 		<= 0 && 
 		new BigDecimal("1.0e" +  MAX_INT_DIGITS_NO_EXP).compareTo(dec)
@@ -274,19 +277,16 @@ public class RealRepresentation {
 		}
 		// the representation xxx.yyy with nontrivial integer part. 
 		this.integer  = mantissa
-		    . substring(0,
-				mantissa.length() + exp);
+		    . substring(0            , lenMant + exp);
 		this.fraction = mantissa
-		    . substring(mantissa.length() + exp,
-				mantissa.length());
+		    . substring(lenMant + exp, lenMant      );
 	    } else {
 		// representation a.yyyezzz with exponent 
 		// where a is a digit != 0. 
 		this.exponent = Integer
-		    .toString(exp + mantissa.length() - 1);
+		    .toString(exp + lenMant - 1);
 		this.integer  = mantissa.substring(0, 1);
-		this.fraction = mantissa
-		    . substring(1, mantissa.length());
+		this.fraction = mantissa.substring(1, lenMant);
 	    }
 
 	    // remove trailing zeros. 
@@ -594,6 +594,7 @@ public class RealRepresentation {
      * from <code>+0</code> and so do we in the subclass 
      * {@link RealRepresentation.DoubleRep}. 
      */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     protected String sign;
 
     /*
@@ -604,12 +605,14 @@ public class RealRepresentation {
     /**
      * The integer part of the mantissa of the double value represented. 
      */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     protected String integer;
 
     /**
      * The fractional part of the mantissa of the double value represented. 
      * This may never be empty but it may be <code>0</code>. 
      */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     protected String fraction;
 
 

@@ -787,8 +787,10 @@ public final class ListMap<K, V> implements SortedMap<K, V> {
 
     public ListMap<K, V> tailMap(K fromKey) {
  	return subMap(this.keys.obj2idx(fromKey), size());
-   }
+    }
 
+
+    @SuppressWarnings("checkstyle:genericwhitespace")
     ListMap<K, V> subMap(int fromIdx, int toIdx) {
 	ListSet<K> subKeys   = this.keys  .subSetIdx(fromIdx, toIdx);
 	List   <V> subValues = this.values.subList  (fromIdx, toIdx);

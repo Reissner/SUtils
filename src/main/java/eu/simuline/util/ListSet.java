@@ -594,6 +594,7 @@ public final class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      * @return
      *    whether <code>list1</code> had been modified. 
      */
+   @SuppressWarnings("checkstyle:nowhitespacebefore")
     private boolean addList(List<E> list1, List<E> list2) {
 	
 	switch (list2.size()) { // NOPMD

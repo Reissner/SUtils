@@ -1,14 +1,11 @@
 
 package eu.simuline.util;
 
-import java.util.Collection;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.Comparator;
-import java.util.Collections;
 import java.util.NoSuchElementException; // for javadoc only 
 
 /**
@@ -22,215 +19,14 @@ import java.util.NoSuchElementException; // for javadoc only
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public class TreeMultiSet<T> 
+public final class TreeMultiSet<T> 
     extends AbstractMultiSet<NavigableMap<T, MultiSet.Multiplicity>, T> 
     implements SortedMultiSet<T> {
 
-    /* -------------------------------------------------------------------- *
-     * inner classes.                                                       *
-     * -------------------------------------------------------------------- */
-
-
-    /**
-     * Represents immutable <code>MultiSet</code>s 
-     * as e.g. the one given by {@link TreeMultiSet#emptyMultiSet()}. 
-     * **** Idea: use {@link Collections#unmodifiableMap(Map)} 
-     * but still modifications of multiplicities must be handled. 
-     *
-     * @param <T>
-     *    the class of the elements of this multi-set. 
-     */
-    static final class Immutable<T> extends TreeMultiSet<T> {
-
-	/* ---------------------------------------------------------------- *
-	 * constructors.                                                    *
-	 * ---------------------------------------------------------------- */
-
-	/**
-	 * Creates a new, empty <code>Immutable</code>. 
-	 */
-	private Immutable() {
-	    super();
-	}
-
-	/**
-	 * Copy constructor. 
-	 * Wrapps another <code>MultiSet</code> 
-	 * in an equivalent but immutable one. 
-	 *
-	 * @param other 
-	 *    another <code>MultiSet</code> instance. 
-	 */
-	Immutable(TreeMultiSet<T> other) {
-	    super(other);
-	}
-
-	/**
-	 * Creates an immutable <code>MultiSet</code> 
-	 * with the elements of <code>sSet</code> 
-	 * and all elements with multiplicity <code>1</code>. 
-	 */
-	Immutable(Set<? extends T> sSet) {
-	    this();
-	    super.addAll(sSet);
-	}
-
-
-	/* ---------------------------------------------------------------- *
-	 * methods.                                                         *
-	 * ---------------------------------------------------------------- */
-
-
-	private static <T> Immutable<T> createEmpty() {
-	    return new Immutable<T>();
-	}
-
-	// api-docs inherited from base class 
-	public SortedMultiSet<T> immutable() {
-	    return this;
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public void clear() {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public int addWithMult(T obj) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public int addWithMult(T obj, int addMult) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean add(T obj) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public int removeWithMult(Object obj) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public int removeWithMult(Object obj, int removeMult) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean remove(Object obj) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public int setMultiplicity(T obj, int newMult) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean addAll(MultiSet<? extends T> mvs) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean addAll(Set<? extends T> set) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean removeAll(Collection<?> coll) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * @throws UnsupportedOperationException
-	 */
-	public boolean retainAll(Collection<?> coll) {
-	    throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Returns an unmodifyable view of the underlying set. 
-	 */
-	public SortedSet<T> getSet() {
-	    return Collections.unmodifiableSortedSet(super.getSet());
-	}
-
-	/**
-	 * Returns an unmodifyable Set view of the mapping 
-	 * from the element of this <code>MultiSet</code> 
-	 * to the according multiplicities. 
-	 */
-	public Set<Map.Entry<T, Multiplicity>> getSetWithMults() {
-	    return Collections.unmodifiableSet(super.getSetWithMults());
-	}
-
-	/**
-	 * Returns an iterator which does not allow modifications 
-	 * of this underlying {@link MultiSet}. 
-	 */
-	public MultiSetIterator<T> iterator() {
-	    return new MultiSetIteratorImpl<T>(this) {
-		/**
-		 * @throws UnsupportedOperationException
-		 */
-		public void remove()  {
-		    throw new UnsupportedOperationException();
-		}
-		/**
-		 * @throws UnsupportedOperationException
-		 */
-		public int setMult(int setMult) {
-		    throw new UnsupportedOperationException();
-		}
-		/**
-		 * @throws UnsupportedOperationException
-		 */
-		public int removeMult(int removeMult)  {
-		    throw new UnsupportedOperationException();
-		}
-	    };
-	}
-    } // class Immutable 
 
     /* -------------------------------------------------------------------- *
-     * class constants.                                                     *
+     * constructors.                                                        *
      * -------------------------------------------------------------------- */
-
-
-    /* -------------------------------------------------------------------- *
-     * fields.                                                              *
-     * -------------------------------------------------------------------- */
-
-    /* -------------------------------------------------------------------- *
-     * constructors and creator methods.                                    *
-     * -------------------------------------------------------------------- */
-
 
     private TreeMultiSet(NavigableMap<T, Multiplicity> t2mult) {
 	super(t2mult);
@@ -272,29 +68,9 @@ public class TreeMultiSet<T>
 	addAll(sSet);
     }
 
-    /**
-     * Returns an <em>immutable</em> empty <code>MultiSet</code>. 
-     * @see TreeMultiSet.Immutable
-     */
-    public static <T> MultiSet<T> emptyMultiSet() {
-	return Immutable.createEmpty();
-    }
-
-    /**
-     * Returns an immutable copy of this <code>MultiSet</code>. 
-     */
-    public SortedMultiSet<T> immutable() {
-	return new Immutable<T>(this);
-    }
-
-    /**
-     * Returns an immutable <code>MultiSet</code> 
-     * with the elements of <code>sSet</code> 
-     * and all elements with multiplicity <code>1</code>. 
-     */
-    public static <T> MultiSet<T> immutable(Set<? extends T> sSet) {
-	return new Immutable<T>(sSet);
-    }
+    /* -------------------------------------------------------------------- *
+     * methods.                                                             *
+     * -------------------------------------------------------------------- */
 
     /**
      * Returns the comparator used to order the elements in this set, 
@@ -318,7 +94,7 @@ public class TreeMultiSet<T>
      * @throws NoSuchElementException
      *    if this set is empty. 
      */
-    public final T first() {
+    public T first() {
 	return this.obj2mult.firstKey();
     }
 
@@ -330,7 +106,7 @@ public class TreeMultiSet<T>
      * @throws NoSuchElementException
      *    if this set is empty. 
      */
-    public final T last() {
+    public T last() {
 	return this.obj2mult.lastKey();
     }
 
@@ -367,7 +143,7 @@ public class TreeMultiSet<T>
      *    if this multi-set itself has a restricted range, 
      *    and <code>toElement</code> lies outside the bounds of the range. 
      */
-    public final MultiSet<T> headSet(T toElement) {
+    public SortedMultiSet<T> headSet(T toElement) {
 	return new TreeMultiSet<T>(this.obj2mult.headMap(toElement, false));
     }
 
@@ -404,7 +180,7 @@ public class TreeMultiSet<T>
      *    if this multi-set itself has a restricted range, 
      *    and <code>fromElement</code> lies outside the bounds of the range. 
      */
-    public final MultiSet<T> tailSet(T fromElement) {
+    public SortedMultiSet<T> tailSet(T fromElement) {
 	return new TreeMultiSet<T>(this.obj2mult.tailMap(fromElement, true));
     }
 
@@ -452,9 +228,9 @@ public class TreeMultiSet<T>
      *    and <code>fromElement</code> or <code>toElement</code> 
      *    lies outside the bounds of the range. 
      */
-    public final MultiSet<T> subSet(T fromElement, T toElement) {
+    public SortedMultiSet<T> subSet(T fromElement, T toElement) {
 	return new TreeMultiSet<T>(this.obj2mult.subMap(fromElement, true, 
-						    toElement, false));
+							toElement, false));
     }
 
     /**
@@ -465,7 +241,6 @@ public class TreeMultiSet<T>
      * @return 
      *    the <code>Set</code> containing exactly the objects 
      *    with strictly positive multiplicity in this <code>MultiSet</code>. 
-     * @see TreeMultiSet.Immutable#getSet()
      */
     public SortedSet<T> getSet() {
 	return this.obj2mult.navigableKeySet();
@@ -475,7 +250,7 @@ public class TreeMultiSet<T>
      * Returns a view of the underlying map of this <code>SortedMultiSet</code> 
      * as a map mapping each entry to its multiplicity. 
      */
-     public NavigableMap<T, Multiplicity> getMap() {
+    public NavigableMap<T, Multiplicity> getMap() {
 	return this.obj2mult;
     }
 

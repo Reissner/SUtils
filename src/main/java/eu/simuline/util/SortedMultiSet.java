@@ -21,11 +21,6 @@ import java.util.NoSuchElementException; // for javadoc only
 public interface SortedMultiSet<T> extends MultiSet<T> {
 
     /**
-     * Returns an immutable copy of this <code>SortedMultiSet</code>. 
-     */
-    SortedMultiSet<T> immutable();
-
-    /**
      * Returns a view of the underlying sorted set 
      * of this <code>SortedMultiSet</code>. 
      * For certain implementations, this set is immutable 
@@ -35,7 +30,6 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      *    the <code>SortedSet</code> containing exactly the objects 
      *    with strictly positive multiplicity 
      *    in this <code>SortedMultiSet</code>. 
-     * @see HashMultiSet.Immutable#getSet()
      */
     SortedSet<T> getSet();
 
@@ -110,7 +104,7 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      *    if this multi-set itself has a restricted range, 
      *    and <code>toElement</code> lies outside the bounds of the range. 
      */
-    MultiSet<T> headSet(T toElement);
+    SortedMultiSet<T> headSet(T toElement);
 
     /**
      * Returns a view of the portion of this multi-set 
@@ -145,7 +139,7 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      *    if this multi-set itself has a restricted range, 
      *    and <code>fromElement</code> lies outside the bounds of the range. 
      */
-    MultiSet<T> tailSet(T fromElement);
+    SortedMultiSet<T> tailSet(T fromElement);
 
     /**
      * Returns a view of the portion of this multi-set 
@@ -191,6 +185,5 @@ public interface SortedMultiSet<T> extends MultiSet<T> {
      *    and <code>fromElement</code> or <code>toElement</code> 
      *    lies outside the bounds of the range. 
      */
-    MultiSet<T> subSet(T fromElement, T toElement);
-
+    SortedMultiSet<T> subSet(T fromElement, T toElement);
 }

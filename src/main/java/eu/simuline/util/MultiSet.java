@@ -44,6 +44,9 @@ public interface MultiSet<T> extends Iterable<T> {
 	 *    representing the old multiplicity. 
 	 * @throws IllegalArgumentException 
 	 *    if <code>mult</code> is not strictly positive. 
+	 * @throws UnsupportedOperationException 
+	 *    if setting the multiplicity would modify this Multiplicity object 
+	 *    in a way which is not supported. 
 	 */
 	int set(int mult);
 
@@ -61,6 +64,9 @@ public interface MultiSet<T> extends Iterable<T> {
 	 * @throws IllegalStateException 
 	 *    if <code>this.mult + mult == 0</code> holds. 
 	 *    This cannot occur: if it does this is a bug within this class. 
+	 * @throws UnsupportedOperationException 
+	 *    if setting the multiplicity would modify this Multiplicity object 
+	 *    in a way which is not supported. 
 	 */
 	int add(int mult);
 
@@ -94,17 +100,6 @@ public interface MultiSet<T> extends Iterable<T> {
     /* -------------------------------------------------------------------- *
      * fields.                                                              *
      * -------------------------------------------------------------------- */
-
-
-    /* -------------------------------------------------------------------- *
-     * constructors and creator methods.                                    *
-     * -------------------------------------------------------------------- */
-
-
-    /**
-     * Returns an immutable copy of this <code>MultiSet</code>. 
-     */
-    MultiSet<T> immutable();
 
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
@@ -149,7 +144,6 @@ public interface MultiSet<T> extends Iterable<T> {
      *    whether this multiple set contains no element. 
      */
     boolean isEmpty();
-
 
     /**
      * Returns one of the elements in this multiple set 
@@ -335,6 +329,8 @@ public interface MultiSet<T> extends Iterable<T> {
      * Adds <code>obj</code> to this <code>MultiSet</code> 
      * and returns the new multiplicity of this object. 
      * In other words, increments the multiplicity of <code>obj</code> by one. 
+     * This is a special case of {@link #addWithMult(Object obj, int addMult)} 
+     * with <code>addMult==1</code>. 
      *
      * @param obj 
      *    a <code>Object</code>. 
@@ -354,6 +350,8 @@ public interface MultiSet<T> extends Iterable<T> {
      * in this <code>MultiSet</code> 
      * by the specified value <code>addMult</code> 
      * and returns the new multiplicity of this object. 
+     * This generalizes {@link #addWithMult(Object obj)} 
+     * with <code>addMult==1</code>. 
      *
      * @param obj 
      *    an <code>Object</code> instance. 
@@ -616,7 +614,6 @@ public interface MultiSet<T> extends Iterable<T> {
      * @return 
      *    the <code>Set</code> containing exactly the objects 
      *    with strictly positive multiplicity in this <code>MultiSet</code>. 
-     * @see HashMultiSet.Immutable#getSet()
      */
     Set<T> getSet();
 

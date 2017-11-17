@@ -187,11 +187,7 @@ public class MultiSetTest {
 	MultiSet<String> cmp;
 
 	// testcase 1
-	//
-	// The empty set
-	//
-	assertTrue(TreeMultiSet.emptyMultiSet().isEmpty());
-
+	// deprecated 
 
 	// testcase 2
 	//
@@ -835,12 +831,13 @@ public class MultiSetTest {
 	assertEquals("Element1", str);
 	assertEquals(3, iter.getMult());
 
-	try {
-	    iter.removeMult(-1);
-	    fail("exception expected");
-	} catch (IllegalArgumentException e) {
+	// changed specification: 
+	// try {
+	//     iter.removeMult(-1);
+	//     fail("exception expected");
+	// } catch (IllegalArgumentException e) {
 
-	}
+	// }
 
 	try {
 	    iter.removeMult(4);

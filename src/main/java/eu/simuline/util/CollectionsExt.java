@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 
 import java.util.List;
 import java.util.Iterator;
+import java.util.Spliterator; // for javadoc only 
 import java.util.ListIterator;
 import java.util.Collections;
 import java.util.Collection;
@@ -14,10 +15,14 @@ import java.util.SortedSet;
 import java.util.Comparator;
 import java.util.WeakHashMap;
 import java.util.EnumSet;
+import java.util.Map;
+
+import java.util.stream.Stream; // for javadoc only 
 
 import java.util.function.Predicate;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
+import java.util.NavigableMap;
 
 /**
  * An add on of the core class {@link java.util.Collections}. 
@@ -184,7 +189,7 @@ public abstract class CollectionsExt<E> {
 	/**
 	 * Creates an empty collection with no allowed modifications. 
 	 *
-	 * @see #AbstractImmutableCollection(Set)
+	 * @see #CollectionsExt.AbstractImmutableCollection(Set)
 	 */
     	private AbstractImmutableCollection() {
    	    this(EnumSet.noneOf(Modification.class));
@@ -237,7 +242,6 @@ public abstract class CollectionsExt<E> {
 	 * without backup: Changing the returned set 
 	 * changes the allowed modifications for this set. 
 	 * Also applying {@link #allowModifications(Set)} 
-	 * or {@link #allowModifications(Modification)} 
 	 * modifies the returned set. 
 	 *
 	 * @return
@@ -424,7 +428,7 @@ public abstract class CollectionsExt<E> {
 	 *    which is the case only if <code>filter</code> 
 	 *    accepts an element of <code>this</code>. 
      	 */
-	public boolean removeIf(Predicate<? super E> filter) {
+	public final boolean removeIf(Predicate<? super E> filter) {
     	    if (this.mods.contains(Modification.RemoveObj)) {
  		// may throw UnsupportedOperationException
    		return unrestricted().removeIf(filter);
@@ -437,7 +441,7 @@ public abstract class CollectionsExt<E> {
 	 * which throws an {@link UnsupportedOperationException} 
 	 * if either {@link #unrestricted()}'s iterator 
 	 * does not allow this operation 
-	 * or {@link CollectionsExt.Modification#RemoveIter RemoveIter} 
+	 * or {@link CollectionsExt.Modification#RemoveObj RemoveObj} 
 	 * is no allowed operation 
 	 * according to {@link #allowedModifications()}. 
     	 */
@@ -452,6 +456,10 @@ public abstract class CollectionsExt<E> {
 
 		public E next() {
 		    return this.wrapped.next();
+		}
+
+		public void forEachRemaining(Consumer<? super E> action) {
+		    this.wrapped.forEachRemaining(action);
 		}
 
 		/**
@@ -520,7 +528,7 @@ public abstract class CollectionsExt<E> {
 
     	/**
     	 * Creates a new empty <code>ImmutableCollection</code> 
-    	 * which equals <code>set</code> but cannot be modified 
+    	 * which equals <code>coll</code> but cannot be modified 
 	 * neither directly nor via its iterator. 
 	 *
 	 * @throws NullPointerException
@@ -574,6 +582,14 @@ public abstract class CollectionsExt<E> {
 	    this.set = set;
 	}
 
+	ImmutableSet(Set<Modification> mods, Set<E> set) {
+	    super(mods);
+	    if (set == null) {
+		throw new NullPointerException(); // NOPMD 
+	    }
+	    this.set = set;
+	}
+
       	/* ---------------------------------------------------------------- *
     	 * methods.                                                         *
     	 * ---------------------------------------------------------------- */
@@ -611,6 +627,9 @@ public abstract class CollectionsExt<E> {
     	 * ---------------------------------------------------------------- */
 
 	ImmutableSortedSet(SortedSet<E> set) {
+	    if (set == null) {
+		throw new NullPointerException(); // NOPMD
+	    }
 	    this.set = set;
 	}
 
@@ -813,6 +832,10 @@ public abstract class CollectionsExt<E> {
 		    return this.wrapped.previousIndex();
 		}
 
+		public void forEachRemaining(Consumer<? super E> action) {
+		    this.wrapped.forEachRemaining(action);
+		}
+
 		/**
 		 * @throws UnsupportedOperationException
 		 *    if either this iterator does not allow remove  or 
@@ -933,7 +956,7 @@ public abstract class CollectionsExt<E> {
 	 *    This definition is in conjunction with the requirement, 
 	 *    of {@link List#sort(Comparator)} 
 	 *    that this exception is thrown iff the list iterator 
-	 *    does not permit the {@link ListIterator@set(Object)} method. 
+	 *    does not permit the {@link ListIterator#set(Object)} method. 
      	 */
 	public void sort(Comparator<? super E> cmp) {
    	    if (!allowedModifications().contains(Modification.SetObj)) {
@@ -1177,9 +1200,571 @@ public abstract class CollectionsExt<E> {
 
     } // class ImmutableCyclicList 
 
+    /**
+     * An immutable implementation of the multiplicity interface. 
+     */
+    private static class ImmutableMultiplicity 
+	implements MultiSet.Multiplicity {
+	private final MultiSet.Multiplicity wrapped;
+	private final Set<Modification> mod;
+	ImmutableMultiplicity(MultiSet.Multiplicity wrapped, 
+			      Set<Modification> mod) {
+	    this.wrapped = wrapped;
+	    this.mod = mod;
+	}
+
+	private Set<Modification> allowedModifications() {
+	    return this.mod;
+	}
+
+	public int set(int mult) {
+	    int multOrg = this.wrapped.get();
+
+	    // **** may cause problems with over/underflow 
+	    switch ((int) Math.signum(mult - multOrg)) {
+	    case -1:
+		assert mult < multOrg;
+		if (allowedModifications()
+		    .contains(Modification.RemoveObj)) {
+		    // may throw UnsupportedOperationException
+		    return this.wrapped.set(mult);
+		}
+		break;
+	    case +1:
+		assert mult > multOrg;
+		if (allowedModifications()
+		    .contains(Modification.AddObj)) {
+		    // may throw UnsupportedOperationException
+		    return this.wrapped.set(mult);
+		}
+		break;
+	    case 0:
+		assert mult == multOrg;
+		// this does not modify the multiplicity 
+		// but just returns the current value. 
+		// could also return multOrg 
+		return this.wrapped.set(mult);
+	    default:
+		throw new IllegalStateException("****");
+	    }
+	    throw new UnsupportedOperationException();
+	}
+
+	public int add(int mult) {
+	    switch ((int) Math.signum(mult)) {
+	    case -1:
+		assert mult < 0;
+		if (allowedModifications()
+		    .contains(Modification.RemoveObj)) {
+		    // may throw UnsupportedOperationException
+		    return this.wrapped.add(mult);
+		}
+		break;
+	    case +1:
+		assert mult > 0;
+		if (allowedModifications()
+		    .contains(Modification.AddObj)) {
+		    // may throw UnsupportedOperationException
+		    return this.wrapped.add(mult);
+		}
+		break;
+	    case 0:
+		assert mult == 0;
+		// this does not modify the multiplicity 
+		// but just returns the current value. 
+		return this.wrapped.add(mult);
+	    default:
+		throw new IllegalStateException("****");
+	    }
+	    throw new UnsupportedOperationException();
+	}
+
+	public int get() {
+	    return this.wrapped.get();
+	}
+
+	public int compareTo(MultiSet.Multiplicity mult) {
+	    return this.wrapped.compareTo(mult);
+	}
+
+    } // class ImmutableMultiplicity 
+
+    /**
+     * A MultiSet which prevents being modified 
+     * by throwing an exception for the modifying methods. 
+     *
+     * @param <C>
+     *    the class extending {@link MultiSet} with elements in E. 
+     * @param <E>
+     *    the class of the elements of this collection. 
+     */
+    abstract static class AbstractImmutableMultiSet<C extends MultiSet<E>, E> 
+	implements MultiSet<E> {
+
+    	private static final long serialVersionUID = -2479143000061671589L;
+
+    	/* ---------------------------------------------------------------- *
+    	 * fields.                                                          *
+    	 * ---------------------------------------------------------------- */
+
+	// ***** same as for AbstractImmutableCollection 
+	/**
+	 * The set of allowed modifications. 
+	 */
+    	private final Set<Modification> mods;
+
+    	/* ---------------------------------------------------------------- *
+    	 * constructors.                                                    *
+    	 * ---------------------------------------------------------------- */
+
+	// ***** same as for AbstractCollection 
+	private AbstractImmutableMultiSet() {
+   	    this(EnumSet.noneOf(Modification.class));
+	}
+
+	// ***** same as for AbstractCollection 
+	AbstractImmutableMultiSet(Set<Modification> mods) {
+   	    this.mods = mods;
+	}
+
+    	/* ---------------------------------------------------------------- *
+    	 * methods.                                                         *
+    	 * ---------------------------------------------------------------- */
+
+    	public final Set<Modification> allowedModifications() {
+    	    return this.mods;
+    	}
+
+	/**
+	 * Returns the underlying multiset without the restrictions 
+	 * imposed by this {@link CollectionsExt.ImmutableCollection}. 
+	 * Note that the result 
+	 * may still throw {@link UnsupportedOperationException}s 
+	 * depending on the implementation. 
+	 */
+	public abstract C unrestricted();
+
+	// query methods 
+
+	public int size() {
+	    return unrestricted().size();
+	}
+
+	public int sizeWithMult() {
+	    return unrestricted().sizeWithMult();
+	}
+
+	public boolean isEmpty() {
+	    return unrestricted().isEmpty();
+	}
+
+	public Object getObjWithMaxMult() {
+	    return unrestricted().getObjWithMaxMult();
+	}
+
+	public int getMaxMult() {
+	    return unrestricted().getMaxMult();
+	}
+
+	public int getMultiplicity(Object obj) {
+	    return unrestricted().getMultiplicity(obj);
+	}
+
+	public boolean contains(Object obj) {
+	    return unrestricted().contains(obj);
+	}
+
+	public Object[] toArray() {
+	    return unrestricted().toArray();
+	}
+
+	public E[] toArray(E[] arr) {
+	    return unrestricted().toArray(arr);
+	}
+
+	// What follows are query methods the return value of which 
+	// is required to prevent modifications. 
+
+	public Multiplicity getMultiplicityObj(Object obj) {
+	    Multiplicity res0 = this.unrestricted().getMultiplicityObj(obj);
+	    return new ImmutableMultiplicity(res0, this.allowedModifications());
+	}
+
+	public MultiSetIterator<E> iterator() {
+	    return new MultiSetIterator<E>() {
+		private MultiSetIterator<E> wrapped = 
+		    AbstractImmutableMultiSet.this.unrestricted().iterator();
+
+		public boolean hasNext() {
+		    return this.wrapped.hasNext();
+		}
+
+		public E next() {
+		    return this.wrapped.next();
+		}
+
+		public void forEachRemaining(Consumer<? super E> action) {
+		    this.wrapped.forEachRemaining(action);
+		}
+
+		public void remove() {
+		    if (AbstractImmutableMultiSet.this.mods
+			.contains(Modification.RemoveObj)) {
+			// may throw UnsupportedOperationException
+			this.wrapped.remove();
+		    }
+		    throw new UnsupportedOperationException();
+		}
+
+		public int getMult() {
+		    return this.wrapped.getMult();
+		}
+
+		public MultiSet.Multiplicity getMultObj() {
+		    return this.wrapped.getMultObj();
+		}
+
+		// this is always the same as for mutable multi-sets. 
+		// I think, one has to decide: 
+		// There is a single method exposing Multiplicities: 
+		// MultiSet.getMultiplicityObj(Object). 
+		// If this is ok, then we may replace in MultiSetIterator 
+		// setMult and removeMult by getMultObj.set() 
+		// and getMultObj.remove(int) 
+		//
+		// If we agree that Multiplicities are not public, 
+		// then we must turn 
+		// MultiSet.getMultiplicityObj(Object) protected
+		// but we must define iterator with method 
+		// protected getMultObj and implement 
+		// setMult and removeMult in terms of getMultObj. 
+		// Moreover we need a method iteratorInternal 
+		// which exposes getMultObj to the immutable iterator 
+		// and make sure that setMult and removeMult 
+		// are implemented as in base class. 
+
+		// Here getMultObj() returns an immutable Multiplicity 
+		public int setMult(int mult) {
+		    // **** copy from MultiSetIteratorImpl 
+		    // can be avoided using default final in interface 
+		    // may throw IllegalStateException 
+		    Multiplicity last = getMultObj();
+		    assert last != null;
+		    if (mult == 0) {
+			int res = last.get();
+			// may throw UnsupportedOperationException
+			remove();
+			return res;
+		    }
+		    // may throw IllegalArgumentException
+		    // may throw UnsupportedOperationException
+		    return last.set(mult);
+		    //throw new NotYetImplementedException();
+		}
+
+		// Here getMultObj() returns an immutable Multiplicity 
+		public int removeMult(int mult) {
+		    // **** copy from MultiSetIteratorImpl
+		    // may throw IllegalStateException 
+		    Multiplicity last = getMultObj();
+		    assert last != null;
+		    // return value is old multiplicity 
+		    int oldMult = last.get();
+		    if (mult == oldMult) {
+			remove();
+			return oldMult;
+		    }
+
+		    // may throw an IllegalArgumentException 
+		    // may throw UnsupportedOperationException
+		    last.add(-mult);
+		    return oldMult;
+		}
+	    };
+	}
+
+	public int addWithMult(E obj) {
+    	    if (this.mods.contains(Modification.AddObj)) {
+		// may throw UnsupportedOperationException
+    		return unrestricted().addWithMult(obj);
+    	    }
+    	    throw new UnsupportedOperationException();
+	}
+
+	public int addWithMult(E obj, int addMult) {
+    	    if (this.mods.contains(Modification.AddObj)) {
+		// may throw UnsupportedOperationException
+    		return unrestricted().addWithMult(obj, addMult);
+    	    }
+    	    throw new UnsupportedOperationException();
+	}
+
+	public boolean add(E obj) {
+    	    if (this.mods.contains(Modification.AddObj)) {
+		// may throw UnsupportedOperationException
+    		return unrestricted().add(obj);
+    	    }
+    	    throw new UnsupportedOperationException();
+	}
+
+	public int removeWithMult(Object obj) {
+    	    if (this.mods.contains(Modification.RemoveObj)) {
+		// may throw UnsupportedOperationException
+    		return unrestricted().removeWithMult(obj);
+    	    }
+    	    throw new UnsupportedOperationException();
+	}
+
+	public int removeWithMult(Object obj, int removeMult) {
+    	    if (this.mods.contains(Modification.RemoveObj)) {
+		// may throw UnsupportedOperationException
+    		return unrestricted().removeWithMult(obj, removeMult);
+    	    }
+    	    throw new UnsupportedOperationException();
+	}
+
+	public boolean remove(Object obj) {
+    	    if (this.mods.contains(Modification.RemoveObj)) {
+		// may throw UnsupportedOperationException
+    		return unrestricted().remove(obj);
+    	    }
+    	    throw new UnsupportedOperationException();
+	}
+
+	public int setMultiplicity(E obj, int newMult) {
+	    throw new NotYetImplementedException();
+	}
+
+	public boolean containsAll(Collection<?> coll) {
+	    return unrestricted().containsAll(coll);
+	}
+
+	public boolean addAll(MultiSet<? extends E> mvs) {
+    	    if (this.mods.contains(Modification.AddObj)) {
+		// may throw UnsupportedOperationException
+    		return unrestricted().addAll(mvs);
+    	    }
+    	    throw new UnsupportedOperationException();
+	}
+
+	public boolean addAll(Set<? extends E> set) {
+    	    if (this.mods.contains(Modification.AddObj)) {
+		// may throw UnsupportedOperationException
+    		return unrestricted().addAll(set);
+    	    }
+    	    throw new UnsupportedOperationException();
+	}
+
+	public boolean removeAll(Collection<?> coll) {
+    	    if (this.mods.contains(Modification.RemoveObj)) {
+		// may throw UnsupportedOperationException
+    		return unrestricted().removeAll(coll);
+    	    }
+    	    throw new UnsupportedOperationException();
+	}
+
+	public boolean retainAll(Collection<?> coll) {
+    	    if (this.mods.contains(Modification.RemoveObj)) {
+		// may throw UnsupportedOperationException
+    		return unrestricted().retainAll(coll);
+    	    }
+    	    throw new UnsupportedOperationException();
+	}
+
+	public void clear() {
+    	    if (!this.mods.contains(Modification.RemoveObj)) {
+		throw new UnsupportedOperationException();
+  	    }
+	    // may throw UnsupportedOperationException
+	    unrestricted().clear();
+  	}
+
+	public Set<E> getSet() {
+	    return new ImmutableSet<E>(allowedModifications(),
+				       unrestricted().getSet());
+	}
+
+	public Map<E, Multiplicity> getMap() {
+	    throw new NotYetImplementedException();
+	}
+
+	public Set<Map.Entry<E, Multiplicity>> getSetWithMults() {
+	    return new ImmutableSet<Map.Entry<E, Multiplicity>>
+		(allowedModifications(), unrestricted().getSetWithMults());
+	}
+
+	// **** as in AbstractImmutableCollection
+	public String toString() {
+	    StringBuilder res = new StringBuilder();
+	    res.append("<Immutable modifications=\">");
+	    res.append(this.mods);
+	    res.append("\">");
+	    res.append(unrestricted().toString());
+	    res.append("</Immutable>");
+	    return res.toString();
+	}
+
+	public boolean equals(Object obj) {
+	    return unrestricted().equals(obj);
+	}
+
+	public int hashCode() {
+	    return unrestricted().hashCode();
+	}
+
+    } // class AbstractImmutableMultiSet 
+
+    /**
+     * A multi-set which prevents being modified 
+     * by throwing an exception for the modifying methods. 
+     *
+     * @param <E>
+     *    the class of the elements of this list. 
+     */
+    static class ImmutableMultiSet<E> 
+	extends AbstractImmutableMultiSet<MultiSet<E>, E> 
+	implements MultiSet<E> {
+
+   	/* ---------------------------------------------------------------- *
+    	 * fields.                                                          *
+    	 * ---------------------------------------------------------------- */
+
+	/**
+	 * The enclosed multi-set containing the elements of this multi-set. 
+	 */
+	private final MultiSet<E> mSet;
+
+    	/* ---------------------------------------------------------------- *
+    	 * constructors.                                                    *
+    	 * ---------------------------------------------------------------- */
+
+    	/**
+    	 * Creates a new empty <code>ImmutableMultiSet</code> 
+    	 * which equals <code>mSet</code> but cannot be modified 
+	 * neither directly nor via its iterator. 
+	 *y
+	 * @throws NullPointerException
+	 *    if <code>coll==null</code>. 
+   	 */
+	ImmutableMultiSet(MultiSet<E> mSet) {
+	    if (mSet == null) {
+		throw new NullPointerException(); // NOPMD
+	    }
+	    this.mSet = mSet;
+	}
+
+    	/* ---------------------------------------------------------------- *
+    	 * methods.                                                         *
+    	 * ---------------------------------------------------------------- */
+
+	public MultiSet<E> unrestricted() {
+	    return this.mSet;
+	}
+    } // class ImmutableMultiSet
+
+    /**
+     * A sorted multi-set which prevents being modified 
+     * by throwing an exception for the modifying methods. 
+     *
+     * @param <E>
+     *    the class of the elements of this list. 
+     */
+    static class ImmutableSortedMultiSet<E> 
+	extends AbstractImmutableMultiSet<SortedMultiSet<E>, E> 
+	implements SortedMultiSet<E> {
+
+   	/* ---------------------------------------------------------------- *
+    	 * fields.                                                          *
+    	 * ---------------------------------------------------------------- */
+
+	private final SortedMultiSet<E> mSet;
+
+    	/* ---------------------------------------------------------------- *
+    	 * constructors.                                                    *
+    	 * ---------------------------------------------------------------- */
+
+	/**
+    	 * Creates a new empty <code>ImmutableSortedMultiSet</code> 
+    	 * which equals <code>mSet</code> but cannot be modified 
+	 * neither directly nor via its iterator. 
+	 *y
+	 * @throws NullPointerException
+	 *    if <code>coll==null</code>. 
+   	 */
+	ImmutableSortedMultiSet(SortedMultiSet<E> mSet) {
+	    if (mSet == null) {
+		throw new NullPointerException(); // NOPMD
+	    }
+	    this.mSet = mSet;
+	}
+
+	ImmutableSortedMultiSet(Set<Modification> mods,
+				SortedMultiSet<E> mSet) {
+	    super(mods);
+	    if (mSet == null) {
+		throw new NullPointerException(); // NOPMD 
+	    }
+	    this.mSet = mSet;
+	}
+
+    	/* ---------------------------------------------------------------- *
+    	 * methods.                                                         *
+    	 * ---------------------------------------------------------------- */
+
+	// ****
+	public SortedMultiSet<E> unrestricted() {
+	    return this.mSet;
+	}
+
+	public SortedSet<E> getSet() {
+	    return new ImmutableSortedSet<E>(allowedModifications(),
+					     unrestricted().getSet());
+	}
+
+     	public NavigableMap<E, Multiplicity> getMap() {
+	    //return Collections
+	    //.unmodifiableNavigableMap(unrestricted().getMap())
+	    throw new NotYetImplementedException();
+	    // return new ImmutableNavigableMap(unrestricted().getMap());
+	}
+
+	public Comparator<? super E> comparator() {
+	    return unrestricted().comparator();
+	}
+
+	public E first() {
+	    return unrestricted().first();
+	}
+
+	public E last() {
+	    return unrestricted().last();
+	}
+
+	public SortedMultiSet<E> headSet(E toElement) {
+	    SortedMultiSet<E> res0 = unrestricted()
+		.headSet(toElement);
+	    return new ImmutableSortedMultiSet<E>(allowedModifications(), res0);
+	}
+
+    	public SortedMultiSet<E> tailSet(E fromElement) {
+	    SortedMultiSet<E> res0 = unrestricted()
+		.tailSet(fromElement);
+	    return new ImmutableSortedMultiSet<E>(allowedModifications(), res0);
+	}
+
+	public SortedMultiSet<E> subSet(E fromElement, E toElement) {
+	    SortedMultiSet<E> res0 = unrestricted()
+		.subSet(fromElement, toElement);
+	    return new ImmutableSortedMultiSet<E>(allowedModifications(), res0);
+	}
+
+    } // class ImmutableSortedMultiSet
+
+
     /* -------------------------------------------------------------------- *
      * class fields.                                                        *
      * -------------------------------------------------------------------- */
+
 
 
     /* -------------------------------------------------------------------- *
@@ -1237,6 +1822,18 @@ public abstract class CollectionsExt<E> {
     public static <E> CyclicList<E> getImmutableCyclicList(CyclicList<E> cyc) {
 	return new ImmutableCyclicList<E>(cyc);
     }
+
+    public static 
+	<E> MultiSet<E> getImmutableMultiSet(MultiSet<E> mSet) {
+	return new ImmutableMultiSet<E>(mSet);
+    }
+
+    public static <E> 
+	MultiSet<E> getImmutableSortedMultiSet(SortedMultiSet<E> mSet) {
+	return new ImmutableMultiSet<E>(mSet);
+    }
+
+
 
     /**
      * Retuns a weak hash set, i.e. a hash set of weak references. 

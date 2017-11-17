@@ -79,6 +79,9 @@ public interface MultiSetIterator<E> extends Iterator<E> {
      */
     int getMult();
 
+    // **** two places were Multiplicity is exposed. 
+    MultiSet.Multiplicity getMultObj();
+
     /**
      * Endows the element of the underlying {@link MultiSet} 
      * returned by the last invocation of {@link #next()} 
@@ -143,7 +146,9 @@ public interface MultiSetIterator<E> extends Iterator<E> {
      * in any way other than by calling methods of an iterator. 
      *
      * @param removeMult 
-     *    a non-negative number signifying the 
+     *    a number signifying the multiplicity which which 
+     *    the current element should be removed. 
+     *    Negative values signify adding that element. 
      * @return
      *    the multiplicity of the element this method refers to 
      *    before invoking this method. 

@@ -5,9 +5,12 @@ import java.util.Collection;
 import java.util.BitSet;
 
 /**
- * Describe class BitSetList here. 
- * E extends Integer which in turn is final. 
- * This means E is nothing but Integer. 
+ * Implements a list of integers <code>0</code> and <code>1</code> 
+ * stored as bits in a {@link BitSet}. 
+ * <p>
+ * Implementational note: <code>E</code> extends <code>Integer</code> 
+ * which in turn is final. 
+ * This means <code>E</code> is nothing but <code>Integer</code>. 
  *
  *
  * Created: Mon May 29 19:37:38 2006
@@ -174,13 +177,37 @@ public final class BitSetList extends AbstractList<Integer>
     }
 */
     /**
-     * Describe <code>hashCode</code> method here.
+     * Returns the hash code value for this cyclic list. 
+     * The hash code of a list 
+     * is defined to be the result of the following calculation: 
+     * <pre>
+     *  hashCode = 1;
+     *  Iterator i = list.iterator();
+     *  while (i.hasNext()) {
+     *      Object obj = i.next();
+     *      hashCode = 31*hashCode + (obj==null ? 0 : obj.hashCode());
+     *  }
+     * </pre>
+     * This ensures that <code>list1.equals(list2)</code> implies that 
+     * <code>list1.hashCode()==list2.hashCode()</code> for any two lists, 
+     * <code>list1</code> and <code>list2</code>, 
+     * as required by the general contract of <code>Object.hashCode</code>. 
+     * <p>
+     * Note that this list does not allow null-elements 
+     * and the hash code of an element is its value. 
      *
-     * @return an <code>int</code> value
+     * @return
+     *    the hash code value for this list.
+     * @see java.util.List#hashCode()
+     * @see Object#equals(Object)
+     * @see #equals(Object)
      */
+    // Note that the magic number comes from the spec of List.hashCode 
+    @SuppressWarnings("checkstyle:magicnumber")
     public int hashCode() {
 	int hashCode = 1;
 	for (Integer cand : this) {
+	    // hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
 	    hashCode = 31 * hashCode + cand;
 	}
 	return hashCode;

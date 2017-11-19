@@ -1167,15 +1167,17 @@ public final class CyclicArrayList<E>
      * <code>list1</code> and <code>list2</code>, 
      * as required by the general contract of <code>Object.hashCode</code>. 
      *
-     * @return the hash code value for this list.
-     * @see Object#hashCode()
+     * @return
+     *    the hash code value for this list.
+     * @see List#hashCode()
      * @see Object#equals(Object)
      * @see #equals(Object)
      */
+    // Note that the magic number comes from the spec of List.hashCode 
+    @SuppressWarnings("checkstyle:magicnumber")
     public int hashCode() {
 	int hashCode = 1;
-	for (int i = 0; i < this.size(); i++) {
-	    E obj = this.list.get(i);
+	for (Object obj : this) {
 	    hashCode = 31 * hashCode + (obj == null ? 0 : obj.hashCode());
 	}
 	return hashCode;

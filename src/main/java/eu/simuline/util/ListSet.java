@@ -898,7 +898,7 @@ public final class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	return code;
     }
 
-
+    @SuppressWarnings("checkstyle:magicnumber")
     public static void main(String[] args) {
 	ListSet<Integer> aSet;
 

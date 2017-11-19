@@ -619,6 +619,7 @@ public class RealRepresentation {
     /**
      * The exponent of the double value represented. 
      */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     protected String exponent;
 
     private String signOfExp;
@@ -1099,7 +1100,7 @@ public class RealRepresentation {
 	return !this.fraction.matches("^0* *$");
     }
 
-    public boolean hasInteger() {
+    public final boolean hasInteger() {
 	return !this.integer.matches("^ *0*$");
     }
 

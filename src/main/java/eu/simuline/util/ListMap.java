@@ -498,6 +498,7 @@ public final class ListMap<K, V> implements SortedMap<K, V> {
 	 * @see ListMap#keys
 	 * @see ListSet#getList()
 	 */
+	@SuppressWarnings("checkstyle:visibilitymodifier")
 	protected final ListIterator<K> lIter;
 
 	/* ------------------------------------------------------------------ *

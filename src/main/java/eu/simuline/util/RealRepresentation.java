@@ -539,7 +539,10 @@ public class RealRepresentation {
 	 * otherwise it is just ignored. 
 	 */
 	@SuppressWarnings("PMD.FinalFieldCouldBeStatic")
-	private final boolean strictInteger = false;
+	@edu.umd.cs.findbugs.annotations.SuppressWarnings
+	(value="SS_SHOULD_BE_STATIC", 
+	 justification="not now")
+	 private final boolean strictInteger = false;
 
 	/**
 	 * Signifies whether an attempt 
@@ -547,6 +550,9 @@ public class RealRepresentation {
 	 * otherwise it is just ignored. 
 	 */
 	@SuppressWarnings("PMD.FinalFieldCouldBeStatic")
+	@edu.umd.cs.findbugs.annotations.SuppressWarnings
+	(value="SS_SHOULD_BE_STATIC", 
+	 justification="not now")
 	private final boolean strictExponent = false;
 
 	private  final Cutter fractionCutter = ALIGN_CUT_OFF_RIGHT;
@@ -632,6 +638,9 @@ public class RealRepresentation {
      * create methods: out of Strings, doubles, Doubles and BigDecimals.    *
      * -------------------------------------------------------------------- */
 
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings
+	(value="URF_UNREAD_FIELD", 
+	 justification="to be used in later versions ")
     protected final void initSignExp() {
 	Number2SignUnsigned sus = new Number2SignUnsigned(this.exponent);
 	this.signOfExp = sus.getSign();
@@ -752,7 +761,7 @@ public class RealRepresentation {
      *    <code>c</code>. 
      */
     public static String fill(char chr0, int len) {
-	Character chr = new Character(chr0);
+	Character chr = Character.valueOf(chr0);
 	String cutString = FILL_STRINGS.get(chr);
 	// by contract, cutString is either null or 
 	// its length is 2^n for some natural number n. 

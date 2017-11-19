@@ -1589,23 +1589,30 @@ public final class CyclicArrayList<E>
     /*----------------------------------------------------------------------*/
 
     // not supported by CyclicList interface either 
-    // /**
-    //  * Returns a clone of this <code>CyclicArrayList</code>. 
-    //  * This includes copying<code>vertices</code>. 
-    //  *
-    //  * @return 
-    //  *     a clone of this <code>CyclicArrayList</code>. 
-    //  *     This includes copying <code>vertices</code>. 
-    //  */
-    // public CyclicArrayList<E> clone() throws CloneNotSupportedException {
+    /**
+     * Returns a clone of this <code>CyclicArrayList</code>. 
+     * This includes copying<code>vertices</code>. 
+     *
+     * @return 
+     *     a clone of this <code>CyclicArrayList</code>. 
+     *     This includes copying <code>vertices</code>. 
+     */
+    public CyclicArrayList<E> clone() throws CloneNotSupportedException {
 
 
     // 	CyclicArrayList<E> res = (CyclicArrayList<E>)super.clone();
     // 	res.list.clear();// = (List<E>)((ArrayList<E>)this.list).clone();
     // 	res.list.addAll((List<E>)((ArrayList<E>)this.list).clone());
     // 	return res;
-    // 	// return new CyclicArrayList<E>
-    // 	// 	((List<E>) ((ArrayList<E>)this.list).clone());
-    // }
+	return new CyclicArrayList<E>
+	    ((List<E>) ((ArrayList<E> )this.list).clone());
+    }
 }
 
+// CyclicArrayList.java:1608: warning: [unchecked] unchecked cast
+// 	    ((List<E>) ((ArrayList<E>)this.list).clone());
+// 	                                              ^
+//   required: List<E>
+//   found:    Object
+//   where E is a type-variable:
+//     E extends Object declared in class CyclicArrayList

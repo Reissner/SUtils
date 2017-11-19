@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import java.io.Serializable;
+
 /**
  * Collection of static methods related with {@link Comparator}s. 
  *
@@ -30,7 +32,9 @@ public abstract class Comparators<E> { // NOPMD
      * @param <E>
      *    the type to be compared. 
     */
-    private static class Cascade<E> implements Comparator<E> {
+    private static class Cascade<E> implements Comparator<E>, Serializable {
+	private static final long serialVersionUID = -2479143000061671589L;
+
 	private final Collection<Comparator<E>> seq;
 	Cascade(Collection<Comparator<E>> seq) {
 	    this.seq = seq;
@@ -88,7 +92,9 @@ public abstract class Comparators<E> { // NOPMD
      * @param <E>
      *    the type to be compared. 
      */
-    private static class AsListed<E> implements Comparator<E> {
+    private static class AsListed<E> implements Comparator<E>, Serializable {
+
+	private static final long serialVersionUID = -2479143000061671589L;
 
 	/* ----------------------------------------------------------------- *
 	 * fields.                                                           *
@@ -147,11 +153,13 @@ public abstract class Comparators<E> { // NOPMD
      * -------------------------------------------------------------------- */
 
  
-
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings
+	(value="IL_INFINITE_RECURSIVE_LOOP", 
+	 justification="bug in findbugs")
     public static <E> Comparator<E> getNegative(Comparator<E> cmp) {
 	return new Comparator<E>() {
 	    public int compare(E obj1, E obj2) {
-		return -compare(obj1, obj2);
+		return cmp.compare(obj2, obj1);
 	    }
 	};
     }
@@ -159,7 +167,7 @@ public abstract class Comparators<E> { // NOPMD
     public static <E> Comparator<E> getInv(Comparator<E> cmp) {
 	return new Comparator<E>() {
 	    public int compare(E obj1, E obj2) {
-		return compare(obj2, obj1);
+		return cmp.compare(obj2, obj1);
 	    }
 	};
     }

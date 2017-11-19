@@ -90,6 +90,8 @@ public interface MultiSet<T> extends Iterable<T> {
 	 *    nor an instance of {@link MultiSet.Multiplicity}. 
 	 */
 	int compareTo(Multiplicity mult);
+
+	boolean equals(Object obj);
     } // class Multiplicity 
 
     /* -------------------------------------------------------------------- *

@@ -1046,6 +1046,9 @@ public abstract class CollectionsExt<E> {
 	    throw new NotYetImplementedException();
 	}
 
+	@edu.umd.cs.findbugs.annotations.SuppressWarnings
+	    (value="EQ_UNUSUAL", 
+	     justification="special kind of exception")
 	public boolean equals(Object other) {
 	    throw new NotYetImplementedException();
 	}
@@ -1205,8 +1208,10 @@ public abstract class CollectionsExt<E> {
      */
     private static class ImmutableMultiplicity 
 	implements MultiSet.Multiplicity {
+
 	private final MultiSet.Multiplicity wrapped;
 	private final Set<Modification> mod;
+
 	ImmutableMultiplicity(MultiSet.Multiplicity wrapped, 
 			      Set<Modification> mod) {
 	    this.wrapped = wrapped;
@@ -1286,6 +1291,31 @@ public abstract class CollectionsExt<E> {
 	public int compareTo(MultiSet.Multiplicity mult) {
 	    return this.wrapped.compareTo(mult);
 	}
+
+	/**
+	 * Returns <code>true</code> if and only if 
+	 * <code>obj</code> is also an instance of <code>Multiplicity></code> 
+	 * and if the wrapped multiplicities coincide. 
+	 *
+	 * @param obj 
+	 *    an <code>Object</code> value 
+	 *    which may well be <code>null</code>. 
+	 * @return 
+	 *    a <code>boolean</code> value which indicates 
+	 *    whether <code>obj</code> is also an instance 
+	 *    of <code>Multiplicity></code> 
+	 *    and whether the wrapped multiplicity coincides with this one. 
+	 * @see #compareTo
+	 */
+	public boolean equals(Object obj) {
+	    return this.wrapped.equals(obj);
+	}
+
+	// api-docs provided by javadoc. 
+	public int hashCode() {
+	    return this.wrapped.hashCode();
+	}
+
 
     } // class ImmutableMultiplicity 
 
@@ -2120,9 +2150,6 @@ public abstract class CollectionsExt<E> {
     }
 
     public static void main(String[] args) {
-	    System.out.println("" + Collections.unmodifiableSortedSet(null));
-	    System.out.println("" + Collections.unmodifiableSet(null));
-	    System.out.println("" + Collections.unmodifiableCollection(null));
     }
 
 }

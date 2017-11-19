@@ -25,7 +25,10 @@ public final class AttributesImpl implements Attributes {
      * The latter would not allow to rule out a multiple attribute 
      * without a value. 
      */
-    public static final String NO_VALUE = new String(); // NOPMD
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings
+	(value="DM_STRING_VOID_CTOR", 
+	 justification="used for equality check")
+    public static final String NO_VALUE = new String(""); // NOPMD
 
     /* ----------------------------------------------------------------- *
      * fields                                                            *

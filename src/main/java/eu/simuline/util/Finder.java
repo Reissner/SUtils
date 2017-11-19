@@ -234,7 +234,7 @@ public abstract class Finder {
 	 * ---------------------------------------------------------------- */
 
 	public File next() {
-	    assert hasNext();
+	    assert super.hasNext();
 	    File res = getNext();
 	    assert res != null;
 	    this.idx++;

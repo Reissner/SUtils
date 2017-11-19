@@ -6,6 +6,7 @@ import java.lang.reflect.Array;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Arrays;
 
 /**
  * An add on to the class {@link java.util.Arrays}. 
@@ -342,12 +343,12 @@ public final class ArraysExt<E> {
 
 	int counter = 0;
 	Class<?> type = elemArray.getClass();
+	assert type != null;
 	while (type.isArray()) {
 	    counter++;
 	    type = type.getComponentType();
 	}
 	assert !type.isArray();
-	assert type != null;
 	assert counter > 0; // if not, elemArray is no array or overflow 
 
 	// throws IllegalArgumentException if type is not primitive or void 
@@ -385,12 +386,12 @@ public final class ArraysExt<E> {
 
 	int counter = 0;
 	Class<?> type = wrappedArray.getClass();
+	assert type != null;
 	while (type.isArray()) {
 	    counter++;
 	    type = type.getComponentType();
 	}
 	assert !type.isArray();
-	assert type != null;
 	assert counter > 0; // except if overflow 
 	
 	// throws IllegalArgumentException 
@@ -621,7 +622,7 @@ public final class ArraysExt<E> {
 		// Here, component type is neither array nor component. 
 		 throw new IllegalArgumentException
 		     ("Expected array with wrapper type entries; found " + 
-		      wrappedArray + ". ");
+		      Arrays.asList(wrappedArray) + ". ");
 	    }
 	    // Here, compType is an array type. 
 	    Object unWrap0th = unWrapArray((Object[]) wrappedArray[0]);

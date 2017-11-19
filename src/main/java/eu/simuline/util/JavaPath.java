@@ -247,24 +247,28 @@ public final class JavaPath {
 	}
 
 	// api-docs inherited from interface FileWrapper 
-	public File getFile() throws IOException {	    
+	public File getFile() throws IOException {
 	    // by extraction. 
+	    // may throw IOException
 	    File ret = File
 		.createTempFile("JUnitGUI" + System.currentTimeMillis(),
 				ClsSrc.Source.fileEnding());
-	    new File("/tmp/HI.java"); //this.entry.getName());
-	    ret.createNewFile(); // **** does not work well: shall be rec!!!
-	    InputStream inStream = getInputStream();
-	    FileOutputStream outStream = new FileOutputStream(ret);
-	    byte[] buf = new byte[LEN_BUFFER];
-	    int numRead = inStream.read(buf, 0, LEN_BUFFER - 1);
-	    while (numRead != -1) {
-		/*     */outStream.write(buf, 0, numRead);
-		numRead = inStream.read (buf, 0, LEN_BUFFER - 1);
+	    try (
+		 //new File("/tmp/HI.java"); //this.entry.getName());
+		 //ret.createNewFile(); // **** does not work well: shall be rec!!!
+		 // may throw IOException
+		 InputStream inStream = getInputStream();
+		 // may throw IOException
+		 FileOutputStream outStream = new FileOutputStream(ret);
+		 ) {
+		    byte[] buf = new byte[LEN_BUFFER];
+		    int numRead = inStream.read(buf, 0, LEN_BUFFER - 1);
+		    while (numRead != -1) {
+			/*     */outStream.write(buf, 0, numRead);
+			numRead = inStream.read (buf, 0, LEN_BUFFER - 1);
+		    }
 	    }
 
-	    inStream.close();
-	    outStream.close();
 	    return ret;
 	}
 

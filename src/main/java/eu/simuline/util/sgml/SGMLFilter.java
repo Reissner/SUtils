@@ -23,7 +23,7 @@ public final class SGMLFilter implements ContentHandler {
      * attributes                                                            *
      * --------------------------------------------------------------------- */
 
-    private ContentHandler handler;
+    private final ContentHandler handler;
 
     /* --------------------------------------------------------------------- *
      * constructors                                                          *

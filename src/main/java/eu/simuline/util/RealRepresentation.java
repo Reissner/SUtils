@@ -538,36 +538,38 @@ public class RealRepresentation {
 	 * to cut off parts of the integer will result in an exception; 
 	 * otherwise it is just ignored. 
 	 */
-	private boolean strictInteger = false;
+	@SuppressWarnings("PMD.FinalFieldCouldBeStatic")
+	private final boolean strictInteger = false;
 
 	/**
 	 * Signifies whether an attempt 
 	 * to cut off parts of the exponent will result in an exception; 
 	 * otherwise it is just ignored. 
 	 */
-	private boolean strictExponent = false;
+	@SuppressWarnings("PMD.FinalFieldCouldBeStatic")
+	private final boolean strictExponent = false;
 
-	private  Cutter fractionCutter = ALIGN_CUT_OFF_RIGHT;
+	private  final Cutter fractionCutter = ALIGN_CUT_OFF_RIGHT;
 
 	/**
 	 * The maximal length of the integer part of a number
 	 * displayed in a specific column of the table.
 	 */
-	private int lenI;
+	private final int lenI;
 
 	/**
 	 * The maximal length of the mantissa of a number
 	 * displayed in a specific column of the table.
 	 * @see #lenI
 	 */
-	private int lenM;
+	private final int lenM;
 
 	/**
 	 * The maximal length of the exponent part of a number
 	 * displayed in a specific column of the table.
 	 * @see #lenI
 	 */
-	private int lenE;
+	private final int lenE;
 
 
 	/* ---------------------------------------------------------------- *
@@ -622,9 +624,9 @@ public class RealRepresentation {
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected String exponent;
 
-    private String signOfExp;
+    private String signOfExp; // NOPMD 
 
-    private String unsignedExp;
+    private String unsignedExp; // NOPMD 
 
     /* -------------------------------------------------------------------- *
      * create methods: out of Strings, doubles, Doubles and BigDecimals.    *

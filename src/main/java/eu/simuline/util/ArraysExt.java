@@ -651,7 +651,7 @@ public final class ArraysExt<E> {
 	 * This is allocated by the constructor 
 	 * {@link #ArraysExt.ArrayComparator}. 
 	 */
-	private Comparator<Object> atomic;
+	private final Comparator<Object> atomic;
 
 	/**
 	 * Creates a new <code>ArrayComparator</code> 

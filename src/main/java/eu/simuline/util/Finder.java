@@ -144,13 +144,13 @@ public abstract class Finder {
 	 * The source finder from which the stream of files is read. 
 	 * **** this is superfluous if this is not static 
 	 */
-	private Finder encl;
+	private final Finder encl;
 
 	/**
 	 * The filter to be passed 
 	 * before a file is returned by {@link #next()}. 
 	 */
-	private Filter filter;
+	private final Filter filter;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
@@ -464,7 +464,7 @@ public abstract class Finder {
 	 * Parameters are passed to the callable when creating the instance 
 	 * or later by a setter method, depending on the implementation. 
 	 */
-	private Callable callable;
+	private final Callable callable;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *

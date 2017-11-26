@@ -472,8 +472,8 @@ public final class ListMap<K, V> implements SortedMap<K, V> {
      * @see ListMap.Values#iterator()
      */
     @edu.umd.cs.findbugs.annotations.SuppressWarnings
-	(value="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT", 
-	 justification="bug in findbugs")
+	(value = "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT", 
+	 justification = "bug in findbugs")
     private class ValuesIterator extends XIterator implements Iterator<V> {
   	public V next() {
 	    int idx = this.lIter.nextIndex();

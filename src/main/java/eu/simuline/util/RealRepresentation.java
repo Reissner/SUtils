@@ -540,8 +540,8 @@ public class RealRepresentation {
 	 */
 	@SuppressWarnings("PMD.FinalFieldCouldBeStatic")
 	@edu.umd.cs.findbugs.annotations.SuppressWarnings
-	(value="SS_SHOULD_BE_STATIC", 
-	 justification="not now")
+	(value = "SS_SHOULD_BE_STATIC", 
+	 justification = "not now")
 	 private final boolean strictInteger = false;
 
 	/**
@@ -551,8 +551,8 @@ public class RealRepresentation {
 	 */
 	@SuppressWarnings("PMD.FinalFieldCouldBeStatic")
 	@edu.umd.cs.findbugs.annotations.SuppressWarnings
-	(value="SS_SHOULD_BE_STATIC", 
-	 justification="not now")
+	(value = "SS_SHOULD_BE_STATIC", 
+	 justification = "not now")
 	private final boolean strictExponent = false;
 
 	private  final Cutter fractionCutter = ALIGN_CUT_OFF_RIGHT;
@@ -639,8 +639,8 @@ public class RealRepresentation {
      * -------------------------------------------------------------------- */
 
     @edu.umd.cs.findbugs.annotations.SuppressWarnings
-	(value="URF_UNREAD_FIELD", 
-	 justification="to be used in later versions ")
+	(value = "URF_UNREAD_FIELD", 
+	 justification = "to be used in later versions ")
     protected final void initSignExp() {
 	Number2SignUnsigned sus = new Number2SignUnsigned(this.exponent);
 	this.signOfExp = sus.getSign();

@@ -1047,8 +1047,8 @@ public abstract class CollectionsExt<E> {
 	}
 
 	@edu.umd.cs.findbugs.annotations.SuppressWarnings
-	    (value="EQ_UNUSUAL", 
-	     justification="special kind of exception")
+	    (value = "EQ_UNUSUAL", 
+	     justification = "special kind of exception")
 	public boolean equals(Object other) {
 	    throw new NotYetImplementedException();
 	}

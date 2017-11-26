@@ -154,8 +154,8 @@ public abstract class Comparators<E> { // NOPMD
 
  
     @edu.umd.cs.findbugs.annotations.SuppressWarnings
-	(value="IL_INFINITE_RECURSIVE_LOOP", 
-	 justification="bug in findbugs")
+	(value = "IL_INFINITE_RECURSIVE_LOOP", 
+	 justification = "bug in findbugs")
     public static <E> Comparator<E> getNegative(Comparator<E> cmp) {
 	return new Comparator<E>() {
 	    public int compare(E obj1, E obj2) {

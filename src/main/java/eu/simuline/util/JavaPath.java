@@ -255,7 +255,8 @@ public final class JavaPath {
 				ClsSrc.Source.fileEnding());
 	    try (
 		 //new File("/tmp/HI.java"); //this.entry.getName());
-		 //ret.createNewFile(); // **** does not work well: shall be rec!!!
+		 //ret.createNewFile(); 
+		 // **** does not work well: shall be rec!!!
 		 // may throw IOException
 		 InputStream inStream = getInputStream();
 		 // may throw IOException

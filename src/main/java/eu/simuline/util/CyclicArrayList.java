@@ -1605,7 +1605,7 @@ public final class CyclicArrayList<E>
     // 	res.list.addAll((List<E>)((ArrayList<E>)this.list).clone());
     // 	return res;
 	return new CyclicArrayList<E>
-	    ((List<E>) ((ArrayList<E> )this.list).clone());
+	    ((List<E>) ((ArrayList<E>) this.list).clone());
     }
 }
 

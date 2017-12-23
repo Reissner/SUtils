@@ -220,7 +220,8 @@ public final class JavaPath {
     static class ZipEntryWrapper implements FileWrapper {
 
 	/**
-	 * A filter input stream closing {@link ipEntryWrapper.this.zipFile} 
+	 * A filter input stream 
+	 * closing {@link JavaPath.ZipEntryWrapper#zipFile} 
 	 * when closing the stream. 
 	 */
 	class WrappedInputStream extends FilterInputStream {

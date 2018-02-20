@@ -1,6 +1,11 @@
 package eu.simuline.util;
 
 public final class VMArgs {
+
+    // just to prevent from instantiation 
+    private VMArgs() {
+    }
+
     /**
      * Returns whether assertions are enabled through -ea-switch. 
      */

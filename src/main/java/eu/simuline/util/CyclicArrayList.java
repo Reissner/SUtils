@@ -989,7 +989,7 @@ public final class CyclicArrayList<E>
      *    in proper sequence.
      */
     public Object[] toArray(int index) {
-	return toArray(index);
+	return toArray(index, new Object[0]);
     }
 
     /**

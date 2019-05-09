@@ -541,7 +541,7 @@ public final class SGMLParser {
 	 *    Allowed values: {@link #START_TAG}, {@link #END_TAG}, 
 	 *    {@link #PROC_INSTR}, 
 	 *    {@link #ATTR_NAME}, {@link #WHITESP_IN_ATTR} 
-	 *    and {@link #ATTR_VALUE}. ****** comment and <!element missing. 
+	 *    and {@link #ATTR_VALUE}. ****** comment and &lt;!element missing. 
 	 * @return 
 	 *    a <code>StringBuffer</code> containing characters 
 	 *    starting with the current one until one 
@@ -640,7 +640,7 @@ public final class SGMLParser {
 
 	/**
 	 * Parses a comment or any declaration 
-	 * starting with <code><!...</code> and notifying the handler. 
+	 * starting with <code>&lt;!...</code> and notifying the handler. 
 	 *
 	 * @exception IOException 
 	 *    if an io-error occurs
@@ -651,7 +651,7 @@ public final class SGMLParser {
 
 	/**
 	 * Parses a processing instruction or any declaration 
-	 * starting with <code><?...</code> and notifying the handler. 
+	 * starting with <code>&lt;?...</code> and notifying the handler. 
 	 *
 	 * @exception IOException 
 	 *    if an io-error occurs

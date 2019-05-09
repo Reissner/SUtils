@@ -208,7 +208,7 @@ public class RealRepresentation {
 	 * such that the representation is without exponent. 
 	 * This evaluates to <code>-3</code> as specified for double's 
 	 * in {@link Double#toString(double)} and is used by 
-	 * {@link #RealRepresentation.BigDecimalRep(BigDecimal)}. 
+	 * {@link #BigDecimalRep(BigDecimal)}. 
 	 */
 	private static final int MAX_FRAC_DIGITS_NO_EXP = -3;
 
@@ -217,7 +217,7 @@ public class RealRepresentation {
 	 * such that the representation is without exponent. 
 	 * This evaluates to <code>7</code> as specified for double's 
 	 * in {@link Double#toString(double)} and is used by 
-	 * {@link #RealRepresentation.BigDecimalRep(BigDecimal)}. 
+	 * {@link #BigDecimalRep(BigDecimal)}. 
 	 */
 	private static final int MAX_INT_DIGITS_NO_EXP = 7;
 
@@ -422,7 +422,7 @@ public class RealRepresentation {
 
 	/**
 	 * Creates a new <code>DoubleRep</code>. 
-	 * An analog to {@link #RealRepresentation.DoubleRep(double)}. 
+	 * An analog to {@link DoubleRep(double)}. 
 	 *
 	 * @param dbl 
 	 *    a <code>Double</code> object. 
@@ -449,7 +449,7 @@ public class RealRepresentation {
 	 * with length <code>len</code> or throws an exception. 
 	 *
 	 * @param str 
-	 *    a <code>String</code> with <code>str.length() >= len</code>. 
+	 *    a <code>String</code> with <code>str.length() &gt;= len</code>. 
 	 * @param len 
 	 *    the desired length of the resulting string. 
 	 * @return 
@@ -718,7 +718,7 @@ public class RealRepresentation {
      */
     public static RealRepresentation create(double val,
 					    boolean precision) {
-	return create(new Double(val), precision);
+	return create(Double.valueOf(val), precision);
     }
 
     /**
@@ -806,7 +806,7 @@ public class RealRepresentation {
      * @param filler 
      *    a <code>char</code> value. 
      * @param  cutter
-     *    takes effect if <code>str.length > len</code>: 
+     *    takes effect if <code>str.length &gt; len</code>: 
      *    <ul>
      *    <li>
      *    for {@link #ALIGN_CUT_OFF_RIGHT} superfluous digits are cut off, 
@@ -822,7 +822,7 @@ public class RealRepresentation {
      *    copies of  <code>filler</code>s 
      *    are attached to the right hand side of <code>str</code> 
      *    such that the length of the result is least <code>int</code>. 
-     *    <li> for <code>str.length()>len</code> 
+     *    <li> for <code>str.length()&gt;len</code> 
      *    <ul>
      *    <li> 
      *    <code>str</code> is returned as is 
@@ -865,7 +865,7 @@ public class RealRepresentation {
      * @param filler 
      *    a <code>char</code> value. 
      * @param  cutter
-     *    takes effect if <code>str.length > len</code>:  { {
+     *    takes effect if <code>str.length &gt; len</code>:  { {
      *    <ul>
      *    <li>
      *    for {@link #ALIGN_CUT_OFF_LEFT} superfluous digits are cut off, 
@@ -881,7 +881,7 @@ public class RealRepresentation {
      *    copies of  <code>filler</code>s 
      *    are attached to the right hand side of <code>str</code> 
      *    such that the length of the result is least <code>int</code>. 
-     *    <li> for <code>str.length()>len</code> 
+     *    <li> for <code>str.length()&gt;len</code> 
      *    <ul>
      *    <li> 
      *    <code>str</code> is returned as is 
@@ -1157,7 +1157,7 @@ public class RealRepresentation {
      *            create(d, false).this2Double().compareTo(d) == 0}. 
      */
     public final Double this2Double() {
-	return new Double(this.sign + mantissa() + getExpWithE());
+	return Double.valueOf(this.sign + mantissa() + getExpWithE());
     }
 
     /**

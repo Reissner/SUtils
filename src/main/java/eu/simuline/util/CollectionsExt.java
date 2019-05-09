@@ -1294,7 +1294,7 @@ public abstract class CollectionsExt<E> {
 
 	/**
 	 * Returns <code>true</code> if and only if 
-	 * <code>obj</code> is also an instance of <code>Multiplicity></code> 
+	 * <code>obj</code> is also an instance of <code>Multiplicity</code> 
 	 * and if the wrapped multiplicities coincide. 
 	 *
 	 * @param obj 
@@ -1303,7 +1303,7 @@ public abstract class CollectionsExt<E> {
 	 * @return 
 	 *    a <code>boolean</code> value which indicates 
 	 *    whether <code>obj</code> is also an instance 
-	 *    of <code>Multiplicity></code> 
+	 *    of <code>Multiplicity</code> 
 	 *    and whether the wrapped multiplicity coincides with this one. 
 	 * @see #compareTo
 	 */
@@ -2143,7 +2143,8 @@ public abstract class CollectionsExt<E> {
      */
     public static <T> List<T> reverse(List<T> list) {
 	List<T> res = new ArrayList<T>(list.size());
-	for (int i = 0; i < list.size(); i++) {
+	// NOPMD
+	for (int i = 0; i < list.size(); i++) {// NOPMD
 	    res.add(list.get(list.size() - 1 - i));
 	}
 	return res;

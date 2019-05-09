@@ -106,12 +106,12 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	 * to the wrapped multiplicity {@link #mult} which is thus modified. 
 	 *
 	 * @param mult 
-	 *    an <code>int</code> such that <code>this.mult + mult > 0</code> 
+	 *    an <code>int</code> such that <code>this.mult + mult &gt; 0</code> 
 	 *    holds. 
 	 * @return
 	 *    the new multiplicity <code>this.mult + mult</code>. 
 	 * @throws IllegalArgumentException 
-	 *    if <code>this.mult + mult < 0</code> holds. 
+	 *    if <code>this.mult + mult &lt; 0</code> holds. 
 	 * @throws IllegalStateException 
 	 *    if <code>this.mult + mult == 0</code> holds. 
 	 *    This cannot occur: if it does this is a bug within this class. 
@@ -169,7 +169,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 
 	/**
 	 * Returns <code>true</code> if and only if 
-	 * <code>obj</code> is also an instance of <code>Multiplicity></code> 
+	 * <code>obj</code> is also an instance of <code>Multiplicity</code> 
 	 * and if the wrapped multiplicities coincide. 
 	 *
 	 * @param obj 
@@ -178,7 +178,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	 * @return 
 	 *    a <code>boolean</code> value which indicates 
 	 *    whether <code>obj</code> is also an instance 
-	 *    of <code>Multiplicity></code> 
+	 *    of <code>Multiplicity</code> 
 	 *    and whether the wrapped multiplicity coincides with this one. 
 	 * @see #compareTo
 	 */

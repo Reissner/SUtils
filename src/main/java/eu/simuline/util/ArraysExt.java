@@ -123,13 +123,20 @@ public final class ArraysExt<E> {
      */
     public static List<Object> recAsList(Object[] array) {
 	List<Object> result = new ArrayList<Object>();
-	for (int i = 0; i < array.length; i++) {
-	    if (array[i] instanceof Object[]) {
-		result.add(recAsList((Object[]) array[i]));
+	for (Object obj : array) {
+	    if (obj instanceof Object[]) {
+		result.add(recAsList((Object[]) obj));
 	    } else {
-		result.add(array[i]);		 
+		result.add(obj);		 
 	    }
 	}
+	// for (int i = 0; i < array.length; i++) {
+	//     if (array[i] instanceof Object[]) {
+	// 	result.add(recAsList((Object[]) array[i]));
+	//     } else {
+	// 	result.add(array[i]);		 
+	//     }
+	// }
 	return result;
     }
 
@@ -650,7 +657,7 @@ public final class ArraysExt<E> {
 	/**
 	 * A <code>Comparator</code> for components of an array. 
 	 * This is allocated by the constructor 
-	 * {@link #ArraysExt.ArrayComparator}. 
+	 * {@link #ArrayComparator(Comparator)}. 
 	 */
 	private final Comparator<Object> atomic;
 

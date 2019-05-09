@@ -111,9 +111,9 @@ public final class TwoSidedList<E> implements List<E> {
  	 * @throws IndexOutOfBoundsException
 	 *    <ul>
 	 *    <li> for <code>this == Left2Right</code>if not 
-	 *    <code>list.firstIndex()   <= ind&lt;list.minFreeIndex()+1</code>.
+	 *    <code>list.firstIndex()   &lt;= ind&lt;list.minFreeIndex()+1</code>.
 	 *    <li> for <code>this == Right2Left</code>if not 
-	 *    <code>list.firstIndex()-1 <= ind&lt;list.minFreeIndex()  </code>.
+	 *    <code>list.firstIndex()-1 &lt;= ind&lt;list.minFreeIndex()  </code>.
 	 *    </ul>
 	 *    The message is always the same: 
 	 *    <code>
@@ -182,7 +182,7 @@ public final class TwoSidedList<E> implements List<E> {
      * The first index in this <code>TwoSidedList</code>. 
      * Note that this integer may well be negative. 
      * The inequality 
-     * <code>{@link #minFreeIndex()} >= {@link #firstIndex}</code> 
+     * <code>{@link #minFreeIndex()} &gt;= {@link #firstIndex}</code> 
      * is guaranteed. 
      * Casually, methods adding objects have to reject them 
      * in order not to hurt this 
@@ -202,7 +202,7 @@ public final class TwoSidedList<E> implements List<E> {
      * <p>
      * Note the difference to reference implementations such as 
      * <code>java.util.ArrayList</code> where the type of the list argument 
-     * is <code>List<? extends E></code>. 
+     * is <code>List&lt;? extends E&gt;</code>. 
      * We deviate from this solution for performance reason 
      * and provide as an alternative 
      * the factory method {@link #create(List,int)}. 
@@ -255,7 +255,7 @@ public final class TwoSidedList<E> implements List<E> {
      * <p>
      * Note the difference to reference implementations such as 
      * <code>java.util.ArrayList</code> where the type of the list argument 
-     * is <code> List<? extends E></code>. 
+     * is <code> List&lt;? extends E&gt;</code>. 
      * We deviate from this solution for performance reason 
      * and provide as an alternative 
      * the factory method {@link #create(List,int)}. 
@@ -341,7 +341,7 @@ public final class TwoSidedList<E> implements List<E> {
      * @param ind
      *    the index to be checked. 
      * @throws IndexOutOfBoundsException
-     *    if not <code>firstIndex() <= ind &lt; minFreeIndex()</code> 
+     *    if not <code>firstIndex() &lt;= ind &lt; minFreeIndex()</code> 
      *    with message 
      *    <code>
      * "Index: &lt;ind&gt; Range: &lt;firstIndex&gt; 
@@ -368,9 +368,9 @@ public final class TwoSidedList<E> implements List<E> {
      * @throws IndexOutOfBoundsException
      *    <ul>
      *    <li> for <code>dir == Left2Right</code>
-     *    if not <code>firstIndex() <= ind &lt; minFreeIndex()+1</code>. 
+     *    if not <code>firstIndex() &lt;= ind &lt; minFreeIndex()+1</code>. 
      *    <li> for <code>dir == Right2Left</code>
-     *    if not <code>firstIndex()-1 <= ind &lt; minFreeIndex()</code>. 
+     *    if not <code>firstIndex()-1 &lt;= ind &lt; minFreeIndex()</code>. 
      *    </ul>
      *    The message is always the same: 
      *    <code>
@@ -648,14 +648,14 @@ public final class TwoSidedList<E> implements List<E> {
      * This breaks **** "extends" contract for the interface List: 
      * Test for "element <code>obj</code> not in list" 
      * is no longer <code>this.indexOf(obj) == -1</code> but 
-     * <code>this.indexOf(obj) < this.firstIndex()-1</code>. 
+     * <code>this.indexOf(obj) &lt; this.firstIndex()-1</code>. 
      * This is an extension in that 
      * wrapping an ordinary list in a twosided list 
      * is by specifying <code>firstIndex() == 0</code> 
      * (see {@link #TwoSidedList(List list)}). 
      * <li>
      * Note that for <code>firstIndex() == {@link Integer#MIN_VALUE}</code> 
-     * <code>firstIndex()-1 > firstIndex()</code>. 
+     * <code>firstIndex()-1 &gt; firstIndex()</code>. 
      * </ul>
      *
      * @param obj 
@@ -689,14 +689,14 @@ public final class TwoSidedList<E> implements List<E> {
      * This breaks **** "extends" contract for the interface List: 
      * Test for "element <code>obj</code> not in list" 
      * is no longer <code>this.indexOf(obj) == -1</code> but 
-     * <code>this.indexOf(obj) < this.firstIndex()-1</code>. 
+     * <code>this.indexOf(obj) &lt; this.firstIndex()-1</code>. 
      * This is an extension in that 
      * wrapping an ordinary list in a twosided list 
      * is by specifying <code>firstIndex() == 0</code> 
      * (see {@link #TwoSidedList(List list)}). 
      * <li>
      * Note that for <code>firstIndex() == {@link Integer#MIN_VALUE}</code> 
-     * <code>firstIndex()-1 > firstIndex()</code>. 
+     * <code>firstIndex()-1 &gt; firstIndex()</code>. 
      * </ul>
      * **** one may expect 
      * that in case the specified object in not in the list 
@@ -1432,7 +1432,7 @@ public final class TwoSidedList<E> implements List<E> {
      *    are reflected in this list, and vice-versa. 
      * @throws IndexOutOfBoundsException
      *    if not 
-     *    <code>firstIndex() <= indStart <= indEnd <= minFreeIndex()</code>
+     *    <code>firstIndex() &lt;= indStart &lt;= indEnd &lt;= minFreeIndex()</code>
      */
     public List<E> subList(final int indStart, final int indEnd) {
 	if (indStart > indEnd) {

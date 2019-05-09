@@ -55,12 +55,12 @@ public interface MultiSet<T> extends Iterable<T> {
 	 * to the wrapped multiplicity which is thus modified. 
 	 *
 	 * @param mult 
-	 *    an <code>int</code> such that <code>this.mult + mult > 0</code> 
+	 *    an <code>int</code> such that <code>this.mult + mult &gt; 0</code> 
 	 *    holds. 
 	 * @return
 	 *    the new multiplicity <code>this.mult + mult</code>. 
 	 * @throws IllegalArgumentException 
-	 *    if <code>this.mult + mult < 0</code> holds. 
+	 *    if <code>this.mult + mult &lt; 0</code> holds. 
 	 * @throws IllegalStateException 
 	 *    if <code>this.mult + mult == 0</code> holds. 
 	 *    This cannot occur: if it does this is a bug within this class. 

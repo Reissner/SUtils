@@ -256,11 +256,11 @@ public abstract class SoftEnum<E extends SoftEnum<E>>
     //         "No enum constant " + enumType.getCanonicalName() + "." + name);
     // }
 
-    /**
-     * enum classes cannot have finalize methods.
-     */
-    protected final void finalize() { // NOPMD
-    }
+    // /**
+    //  * enum classes cannot have finalize methods.
+    //  */
+    // protected final void finalize() { // NOPMD
+    // }
 
     /**
      * Prevent default deserialization.

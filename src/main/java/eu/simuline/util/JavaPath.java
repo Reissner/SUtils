@@ -320,15 +320,23 @@ public final class JavaPath {
 	}
 
 	this.roots = new ArrayList<File>(fileNames.length);
-	for (int i = 0; i < fileNames.length; i++) {
-	    if (fileNames[i].length() == 0) {
+	for (String fileName :fileNames) {
+	    if (fileName.length() == 0) {
 		System.out.println
 		    ("Warning: Found file \"\" in path \"" + path + "\". ");
 
 // 		throw new IllegalArgumentException
 // 		    ("Found file \"\" in path \"" + path + "\". ");
 	    }
-	    this.roots.add(new File(fileNames[i]));
+// 	for (int i = 0; i < fileNames.length; i++) {
+// 	    if (fileNames[i].length() == 0) {
+// 		System.out.println
+// 		    ("Warning: Found file \"\" in path \"" + path + "\". ");
+
+// // 		throw new IllegalArgumentException
+// // 		    ("Found file \"\" in path \"" + path + "\". ");
+// 	    }
+	    this.roots.add(new File(fileName));
 	}
     }
 

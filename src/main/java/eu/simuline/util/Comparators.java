@@ -63,7 +63,7 @@ public abstract class Comparators<E> { // NOPMD
      * CAUTION: This ordering is consistent with equals only 
      * if the elements of {@link #seq} are pairwise non-equal. 
      * If this condition is hurt, 
-     * an element <code>a</code> may satisfy <code>a>a</code>. 
+     * an element <code>a</code> may satisfy <code>a&gt;a</code>. 
      * Even if this condition is satisfied, 
      * two elements <code>a</code>, <code>b</code> not in {@link #seq} 
      * satisfy <code>a=b</code> with respect to the ordering 

@@ -13,7 +13,7 @@ import java.util.Objects;
  * Resizable-array implementation of the <code>CyclicList</code> interface. 
  * Implements all optional operations, and permits all elements, 
  * including<code>null</code>. 
- * In addition to implementing the <code>>CyclicList</code> interface, 
+ * In addition to implementing the <code>CyclicList</code> interface, 
  * this class provides methods to manipulate the size of the array that is
  * used internally to store the list. 
  * <p>
@@ -706,7 +706,7 @@ public final class CyclicArrayList<E>
 	}
 
 	public double dist(CyclicIterator<E> other) {
-	    throw new eu.simuline.util.NotYetImplementedException();
+	    throw new NotYetImplementedException();
 	}
 
 	/**
@@ -989,7 +989,7 @@ public final class CyclicArrayList<E>
      *    in proper sequence.
      */
     public Object[] toArray(int index) {
-	return toArray(index, new Object[this.list.size()]);
+	return toArray(index);
     }
 
     /**
@@ -1548,7 +1548,7 @@ public final class CyclicArrayList<E>
      * @throws IllegalArgumentException
      *    if <code>len</code> is negative. 
      * @throws EmptyCyclicListException
-     *    if this list is empty and <code>len > 0</code>. 
+     *    if this list is empty and <code>len &gt; 0</code>. 
      */
     public CyclicList<E> getCopy(int len) {
 

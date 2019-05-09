@@ -583,7 +583,7 @@ public interface CyclicList<E> extends Collection<E> {
      * @throws IllegalArgumentException
      *    if <code>len</code> is negative. 
      * @throws EmptyCyclicListException
-     *    if this list is empty and <code>len > 0</code>. 
+     *    if this list is empty and <code>len &gt; 0</code>. 
      */
     CyclicList<E> getCopy(int len);
  }

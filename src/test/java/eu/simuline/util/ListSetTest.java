@@ -66,7 +66,7 @@ public class ListSetTest {
 	assertTrue(listSet.isEmpty());
 	assertTrue(!listSet.contains(3));
 	assertTrue(!listSet.contains(null));
-	assertTrue(!listSet.contains(new Double(0)));
+	assertTrue(!listSet.contains(Double.valueOf(0)));
 	assertTrue(!listSet.    iterator().hasNext());
 	assertTrue(!listSet.listIterator().hasNext());
 	assertEquals(0,listSet.toArray().length);
@@ -133,7 +133,7 @@ public class ListSetTest {
 	// check with ordering given by initial list 
 	listSet = ListSet.sortedAsListed(asList(new Integer[] {
 		    3, 2, 1}));
-	Assert.assertArraysEquals(new Integer[] {3, 2, 1}, listSet.toArray());
+	Assert.assertArraysEquals(new Object[] {3, 2, 1}, listSet.toArray());
 
 	assertTrue( listSet.contains(3));
 	assertTrue( listSet.contains(2));

@@ -488,7 +488,8 @@ public final class ListMap<K, V> implements SortedMap<K, V> {
      * providing all methods but {@link Iterator#next()}. 
      * Implementation is based on a {@link ListIterator}. 
      */
-    private abstract class XIterator {
+    // PMD: rethink AbstractClassWithoutAbstractMethod 
+    private abstract class XIterator {// NOPMD 
 
 	/* ------------------------------------------------------------------ *
 	 * fields.                                                            *

@@ -12,7 +12,7 @@ import java.util.HashMap;
  * @author <a href="mailto:ernst.reissner@simuline.eu">Ernst Reissner</a>
  * @version 1.0
  */
-public abstract class BasicTypesCompatibilityChecker {
+public final class BasicTypesCompatibilityChecker {
 
     /* -------------------------------------------------------------------- *
      * class constants.                                                     *
@@ -71,6 +71,12 @@ public abstract class BasicTypesCompatibilityChecker {
 	MAP_BASIC_TYPE2WRAPPER.put(Void     .TYPE, Void     .TYPE);
     } // static 
 
+    
+    /**
+     * Prevents <code>BasicTypesCompatibilityChecker</code> 
+     * from being instantiated.
+     */
+    private BasicTypesCompatibilityChecker() {}
 
     /* -------------------------------------------------------------------- *
      * static methods.                                                      *

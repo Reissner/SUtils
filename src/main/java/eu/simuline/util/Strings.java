@@ -7,7 +7,7 @@ import java.lang.ref.WeakReference;
  * Collection of static methods related to strings. 
  * This class is required because class {@link String} is declared final. 
  */
-public abstract class Strings {
+public final class Strings {
 
     /* -------------------------------------------------------------------- *
      * fields.                                                              *
@@ -20,6 +20,15 @@ public abstract class Strings {
 	new WeakReference<StringBuilder>(new StringBuilder());
 
 
+    /* -------------------------------------------------------------------- *
+     * Constructors.                                                        *
+     * -------------------------------------------------------------------- */
+
+    /**
+     * Prevents <code>Strings</code> from being instantiated. 
+     */
+    private Strings() {}
+    
     /* -------------------------------------------------------------------- *
      * methods.                                                             *
      * -------------------------------------------------------------------- */

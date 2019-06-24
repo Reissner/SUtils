@@ -504,7 +504,7 @@ public abstract class Finder {
     /**
      * One of the logical operations of filters: 
      * Returns a filter which passes a file 
-     * iff the original filter {@link #negFilter} does not. 
+     * iff the original filter {@link #tbNegFilter} does not. 
      * <p>
      * See {@link Finder.Filter#not()}. 
      */
@@ -517,14 +517,14 @@ public abstract class Finder {
 	/**
 	 * The filter to be negated. 
 	 */
-	private final Filter negFilter;
+	private final Filter tbNegFilter;
 
 	/* ---------------------------------------------------------------- *
 	 * constructors.                                                    *
 	 * ---------------------------------------------------------------- */
 
-	NegFilter(Filter negFilter) {
-	    this.negFilter = negFilter;
+	NegFilter(Filter tbNegFilter) {
+	    this.tbNegFilter = tbNegFilter;
 	}
 
 	/* ---------------------------------------------------------------- *
@@ -535,7 +535,7 @@ public abstract class Finder {
 	 * Passes the given file iff {@link #negFilter} does not. 
 	 */
 	public boolean pass(File file) {
-	    return !this.negFilter.pass(file);
+	    return !this.tbNegFilter.pass(file);
 	}
 
     } // class NegFilter 

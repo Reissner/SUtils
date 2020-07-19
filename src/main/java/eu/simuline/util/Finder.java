@@ -83,10 +83,6 @@ public abstract class Finder {
 	    for (File file : path) {
 		this.files.push(file);
 	    }
-
-	    // for (int i = 0; i < path.length; i++) {
-	    // 	this.files.push(path[i]);
-	    // }
 	}
 
 	/* ---------------------------------------------------------------- *
@@ -178,7 +174,6 @@ public abstract class Finder {
 
 	// **** better implementation if this class were not static 
 	protected void updateNext() {
-//	    while (Finder.this.hasNext()) {
 	    while (this.encl.hasNext()) {
 //		this.next = Finder.this.next();
 		this.next = this.encl.next();

@@ -527,7 +527,7 @@ public abstract class Finder {
 	 * ---------------------------------------------------------------- */
 
 	/**
-	 * Passes the given file iff {@link #negFilter} does not. 
+	 * Passes the given file iff {@link #tbNegFilter} does not. 
 	 */
 	public boolean pass(File file) {
 	    return !this.tbNegFilter.pass(file);

@@ -1,4 +1,4 @@
-package eu.simuline.util;
+package eu.simuline.util.images;
 
 import javax.swing.ImageIcon;
 

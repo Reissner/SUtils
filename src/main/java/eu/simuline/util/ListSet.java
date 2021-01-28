@@ -149,7 +149,10 @@ public final class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
      *    contains each element once only. 
      * @param cmp
      *    A comparator or <code>null</code>. 
+     * @throws ClassCastOperation
+     *    if <code>cmp==null</code> but E doesn not extend Comparable&lg;E&gt;.
      */
+    @SuppressWarnings("unchecked")
     private ListSet(List<E> list, Comparator<? super E> cmp) {
 	this.list = list;
 	this.outerCmp = cmp;

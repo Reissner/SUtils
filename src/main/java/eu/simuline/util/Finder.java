@@ -108,14 +108,15 @@ public abstract class Finder {
 	    if (file.isDirectory()) {
 		File[] list = file.listFiles();
 		if (list == null) {
-		    System.out.println("cannot read " + file);
-		} else {
-		    // push in inverse order 
-		    for (int i = list.length - 1; i >= 0; i--) {
-			this.files.push(list[i]);
-		    }
-		    //this.files.addAll(Arrays.asList(list));
+		    // TBD: redesign 
+		    throw new RuntimeException
+			("IOE: Could not determine next entry. ");
 		}
+		// push in inverse order 
+		for (int i = list.length - 1; i >= 0; i--) {
+		    this.files.push(list[i]);
+		}
+		//this.files.addAll(Arrays.asList(list));
 	    }
 	    return file;
 	}

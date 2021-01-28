@@ -1597,8 +1597,7 @@ public final class CyclicArrayList<E>
      *     a clone of this <code>CyclicArrayList</code>. 
      *     This includes copying <code>vertices</code>. 
      */
-    // **** problem with PMD: should use super.clone() 
-    // learn from sources of ArrayList 
+    @SuppressWarnings("unchecked")
     public CyclicArrayList<E> clone() // NOPMD
 	throws CloneNotSupportedException {
     // 	CyclicArrayList<E> res = (CyclicArrayList<E>)super.clone();

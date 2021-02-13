@@ -189,7 +189,7 @@ public abstract class CollectionsExt<E> {
 	/**
 	 * Creates an empty collection with no allowed modifications. 
 	 *
-	 * @see #CollectionsExt.AbstractImmutableCollection(Set)
+	 * @see #AbstractImmutableCollection(Set)
 	 */
     	private AbstractImmutableCollection() {
    	    this(EnumSet.noneOf(Modification.class));

@@ -546,8 +546,8 @@ public interface CyclicList<E> extends Collection<E> {
      * Returns the non-negative index in this cyclic list 
      * of the first occurrence of the specified element, 
      * or <code>-1</code> if this cyclic list does not contain this element. 
-     * More formally, returns the lowest index <tt>i</tt> such that 
-     * <tt>(o==null ? get(i)==null : o.equals(get(i)))</tt>, 
+     * More formally, returns the lowest index <code>i</code> such that 
+     * <code>(o==null ? get(i)==null : o.equals(get(i)))</code>, 
      * or some negative index if there is no such index. 
      * <p>
      * Note that this specification slightly differs from 

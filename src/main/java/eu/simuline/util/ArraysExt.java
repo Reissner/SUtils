@@ -80,7 +80,7 @@ public final class ArraysExt<E> {
     }
 
     /**
-     * Returns an array consisting of <tt>n</tt> copies 
+     * Returns an array consisting of <code>n</code> copies 
      * of the specified object. 
      * The newly allocated data object is tiny 
      * (it contains a single reference to the data object). 
@@ -90,7 +90,7 @@ public final class ArraysExt<E> {
      * @param  obj 
      *    the element to appear repeatedly in the returned list.
      * @return 
-     *    an array consisting of <tt>n</tt> copies 
+     *    an array consisting of <code>n</code> copies 
      * 	  of the specified object. 
      * @throws IllegalArgumentException 
      *    if n &lt; 0. 

@@ -113,8 +113,8 @@ public interface MultiSet<T> extends Iterable<T> {
      * Returns the number of pairwise different elements 
      * in this <code>MultiSet</code>. 
      * If this <code>MultiSet</code> 
-     * contains more than <tt>Integer.MAX_VALUE</tt> elements, 
-     * returns <tt>Integer.MAX_VALUE</tt>. 
+     * contains more than <code>Integer.MAX_VALUE</code> elements, 
+     * returns <code>Integer.MAX_VALUE</code>. 
      * 
      * @return 
      *    the number of elements in this <code>MultiSet</code> 
@@ -127,8 +127,8 @@ public interface MultiSet<T> extends Iterable<T> {
      * Returns the number of elements 
      * in this <code>MultiSet</code> counted with multiplicities. 
      * If this <code>MultiSet</code> 
-     * contains more than <tt>Integer.MAX_VALUE</tt> elements, 
-     * returns <tt>Integer.MAX_VALUE</tt>. 
+     * contains more than <code>Integer.MAX_VALUE</code> elements, 
+     * returns <code>Integer.MAX_VALUE</code>. 
      * 
      * @return 
      *    the number of elements in this <code>MultiSet</code> 
@@ -208,17 +208,17 @@ public interface MultiSet<T> extends Iterable<T> {
     Multiplicity getMultiplicityObj(Object obj);
 
     /**
-     * Returns <tt>true</tt> if this <code>MultiSet</code> 
+     * Returns <code>true</code> if this <code>MultiSet</code> 
      * contains the specified element. 
-     * More formally, returns <tt>true</tt> if and only if this
-     * <code>MultiSet</code> contains at least one element <tt>e</tt> 
-     * such that <tt>(o==null ? e==null : o.equals(e))</tt>. 
+     * More formally, returns <code>true</code> if and only if this
+     * <code>MultiSet</code> contains at least one element <code>e</code> 
+     * such that <code>(o==null ? e==null : o.equals(e))</code>. 
      *
      * @param obj 
      *    element (not <code>null</code>) 
      *    whose presence in this <code>MultiSet</code> is to be tested.
      * @return 
-     *    <tt>true</tt> if this <code>MultiSet</code> 
+     *    <code>true</code> if this <code>MultiSet</code> 
      *    contains the specified element. 
      * @throws NullPointerException
      *    for <code>obj==null</code>. 
@@ -237,7 +237,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * does not allow modifications of the underlying (multi-)set. 
      * 
      * @return 
-     *    an <tt>Iterator</tt> over the elements in this collection 
+     *    an <code>Iterator</code> over the elements in this collection 
      *    considering each element exactly once ignoring its multiplicity. 
      */
     MultiSetIterator<T> iterator();
@@ -280,10 +280,10 @@ public interface MultiSet<T> extends Iterable<T> {
      * (i.e., the array has more elements than this <code>MultiSet</code>), 
      * the elementin the array 
      * immediately following the end of the <code>MultiSet</code> 
-     * is set to <tt>null</tt>. 
+     * is set to <code>null</code>. 
      * This is useful in determining the length of this
      * <code>MultiSet</code> because this <code>MultiSet</code> does
-     * not contain any <tt>null</tt> elements. 
+     * not contain any <code>null</code> elements. 
      * <p>
      * <!--
      * If this <code>MultiSet</code> makes any guarantees 
@@ -293,22 +293,22 @@ public interface MultiSet<T> extends Iterable<T> {
      * -->
      * <!--
      * <p>
-     * Like the <tt>toArray</tt> method, this method acts as bridge between
+     * Like the <code>toArray</code> method, this method acts as bridge between
      * array-based and collection-based APIs.  Further, this method allows
      * precise control over the runtime type of the output array, and may,
      * under certain circumstances, be used to save allocation costs. 
      * <p>
      * -->
-     * Suppose <tt>l</tt> is a <tt>List</tt> known to contain only strings.
+     * Suppose <code>l</code> is a <code>List</code> known to contain only strings.
      * The following code can be used to dump the list into a newly allocated
-     * array of <tt>String</tt>:
+     * array of <code>String</code>:
      *
      * <pre>
      *     String[] x = (String[]) v.toArray(new String[0]);
      * </pre><p>
      *
-     * Note that <tt>toArray(new Object[0])</tt> is identical in function to
-     * <tt>toArray()</tt>.
+     * Note that <code>toArray(new Object[0])</code> is identical in function to
+     * <code>toArray()</code>.
      *
      * @param arr 
      *    the array into which the elements of this <code>MultiSet</code> 
@@ -322,7 +322,7 @@ public interface MultiSet<T> extends Iterable<T> {
      *    the runtime type of the specified array is not a supertype 
      *    of the runtime type of every element in this <code>MultiSet</code>. 
      * @throws NullPointerException 
-     *    if the specified array is <tt>null</tt>. 
+     *    if the specified array is <code>null</code>. 
      */
     T[] toArray(T[] arr);
     // Modification Operations
@@ -375,9 +375,9 @@ public interface MultiSet<T> extends Iterable<T> {
     /**
      * Adds <code>obj</code> to this <code>MultiSet</code>. 
      * In other words, increments the multiplicity of <code>obj</code> by one. 
-     * Returns <tt>true</tt> if this <code>MultiSet</code> 
+     * Returns <code>true</code> if this <code>MultiSet</code> 
      * interpreted as a set changed as a result of the call. 
-     * (Returns <tt>false</tt> if this <code>MultiSet</code> 
+     * (Returns <code>false</code> if this <code>MultiSet</code> 
      * already contains the specified element (with nontrivial multiplicity). 
      * <!--
      * <p>
@@ -385,7 +385,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * may place limitations on what elements may be added 
      * to this <code>MultiSet</code>. 
      * In particular, some<code>MultiSet</code>s will refuse 
-     * to add <tt>null</tt> elements, and others will impose restrictions 
+     * to add <code>null</code> elements, and others will impose restrictions 
      * on the type of elements that may be added. 
      * <Code>MultiSet</Code> classes should clearly specify 
      * in their documentation any 
@@ -394,7 +394,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * If a <code>MultiSet</code> refuses to add a particular element 
      * for any reason other than that it already contains the element, 
      * it <i>must</i> throw an exception 
-     * (rather than returning <tt>false</tt>).  
+     * (rather than returning <code>false</code>).  
      * This preservesthe invariant 
      * that a <code>MultiSet</code> always contains the specified element 
      * after this call returns. 
@@ -405,7 +405,7 @@ public interface MultiSet<T> extends Iterable<T> {
      *    is to be increased by one. 
      *    Note that this may not be <code>null</code>. 
      * @return 
-     *    <tt>true</tt> if and only if 
+     *    <code>true</code> if and only if 
      *    the multiplicity of the specified element 
      *    was <code>0</code> before the call of this method. 
      * @throws NullPointerException 
@@ -475,7 +475,7 @@ public interface MultiSet<T> extends Iterable<T> {
      *    element the multiplicity of which in this <code>MultiSet</code> 
      *    is to be increased by one. 
      * @return 
-     *    <tt>true</tt> if and only if this <code>MultiSet</code> changed 
+     *    <code>true</code> if and only if this <code>MultiSet</code> changed 
      *    as a result of the call. 
      * @throws NullPointerException 
      *    if the specified element is <code>null</code>. 
@@ -506,7 +506,7 @@ public interface MultiSet<T> extends Iterable<T> {
     // Bulk Operations
 
     /**
-     * Returns <tt>true</tt> if this <code>MultiSet</code> 
+     * Returns <code>true</code> if this <code>MultiSet</code> 
      * contains all of the elements in the specified collection 
      * with strictly positive multiplicity. 
      *
@@ -514,12 +514,12 @@ public interface MultiSet<T> extends Iterable<T> {
      *    collection to be checked for containment 
      *    in this <code>MultiSet</code>.
      * @return 
-     *    <tt>true</tt> if this <code>MultiSet</code> 
+     *    <code>true</code> if this <code>MultiSet</code> 
      *    contains all of the elements in the specified collection. 
      * @throws NullPointerException 
      *    if the specified collection contains one or more null elements.
      * @throws NullPointerException 
-     *    if the specified collection is <tt>null</tt>.
+     *    if the specified collection is <code>null</code>.
      * @see #contains(Object)
      */
     boolean containsAll(Collection<?> coll);
@@ -567,7 +567,7 @@ public interface MultiSet<T> extends Iterable<T> {
      * @param coll 
      *    elements to be removed from this <code>MultiSet</code>. 
      * @return 
-     *    <tt>true</tt> if this <code>MultiSet</code> 
+     *    <code>true</code> if this <code>MultiSet</code> 
      *    changed as a result of the call. 
      * @throws NullPointerException 
      *    if the specified collection is <code>null</code>. 
@@ -588,10 +588,10 @@ public interface MultiSet<T> extends Iterable<T> {
      * @param coll 
      *    elements to be retained in this <code>MultiSet</code>. 
      * @return 
-     *    <tt>true</tt> if this <code>MultiSet</code> changed 
+     *    <code>true</code> if this <code>MultiSet</code> changed 
      *    as a result of the call. 
      * @throws NullPointerException 
-     *    if the specified collection is <tt>null</tt>.
+     *    if the specified collection is <code>null</code>.
      * @throws UnsupportedOperationException
      *    if this <code>MultiSet</code> does not support this method. 
      * @see #remove(Object)

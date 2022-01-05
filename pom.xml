@@ -13,11 +13,11 @@
   <artifactId>SUtils</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-  
+
   <!-- information for generating a site -->
   <name>SUtils</name>
   <description>
-    Utilities used in simuline. 
+    Utilities used in simuline.
   </description>
 
   <url>http://www.simuline.eu/SUtils/</url><!-- same as site-deploy -->
@@ -49,7 +49,7 @@
       </properties>
     </developer>
   </developers>
-  
+
   <!-- source repositories: at the moment not needed. -->
   <repositories>
     <repository>
@@ -57,7 +57,7 @@
       <url>https://www.simuline.eu/RepositoryMaven</url>
     </repository>
   </repositories>
-  
+
   <!--scm>
     <connection>
       scm:git:https://github.com/Reissner/maven-latex-plugin.git
@@ -96,7 +96,7 @@
     <system>Github Issues</system>
     <url>https://github.com/akquinet/maven-latex-plugin/issues</url>
     </issueManagement-->
-  
+
   <properties>
     <!-- checked during validation -->
     <versionMvn>3.6.3</versionMvn>
@@ -112,7 +112,7 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>eu.simuline</groupId>
       <artifactId>TestHelpers</artifactId>
@@ -131,27 +131,27 @@
   </dependencies>
 
 
-    <build>
+  <build>
 
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
-         <artifactId>wagon-ftp</artifactId>
-         <version>3.3.2</version>
+        <artifactId>wagon-ftp</artifactId>
+        <version>3.3.2</version>
       </extension>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
-         <artifactId>wagon-file</artifactId>
-         <version>3.3.2</version>
+        <artifactId>wagon-file</artifactId>
+        <version>3.3.2</version>
       </extension>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
-         <artifactId>wagon-http</artifactId>
-         <version>3.3.2</version>
+        <artifactId>wagon-http</artifactId>
+        <version>3.3.2</version>
       </extension>
     </extensions>
-    
-   <plugins>
+
+    <plugins>
       <!-- at the moment just to enforce maven version
 	   use as mvn validate not as mvn enforcer:enforce
 	   TBD: add a lot of tests -->

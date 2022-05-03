@@ -150,7 +150,7 @@ public class ArraysExtTest {
 	// testcase 2
 	//
 	// no array at all. 
-	emptyArray = new Integer(0);
+	emptyArray = Integer.valueOf(0);
 
 	step = System.currentTimeMillis();
 	try {
@@ -265,8 +265,8 @@ public class ArraysExtTest {
      */
     public void testUNWrap() {
 
-	Integer[] wrapped, wrappedCmp;
-	Object[] dwrapped, dwrappedCmp;
+	//Integer[] wrapped, wrappedCmp;
+	Object[] dwrapped;//, dwrappedCmp;
 
 	int[] unWrapped, unWrappedCmp;
 	Object dunWrapped, dunWrappedCmp;
@@ -277,7 +277,7 @@ public class ArraysExtTest {
 	// testcase 1
 	//
 	// non-elementary entry type, empty array. 
-	dunWrapped = new Integer(0);
+	dunWrapped = Integer.valueOf(0);
 
 	step = System.currentTimeMillis();
 	try {
@@ -397,7 +397,7 @@ public class ArraysExtTest {
 	}
 	step = System.currentTimeMillis()-step;
 
-	assertArraysEquals(new Integer[] {new Integer(0)}, dwrapped);
+	assertArraysEquals(new Integer[] {Integer.valueOf(0)}, dwrapped);
 	//reportTestCase(" wrapArray:            ");
 
 
@@ -414,10 +414,10 @@ public class ArraysExtTest {
 	step = System.currentTimeMillis()-step;
 
 	assertArraysEquals(new Integer[] {
-	    new Integer(0),
-	    new Integer(1),
-	    new Integer(2),
-	    new Integer(3)
+		Integer.valueOf(0),
+		Integer.valueOf(1),
+		Integer.valueOf(2),
+		Integer.valueOf(3)
 		},
 				  dwrapped);
 	//reportTestCase(" wrapArray:            ");
@@ -443,9 +443,9 @@ public class ArraysExtTest {
 
 	assertArraysEquals(new Integer[][] {
 	    new Integer[] {},
-	    new Integer[] {new Integer(0)},
-	    new Integer[] {new Integer(0),new Integer(1)},
-	    new Integer[] {new Integer(0),new Integer(1),new Integer(2)},
+	    new Integer[] {Integer.valueOf(0)},
+	    new Integer[] {Integer.valueOf(0),Integer.valueOf(1)},
+	    new Integer[] {Integer.valueOf(0),Integer.valueOf(1),Integer.valueOf(2)},
 	}, dwrapped);
 	//reportTestCase(" wrapArray:            ");
 
@@ -548,7 +548,7 @@ public class ArraysExtTest {
 	// testcase 6
 	//
 	// elementary entry type, array with one element. 
-	dwrapped = new Integer[] {new Integer(0)};
+	dwrapped = new Integer[] {Integer.valueOf(0)};
 	dunWrapped = null;
 
 	step = System.currentTimeMillis();
@@ -565,10 +565,10 @@ public class ArraysExtTest {
 	//
 	// elementary entry type, array with more than one element. 
 	dwrapped = new Integer[] {
-	    new Integer(0),
-	    new Integer(1),
-	    new Integer(2),
-	    new Integer(3)
+		Integer.valueOf(0),
+		Integer.valueOf(1),
+		Integer.valueOf(2),
+		Integer.valueOf(3)
 		};
 	dunWrapped = null;
 

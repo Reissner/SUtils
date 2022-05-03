@@ -84,19 +84,19 @@ public class BitSetListTest {
 
 
 	bitSetList = new BitSetList(Arrays.asList(new Integer[] {
-	    new Integer(0), 
-	    new Integer(1), 
-	    new Integer(1), 
-	    new Integer(0), 
-	    new Integer(0)
+		Integer.valueOf(0), 
+		Integer.valueOf(1), 
+		Integer.valueOf(1), 
+	    Integer.valueOf(0), 
+	    Integer.valueOf(0)
 	}));
 
 	Assert.assertArraysEquals(new Object[] {
-	    new Integer(0), 
-	    new Integer(1), 
-	    new Integer(1), 
-	    new Integer(0), 
-	    new Integer(0)
+		Integer.valueOf(0), 
+		Integer.valueOf(1), 
+		Integer.valueOf(1), 
+	    Integer.valueOf(0), 
+	    Integer.valueOf(0)
 	},
 			    bitSetList.toArray());
 	assertEquals(5,
@@ -107,10 +107,10 @@ public class BitSetListTest {
 
     public void testEquals() {
 	BitSetList bitSetList;
-	List listCmp;
+	List<Integer> listCmp;
 
 	bitSetList = new BitSetList(25);
-	listCmp = new ArrayList();
+	listCmp = new ArrayList<Integer>();
 
 	bitSetList.add(0);
 	bitSetList.add(1);
@@ -160,24 +160,24 @@ public class BitSetListTest {
 	}
 
 	
-	assertTrue(bitSetList.add(new Integer(0)));
-	assertTrue(bitSetList.add(new Integer(1)));
-	assertTrue(bitSetList.add(new Integer(1)));
-	assertTrue(bitSetList.add(new Integer(0)));
-	assertTrue(bitSetList.add(new Integer(0)));
+	assertTrue(bitSetList.add(Integer.valueOf(0)));
+	assertTrue(bitSetList.add(Integer.valueOf(1)));
+	assertTrue(bitSetList.add(Integer.valueOf(1)));
+	assertTrue(bitSetList.add(Integer.valueOf(0)));
+	assertTrue(bitSetList.add(Integer.valueOf(0)));
 	assertEquals(5,bitSetList.size());
 	Assert.assertArraysEquals(new Object[] {
-	    new Integer(0), 
-	    new Integer(1), 
-	    new Integer(1), 
-	    new Integer(0), 
-	    new Integer(0)
+		Integer.valueOf(0), 
+		Integer.valueOf(1), 
+		Integer.valueOf(1), 
+	    Integer.valueOf(0), 
+	    Integer.valueOf(0)
 	},
 			    bitSetList.toArray());
 
 
 	try {
-	    bitSetList.add(6,new Integer(0));
+	    bitSetList.add(6,Integer.valueOf(0));
 	    fail("Exception expected");
 	} catch (IndexOutOfBoundsException e) {
 	    // ok 
@@ -186,26 +186,26 @@ public class BitSetListTest {
 
 
 
-	bitSetList.add(1,new Integer(0));
+	bitSetList.add(1,Integer.valueOf(0));
 	Assert.assertArraysEquals(new Object[] {
-	    new Integer(0), 
-	    new Integer(0), 
+		Integer.valueOf(0), 
+		Integer.valueOf(0), 
 	    new Integer(1), 
 	    new Integer(1), 
-	    new Integer(0), 
-	    new Integer(0)
+	    Integer.valueOf(0), 
+	    Integer.valueOf(0)
 	},
 			    bitSetList.toArray());
 
 
 	bitSetList.add(6,new Integer(1));
 	Assert.assertArraysEquals(new Object[] {
-	    new Integer(0), 
-	    new Integer(0), 
+		Integer.valueOf(0), 
+		Integer.valueOf(0), 
 	    new Integer(1), 
 	    new Integer(1), 
-	    new Integer(0), 
-	    new Integer(0),
+	    Integer.valueOf(0), 
+	    Integer.valueOf(0),
 	    new Integer(1)
 	},
 			    bitSetList.toArray());

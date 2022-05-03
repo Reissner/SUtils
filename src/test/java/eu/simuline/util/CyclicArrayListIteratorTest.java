@@ -409,7 +409,7 @@ public class CyclicArrayListIteratorTest {
 	// list with one element. 
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0)
+	    Integer.valueOf(0)
 		}).cyclicIterator(0);
 	flag = false;
 
@@ -428,7 +428,7 @@ public class CyclicArrayListIteratorTest {
 	// list with one element. 
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0)
+		Integer.valueOf(0)
 		}).cyclicIterator(0);
 	cIter1.next();
 	flag = true;
@@ -469,7 +469,7 @@ public class CyclicArrayListIteratorTest {
 	// list with one element. 
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0)
+		Integer.valueOf(0)
 		}).cyclicIterator(0);
 	flag = true;
 
@@ -488,7 +488,7 @@ public class CyclicArrayListIteratorTest {
 	// list with one element. 
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0)
+		Integer.valueOf(0)
 		}).cyclicIterator(0);
 	cIter1.next();
 	flag = false;
@@ -529,9 +529,9 @@ public class CyclicArrayListIteratorTest {
 	// 
 	//
 	cList1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0),
-	    new Integer(1),
-	    new Integer(2)
+		Integer.valueOf(0),
+		Integer.valueOf(1),
+		Integer.valueOf(2)
 		});
 
 	step = System.currentTimeMillis();
@@ -543,9 +543,9 @@ public class CyclicArrayListIteratorTest {
 	}
 	step = System.currentTimeMillis()-step;
 
-	Assert.assertEquals(new Integer(0),obj0);
-	Assert.assertEquals(new Integer(1),obj1);
-	Assert.assertEquals(new Integer(2),obj2);
+	Assert.assertEquals(Integer.valueOf(0),obj0);
+	Assert.assertEquals(Integer.valueOf(1),obj1);
+	Assert.assertEquals(Integer.valueOf(2),obj2);
 	try {
 	    cIter1.next();
 	    fail("Exception expected. ");
@@ -582,9 +582,9 @@ public class CyclicArrayListIteratorTest {
 	// 
 	//
 	cList1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0),
-	    new Integer(1),
-	    new Integer(2)
+		Integer.valueOf(0),
+		Integer.valueOf(1),
+		Integer.valueOf(2)
 		});
 
 	step = System.currentTimeMillis();
@@ -599,9 +599,9 @@ public class CyclicArrayListIteratorTest {
 	}
 	step = System.currentTimeMillis()-step;
 
-	Assert.assertEquals(new Integer(0),obj0);
-	Assert.assertEquals(new Integer(1),obj1);
-	Assert.assertEquals(new Integer(2),obj2);
+	Assert.assertEquals(Integer.valueOf(0),obj0);
+	Assert.assertEquals(Integer.valueOf(1),obj1);
+	Assert.assertEquals(Integer.valueOf(2),obj2);
 	try {
 	    cIter1.previous();
 	    fail("Exception expected. ");
@@ -619,15 +619,15 @@ public class CyclicArrayListIteratorTest {
 	// element not in list
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0),
-	    new Integer(1),
-	    new Integer(2)
+		Integer.valueOf(0),
+		Integer.valueOf(1),
+		Integer.valueOf(2)
 		}).cyclicIterator(0);
 	index = -20;
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    index = cIter1.getNextIndexOf(new Integer(-3));
+	    index = cIter1.getNextIndexOf(Integer.valueOf(3));
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -640,16 +640,16 @@ public class CyclicArrayListIteratorTest {
 	// element not in part of listwhich is to be read. 
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0),
-	    new Integer(1),
-	    new Integer(2)
+		Integer.valueOf(0),
+		Integer.valueOf(1),
+		Integer.valueOf(2)
 		}).cyclicIterator(0);
 	cIter1.next();
 	index = -20;
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    index = cIter1.getNextIndexOf(new Integer(0));
+	    index = cIter1.getNextIndexOf(Integer.valueOf(0));
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -662,18 +662,18 @@ public class CyclicArrayListIteratorTest {
 	// element not in part of listwhich is to be read. 
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0),
-	    new Integer(1),
-	    new Integer(2),
-	    new Integer(1),
-	    new Integer(2),
+		Integer.valueOf(0),
+		Integer.valueOf(1),
+		Integer.valueOf(2),
+		Integer.valueOf(1),
+		Integer.valueOf(2)
 		}).cyclicIterator(0);
 	cIter1.next();
 	index = 2;
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    index = cIter1.getNextIndexOf(new Integer(2));
+	    index = cIter1.getNextIndexOf(Integer.valueOf(2));
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -698,13 +698,13 @@ public class CyclicArrayListIteratorTest {
 	for (int i = 0; i < repetition; i++) {
 	    cIter1 = new CyclicArrayList<Integer>(new Integer[] {
 		    }).cyclicIterator(0);
-	    cIter1.add(new Integer(10));
+	    cIter1.add(Integer.valueOf(10));
 	    }
 	step = System.currentTimeMillis()-step;
 //System.out.println("cIter1:"+cList1);
 
 	assertTrue(!cIter1.hasNext());
-	assertEquals(new Integer(10),cIter1.previous());
+	assertEquals(Integer.valueOf(10),cIter1.previous());
 	assertTrue("Shall have no previous element. ",
 		   !cIter1.hasPrev());
 	//reportTestCase(" add:           ");
@@ -718,24 +718,24 @@ public class CyclicArrayListIteratorTest {
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
 	    cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-		new Integer(0),
-		new Integer(1),
-		new Integer(2)
+				Integer.valueOf(0),
+				Integer.valueOf(1),
+				Integer.valueOf(2)
 		    }).cyclicIterator(0);
-	    cIter1.add(new Integer(10));
+	    cIter1.add(Integer.valueOf(10));
 	    }
 	step = System.currentTimeMillis()-step;
 //System.out.println("cIter1:"+cList1);
 
-	assertEquals(new Integer(0),cIter1.next());
+	assertEquals(Integer.valueOf(0),cIter1.next());
 	cIter1.previous();
-	assertEquals(new Integer(10),cIter1.previous());
+	assertEquals(Integer.valueOf(10),cIter1.previous());
 	assertTrue("Shall have no previous element. ",
 		   !cIter1.hasPrev());
 	cIter1.next();
-	assertEquals(new Integer(0),cIter1.next());
-	assertEquals(new Integer(1),cIter1.next());
-	assertEquals(new Integer(2),cIter1.next());
+	assertEquals(Integer.valueOf(0),cIter1.next());
+	assertEquals(Integer.valueOf(1),cIter1.next());
+	assertEquals(Integer.valueOf(2),cIter1.next());
 	assertTrue(!cIter1.hasNext());
 	//reportTestCase(" add:           ");
 
@@ -745,21 +745,21 @@ public class CyclicArrayListIteratorTest {
 	// add at a mid-position. 
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0),
-	    new Integer(1),
-	    new Integer(2)
+		Integer.valueOf(0),
+		Integer.valueOf(1),
+		Integer.valueOf(2)
 		}).cyclicIterator(0);
 	cIter1.next();
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    cIter1.add(new Integer(10));
+	    cIter1.add(Integer.valueOf(10));
 	}
 	step = System.currentTimeMillis()-step;
 
-	assertEquals(new Integer(1),cIter1.next());
+	assertEquals(Integer.valueOf(1),cIter1.next());
 	cIter1.previous();
-	assertEquals(new Integer(10),cIter1.previous());
+	assertEquals(Integer.valueOf(10),cIter1.previous());
 	//reportTestCase(" add:           ");
 
 
@@ -768,22 +768,22 @@ public class CyclicArrayListIteratorTest {
 	// add at a mid-position. 
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0),
-	    new Integer(1),
-	    new Integer(2)
+		Integer.valueOf(0),
+		Integer.valueOf(1),
+		Integer.valueOf(2)
 		}).cyclicIterator(0);
 	cIter1.next();
 	cIter1.next();
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    cIter1.add(new Integer(10));
+	    cIter1.add(Integer.valueOf(10));
 	}
 	step = System.currentTimeMillis()-step;
 
-	assertEquals(new Integer(2),cIter1.next());
+	assertEquals(Integer.valueOf(2),cIter1.next());
 	cIter1.previous();
-	assertEquals(new Integer(10),cIter1.previous());
+	assertEquals(Integer.valueOf(10),cIter1.previous());
 	//reportTestCase(" add:           ");
 
 
@@ -792,9 +792,9 @@ public class CyclicArrayListIteratorTest {
 	// add at the end of the list. 
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0),
-	    new Integer(1),
-	    new Integer(2)
+		Integer.valueOf(0),
+		Integer.valueOf(1),
+		Integer.valueOf(2)
 		}).cyclicIterator(0);
 	cIter1.next();
 	cIter1.next();
@@ -802,11 +802,11 @@ public class CyclicArrayListIteratorTest {
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
-	    cIter1.add(new Integer(10));
+	    cIter1.add(Integer.valueOf(10));
 	}
 	step = System.currentTimeMillis()-step;
 
-	assertEquals(new Integer(10),cIter1.previous());
+	assertEquals(Integer.valueOf(10),cIter1.previous());
 	//reportTestCase(" add:           ");
 
 
@@ -817,8 +817,8 @@ public class CyclicArrayListIteratorTest {
 	// add empty list 
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
+		Integer.valueOf(1),
+		Integer.valueOf(2),
 	    //new Integer(-3)
 	});
 
@@ -832,8 +832,8 @@ public class CyclicArrayListIteratorTest {
 //System.out.println("cIter1:"+cList1);
 
 	assertTrue(!cIter1.hasNext());
-	assertEquals(new Integer(-2),cIter1.previous());
-	assertEquals(new Integer(-1),cIter1.previous());
+	assertEquals(Integer.valueOf(2),cIter1.previous());
+	assertEquals(Integer.valueOf(1),cIter1.previous());
 	assertTrue("Shall have no previous element. ",
 		   !cIter1.hasPrev());
 	//reportTestCase(" addAll:        ");
@@ -844,33 +844,33 @@ public class CyclicArrayListIteratorTest {
 	// 
 	// add before the first entry. 
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+		Integer.valueOf(1),
+		Integer.valueOf(2),
+		Integer.valueOf(3)
 	});
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
 	    cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-		new Integer(0),
-		new Integer(1),
-		new Integer(2)
+				Integer.valueOf(0),
+				Integer.valueOf(1),
+				Integer.valueOf(2)
 		    }).cyclicIterator(0);
 	    cIter1.addAll(list1);
 	    }
 	step = System.currentTimeMillis()-step;
 //System.out.println("cIter1:"+cList1);
 
-	assertEquals(new Integer(0),cIter1.next());
-	assertEquals(new Integer(1),cIter1.next());
-	assertEquals(new Integer(2),cIter1.next());
+	assertEquals(Integer.valueOf(0),cIter1.next());
+	assertEquals(Integer.valueOf(1),cIter1.next());
+	assertEquals(Integer.valueOf(2),cIter1.next());
 	assertTrue(!cIter1.hasNext());
 	cIter1.previous();
 	cIter1.previous();
 	cIter1.previous();
-	assertEquals(new Integer(-3),cIter1.previous());
-	assertEquals(new Integer(-2),cIter1.previous());
-	assertEquals(new Integer(-1),cIter1.previous());
+	assertEquals(Integer.valueOf(3),cIter1.previous());
+	assertEquals(Integer.valueOf(2),cIter1.previous());
+	assertEquals(Integer.valueOf(1),cIter1.previous());
 	assertTrue("Shall have no previous element. ",
 		   !cIter1.hasPrev());
 	//reportTestCase(" addAll:        ");
@@ -881,32 +881,32 @@ public class CyclicArrayListIteratorTest {
 	// add at a mid-position. 
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+		Integer.valueOf(1),
+		Integer.valueOf(2),
+		Integer.valueOf(3)
 	});
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
 	    cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-		new Integer(0),
-		new Integer(1),
-		new Integer(2)
+				Integer.valueOf(0),
+				Integer.valueOf(1),
+				Integer.valueOf(2)
 		    }).cyclicIterator(0);
 	    cIter1.next();
 	    cIter1.addAll(list1);
 	}
 	step = System.currentTimeMillis()-step;
 
-	assertEquals(new Integer(1),cIter1.next());
-	assertEquals(new Integer(2),cIter1.next());
+	assertEquals(Integer.valueOf(1),cIter1.next());
+	assertEquals(Integer.valueOf(2),cIter1.next());
 	assertTrue(!cIter1.hasNext());
 	cIter1.previous();
 	cIter1.previous();
-	assertEquals(new Integer(-3),cIter1.previous());
-	assertEquals(new Integer(-2),cIter1.previous());
-	assertEquals(new Integer(-1),cIter1.previous());
-	assertEquals(new Integer(0),cIter1.previous());
+	assertEquals(Integer.valueOf(3),cIter1.previous());
+	assertEquals(Integer.valueOf(2),cIter1.previous());
+	assertEquals(Integer.valueOf(1),cIter1.previous());
+	assertEquals(Integer.valueOf(0),cIter1.previous());
 	assertTrue("Shall have no previous element. ",
 		   !cIter1.hasPrev());
 	//reportTestCase(" addAll:        ");
@@ -917,17 +917,17 @@ public class CyclicArrayListIteratorTest {
 	// add at a mid-position. 
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+		Integer.valueOf(1),
+		Integer.valueOf(2),
+		Integer.valueOf(3)
 	});
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
 	    cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-		new Integer(0),
-		new Integer(1),
-		new Integer(2)
+				Integer.valueOf(0),
+				Integer.valueOf(1),
+				Integer.valueOf(2)
 		    }).cyclicIterator(0);
 	    cIter1.next();
 	    cIter1.next();
@@ -936,14 +936,14 @@ public class CyclicArrayListIteratorTest {
 	}
 	step = System.currentTimeMillis()-step;
 
-	assertEquals(new Integer(2),cIter1.next());
+	assertEquals(Integer.valueOf(2),cIter1.next());
 	assertTrue(!cIter1.hasNext());
 	cIter1.previous();
-	assertEquals(new Integer(-3),cIter1.previous());
-	assertEquals(new Integer(-2),cIter1.previous());
-	assertEquals(new Integer(-1),cIter1.previous());
-	assertEquals(new Integer(1),cIter1.previous());
-	assertEquals(new Integer(0),cIter1.previous());
+	assertEquals(Integer.valueOf(3),cIter1.previous());
+	assertEquals(Integer.valueOf(2),cIter1.previous());
+	assertEquals(Integer.valueOf(1),cIter1.previous());
+	assertEquals(Integer.valueOf(1),cIter1.previous());
+	assertEquals(Integer.valueOf(0),cIter1.previous());
 	assertTrue("Shall have no previous element. ",
 		   !cIter1.hasPrev());
 	//reportTestCase(" addAll:        ");
@@ -954,17 +954,17 @@ public class CyclicArrayListIteratorTest {
 	// add at the end of the list. 
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+		Integer.valueOf(1),
+		Integer.valueOf(2),
+		Integer.valueOf(3)
 	});
 
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
 	    cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-		new Integer(0),
-		new Integer(1),
-		new Integer(2)
+				Integer.valueOf(0),
+				Integer.valueOf(1),
+				Integer.valueOf(2)
 		    }).cyclicIterator(0);
 	    cIter1.next();
 	    cIter1.next();
@@ -974,12 +974,12 @@ public class CyclicArrayListIteratorTest {
 	step = System.currentTimeMillis()-step;
 
 	assertTrue(!cIter1.hasNext());
-	assertEquals(new Integer(-3),cIter1.previous());
-	assertEquals(new Integer(-2),cIter1.previous());
-	assertEquals(new Integer(-1),cIter1.previous());
-	assertEquals(new Integer(2),cIter1.previous());
-	assertEquals(new Integer(1),cIter1.previous());
-	assertEquals(new Integer(0),cIter1.previous());
+	assertEquals(Integer.valueOf(3),cIter1.previous());
+	assertEquals(Integer.valueOf(2),cIter1.previous());
+	assertEquals(Integer.valueOf(1),cIter1.previous());
+	assertEquals(Integer.valueOf(2),cIter1.previous());
+	assertEquals(Integer.valueOf(1),cIter1.previous());
+	assertEquals(Integer.valueOf(0),cIter1.previous());
 	assertTrue("Shall have no previous element. ",
 		   !cIter1.hasPrev());
 	//reportTestCase(" addAll:        ");
@@ -995,14 +995,14 @@ public class CyclicArrayListIteratorTest {
 	// exactly equal. 
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0),
-	    new Integer(1),
-	    new Integer(2)
+		Integer.valueOf(0),
+		Integer.valueOf(1),
+		Integer.valueOf(2)
 		}).cyclicIterator(0);
 	cIter2 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0),
-	    new Integer(1),
-	    new Integer(2)
+		Integer.valueOf(0),
+		Integer.valueOf(1),
+		Integer.valueOf(2)
 		}).cyclicIterator(0);
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {
@@ -1018,14 +1018,14 @@ public class CyclicArrayListIteratorTest {
 	// exactly equal. 
 	//
 	cIter1 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(0),
-	    new Integer(1),
-	    new Integer(2)
+		Integer.valueOf(0),
+		Integer.valueOf(1),
+		Integer.valueOf(2)
 		}).cyclicIterator(0);
 	cIter2 = new CyclicArrayList<Integer>(new Integer[] {
-	    new Integer(2),
-	    new Integer(0),
-	    new Integer(1)
+		Integer.valueOf(2),
+		Integer.valueOf(0),
+		Integer.valueOf(1)
 		}).cyclicIterator(1);
 	step = System.currentTimeMillis();
 	for (int i = 0; i < repetition; i++) {

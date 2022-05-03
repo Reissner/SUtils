@@ -355,9 +355,10 @@ public final class ListMap<K, V> implements SortedMap<K, V> {
 		}
 	    };
 	}
-
+	//Cannot allocate the member type ListMap<K,V>.Entry using a parameterized compound name; 
+	//use its simple name and an enclosing instance of type ListMap<K,V>
 	private Map.Entry<K, V> key2entry(K key) {
-	    return new ListMap<K, V>.Entry(key, get(key));
+	    return new Entry(key, get(key));
 	}
 
 	public Map.Entry<K, V> first() {

@@ -1,8 +1,8 @@
 /**
  * Utility classes: very inhomogeneous. 
  * These are used in projects Arith, Relana, ArithIntOctave and Testhelpers. 
- * Currently linked, but in the long run, either eliminated 
- * or in a separate project. 
+ * In the long run, some classes will be eliminated, 
+ * maybe replaced by classes more commonly used. 
  * To decide this, it must be analyzed which projects need which classes. 
  * 
  * | Class                     | Arith   | Relana | ArithIntOct.. | Testhelp..  |

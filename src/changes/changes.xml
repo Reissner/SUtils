@@ -16,7 +16,8 @@
     <!-- release plan: 
       - eliminate warnings: 
         type parameter E is hiding the type E is because of methods toArray. 
-        Make a concept to eliminate. 
+        This seems to be just a bug in vscode java extension. 
+      - in general, the path is eliminating code from this package in favor of more widely known code. 
     -->
     <release version="1.0" 
 	     date="2022-05-05" 

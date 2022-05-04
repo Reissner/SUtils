@@ -24,10 +24,10 @@
   <inceptionYear>2021</inceptionYear>
   <licenses>
     <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <name>The MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
       <distribution>repo</distribution>
-      <comments>A business-friendly OSS license</comments>
+      <comments>The most admissive license I know</comments>
     </license>
   </licenses>
 

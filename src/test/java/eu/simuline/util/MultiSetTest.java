@@ -183,7 +183,7 @@ public class MultiSetTest {
     public void testIsEmpty() {
 
 	MultiSet<String> result;
-	MultiSet<String> cmp;
+	//MultiSet<String> cmp;
 
 	// testcase 1
 	// deprecated 
@@ -210,14 +210,14 @@ public class MultiSetTest {
     public void testGetMaxObjWithMult() throws Exception {
 
 	MultiSet<String> mset;
-	Map.Entry result;
+	Map.Entry<?,?> result;
 
 	// testcase 1
 	//
 	// empty set 
 	//
 	mset = new TreeMultiSet<String>();
-	result = (Map.Entry)Accessor.invoke(mset,
+	result = (Map.Entry<?,?>)Accessor.invoke(mset,
 					    "getMaxObjWithMult");
 	assertNull(result);
 
@@ -232,17 +232,17 @@ public class MultiSetTest {
 	mset.add("Element1");
 	mset.add("Element2");
 	mset.add("Element2");
-	result = (Map.Entry)Accessor.invoke(mset,
+	result = (Map.Entry<?,?>)Accessor.invoke(mset,
 					    "getMaxObjWithMult");
 	assertEquals("Element1",result.getKey());
-	assertEquals(new Integer(3),Accessor.invoke(result.getValue(),
+	assertEquals(Integer.valueOf(3),Accessor.invoke(result.getValue(),
 						    "get"));
 
     } // testGetMaxObjWithMult 
 
     public void testGetMultiplicity() {
 	MultiSet<String> result;
-	MultiSet<String> cmp;
+	//MultiSet<String> cmp;
 
 	result = new TreeMultiSet<String>();
 	result.add("Element1");

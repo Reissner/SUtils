@@ -630,9 +630,9 @@ public class RealRepresentation {
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected String exponent;
 
-    private String signOfExp; // NOPMD 
+    //private String signOfExp; // NOPMD 
 
-    private String unsignedExp; // NOPMD 
+    //private String unsignedExp; // NOPMD 
 
     /* -------------------------------------------------------------------- *
      * create methods: out of Strings, doubles, Doubles and BigDecimals.    *
@@ -642,9 +642,9 @@ public class RealRepresentation {
 	(value = "URF_UNREAD_FIELD", 
 	 justification = "to be used in later versions ")
     protected final void initSignExp() {
-	Number2SignUnsigned sus = new Number2SignUnsigned(this.exponent);
-	this.signOfExp = sus.getSign();
-	this.unsignedExp = sus.getUnSigned();
+	//Number2SignUnsigned sus = new Number2SignUnsigned(this.exponent);
+	//this.signOfExp = sus.getSign();
+	//this.unsignedExp = sus.getUnSigned();
     }
 
     /**

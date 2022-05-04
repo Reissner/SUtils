@@ -19,7 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Map;
+//import java.util.Map;
 import java.util.Collection;
 
 @RunWith(Suite.class)
@@ -93,19 +93,19 @@ public class ListMapTest {
 
     // **** to be finished 
     public void testEntrySet() {
-	Set<Map.Entry<Integer,Integer>> entries;
+	//Set<Map.Entry<Integer,Integer>> entries;
 	this.listMap = new ListMap<Integer,Integer>();
 	this.listMap.put(3,10);
 	this.listMap.put(2,20);
 	this.listMap.put(1,30);
 
-	entries = this.listMap.entrySet();
+	//entries = this.listMap.entrySet();
 
 
     } // testEntrySet() 
 
     public void testEquals() {
-	Set<Map.Entry<Integer,Integer>> entries;
+	//Set<Map.Entry<Integer,Integer>> entries;
 	this.listMap = new ListMap<Integer,Integer>();
 	this.listMap.put(3,10);
 	this.listMap.put(2,20);
@@ -123,7 +123,7 @@ public class ListMapTest {
     } // testEquals() 
 
     public void testGetPutRemove() {
-	Set<Map.Entry<Integer,Integer>> entries;
+	//Set<Map.Entry<Integer,Integer>> entries;
 	this.listMap = new ListMap<Integer,Integer>();
 	assertNull(this.listMap.put(3,10));
 	assertNull(this.listMap.put(2,20));

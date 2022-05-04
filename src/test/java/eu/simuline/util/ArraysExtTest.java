@@ -7,7 +7,7 @@ import static eu.simuline.testhelpers.Assert.assertEquals;
 import static eu.simuline.testhelpers.Assert.assertArraysEquals;
 
 //import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 //import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
@@ -44,7 +44,7 @@ public class ArraysExtTest {
 	// }
 	@Test public void testCreateEmptyArray() 
 	    throws InvocationTargetException {
-	    ArraysExtTest.TEST.testCreateEmptyArray();	    
+	    ArraysExtTest.TEST.testCreateEmptyArray();
 	}
 	@Test public void testUNWrap() {
 	    ArraysExtTest.TEST.testUNWrap();	    
@@ -268,7 +268,7 @@ public class ArraysExtTest {
 	//Integer[] wrapped, wrappedCmp;
 	Object[] dwrapped;//, dwrappedCmp;
 
-	int[] unWrapped, unWrappedCmp;
+	//int[] unWrapped, unWrappedCmp;
 	Object dunWrapped, dunWrappedCmp;
 
 
@@ -426,7 +426,7 @@ public class ArraysExtTest {
 	// testcase 9
 	//
 	// elementary entry type, array with more than one element. 
-	unWrapped = new int[] {0, 1, 2, 3};
+	//unWrapped = new int[] {0, 1, 2, 3};
 	dunWrapped = new int[][] {
 	    new int[] {},
 	    new int[] {0},
@@ -587,9 +587,9 @@ public class ArraysExtTest {
 	// elementary entry type, array with more than one element. 
 	dwrapped = new Integer[][] {
 	    new Integer[] {},
-	    new Integer[] {new Integer(0)},
-	    new Integer[] {new Integer(0),new Integer(1)},
-	    new Integer[] {new Integer(0),new Integer(1),new Integer(2)},
+	    new Integer[] {Integer.valueOf(0)},
+	    new Integer[] {Integer.valueOf(0),Integer.valueOf(1)},
+	    new Integer[] {Integer.valueOf(0),Integer.valueOf(1),Integer.valueOf(2)},
 	};
 	dunWrapped = null;
 

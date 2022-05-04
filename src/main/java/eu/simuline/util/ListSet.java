@@ -541,7 +541,7 @@ public final class ListSet<E> extends AbstractSet<E> implements SortedSet<E> {
 	if (!(coll instanceof SortedSet)) {
 	    return false;
 	}
-	SortedSet<?> sSet = (SortedSet) coll;
+	SortedSet<?> sSet = (SortedSet<?>) coll;
 	return  sSet.comparator() == this.comparator() || 
 	    (this.comparator() != null && 
 	     this.comparator().equals(sSet.comparator()));

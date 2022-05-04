@@ -1147,7 +1147,7 @@ public abstract class AbstractMultiSet<MAP extends Map<T, Multiplicity>, T>
 	if (!(obj instanceof MultiSet)) {
 	    return false;
 	}
-	MultiSet<?> other = (MultiSet) obj;
+	MultiSet<?> other = (MultiSet<?>) obj;
 	return this.getSetWithMults().equals(other.getSetWithMults());
     }
 

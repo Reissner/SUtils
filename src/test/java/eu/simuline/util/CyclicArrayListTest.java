@@ -160,7 +160,7 @@ public class CyclicArrayListTest {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3)
+	    Integer.valueOf(3)
 	}));
 
 	step = System.currentTimeMillis();
@@ -184,7 +184,7 @@ public class CyclicArrayListTest {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3)
+	    Integer.valueOf(3)
 	}));
 
 	step = System.currentTimeMillis();
@@ -211,7 +211,7 @@ public class CyclicArrayListTest {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3)
+	    Integer.valueOf(3)
 	}));
 
 	step = System.currentTimeMillis();
@@ -224,17 +224,17 @@ public class CyclicArrayListTest {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3),
+	    Integer.valueOf(3),
 
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3),
+	    Integer.valueOf(3),
 
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3)
+	    Integer.valueOf(3)
 		},
 				  cList2.toArray(0));
 	//reportTestCase("  getCopy:            ");
@@ -248,7 +248,7 @@ public class CyclicArrayListTest {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3)
+	    Integer.valueOf(3)
 	}));
 
 	step = System.currentTimeMillis();
@@ -261,17 +261,17 @@ public class CyclicArrayListTest {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3),
+	    Integer.valueOf(3),
 
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3),
+	    Integer.valueOf(3),
 
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3),
+	    Integer.valueOf(3),
 
 	    Integer.valueOf(0),
 	    Integer.valueOf(1)
@@ -471,7 +471,7 @@ public class CyclicArrayListTest {
 		Integer.valueOf(1),
 		Integer.valueOf(2)
 	    });
-	    cList1.add(3-4*8,new Integer(3));
+	    cList1.add(3-4*8,Integer.valueOf(3));
 	}
 	step = System.currentTimeMillis()-step;
 
@@ -479,7 +479,7 @@ public class CyclicArrayListTest {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3)
+	    Integer.valueOf(3)
 		},
 				  cList1.toArray(0));
 	//reportTestCase("  add:                ");
@@ -497,14 +497,14 @@ public class CyclicArrayListTest {
 		Integer.valueOf(1),
 		Integer.valueOf(2)
 	    });
-	    cList1.add(2-4*8,new Integer(3));
+	    cList1.add(2-4*8,Integer.valueOf(3));
 	}
 	step = System.currentTimeMillis()-step;
 
 	Assert.assertArraysEquals(new Object[] {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
-	    new Integer(3),
+	    Integer.valueOf(3),
 	    Integer.valueOf(2)
 		},
 				  cList1.toArray(0));
@@ -549,9 +549,9 @@ public class CyclicArrayListTest {
 	// add to list with length 1 at end. 
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -565,9 +565,9 @@ public class CyclicArrayListTest {
 
 	Assert.assertArraysEquals(new Object[] {
 	    Integer.valueOf(0),
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 		},
 				  cList1.toArray(0));
 	assertEquals(list1.get(0),cList1.get(1));
@@ -579,9 +579,9 @@ public class CyclicArrayListTest {
 	// add to list with length 1 splitted list. 
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -594,10 +594,10 @@ public class CyclicArrayListTest {
 	step = System.currentTimeMillis()-step;
 
 	Assert.assertArraysEquals(new Object[] {
-	    new Integer(-2),
-	    new Integer(-3),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3),
 	    Integer.valueOf(0),
-	    new Integer(-1)
+	    Integer.valueOf(-1)
 		},
 				  cList1.toArray(0));
 	assertEquals(list1.get(0),cList1.get(3));
@@ -609,9 +609,9 @@ public class CyclicArrayListTest {
 	// add to list with length 1 at end. 
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -625,9 +625,9 @@ public class CyclicArrayListTest {
 
 	Assert.assertArraysEquals(new Object[] {
 	    Integer.valueOf(0),
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 		},
 				  cList1.toArray(0));
 	assertEquals(list1.get(0),cList1.get(5));
@@ -639,9 +639,9 @@ public class CyclicArrayListTest {
 	// add to list with length 1 at beginning. 
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -654,9 +654,9 @@ public class CyclicArrayListTest {
 	step = System.currentTimeMillis()-step;
 
 	Assert.assertArraysEquals(new Object[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3),
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3),
 	    Integer.valueOf(0)},
 				  cList1.toArray(0));
 	assertEquals(list1.get(0),cList1.get(0));
@@ -668,9 +668,9 @@ public class CyclicArrayListTest {
 	// add to list with length 1
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -683,9 +683,9 @@ public class CyclicArrayListTest {
 	step = System.currentTimeMillis()-step;
 
 	Assert.assertArraysEquals(new Object[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3),
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3),
 	    Integer.valueOf(0)},
 				  cList1.toArray(0));
 	assertEquals(list1.get(0),cList1.get(-12));
@@ -698,9 +698,9 @@ public class CyclicArrayListTest {
 	// add to list with length 2 list in center. 
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -715,9 +715,9 @@ public class CyclicArrayListTest {
 
 	Assert.assertArraysEquals(new Object[] {
 	    Integer.valueOf(0),
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3),
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3),
 	    Integer.valueOf(1),
 		},
 				  cList1.toArray(0));
@@ -730,9 +730,9 @@ public class CyclicArrayListTest {
 	// add to list with length 2 list at end 
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -748,9 +748,9 @@ public class CyclicArrayListTest {
 	Assert.assertArraysEquals(new Object[] {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3),
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3),
 		},
 				  cList1.toArray(0));
 	assertEquals(list1.get(0),cList1.get(1-3*8));
@@ -762,9 +762,9 @@ public class CyclicArrayListTest {
 	// add to list with length 2 list in center
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -779,9 +779,9 @@ public class CyclicArrayListTest {
 
 	Assert.assertArraysEquals(new Object[] {
 	    Integer.valueOf(0),
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3),
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3),
 	    Integer.valueOf(1)
 		},
 				  cList1.toArray(0));
@@ -794,9 +794,9 @@ public class CyclicArrayListTest {
 	// add to list with length 3 list in center
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -812,9 +812,9 @@ public class CyclicArrayListTest {
 
 	Assert.assertArraysEquals(new Object[] {
 	    Integer.valueOf(0),
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3),
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
 		},
@@ -828,9 +828,9 @@ public class CyclicArrayListTest {
 	// add to list with length 3 list at beginning
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -845,9 +845,9 @@ public class CyclicArrayListTest {
 	step = System.currentTimeMillis()-step;
 
 	Assert.assertArraysEquals(new Object[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3),
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3),
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
@@ -861,9 +861,9 @@ public class CyclicArrayListTest {
 	// add to list with length 3 list at beginning
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -879,9 +879,9 @@ public class CyclicArrayListTest {
 
 	Assert.assertArraysEquals(new Object[] {
 	    Integer.valueOf(0),
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3),
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
 		},
@@ -895,9 +895,9 @@ public class CyclicArrayListTest {
 	// add to list with length 3 list at beginning
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -914,9 +914,9 @@ public class CyclicArrayListTest {
 	Assert.assertArraysEquals(new Object[] {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3),
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3),
 	    Integer.valueOf(2),
 		},
 				  cList1.toArray(0));
@@ -929,9 +929,9 @@ public class CyclicArrayListTest {
 	// add to list with length 3 list at beginning
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -949,9 +949,9 @@ public class CyclicArrayListTest {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3),
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3),
 
 		},
 				  cList1.toArray(0));
@@ -964,9 +964,9 @@ public class CyclicArrayListTest {
 	// add to list with length 3 list at beginning
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -981,12 +981,12 @@ public class CyclicArrayListTest {
 	step = System.currentTimeMillis()-step;
 
 	Assert.assertArraysEquals(new Object[] {
-	    new Integer(-3),
+	    Integer.valueOf(-3),
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(-1),
-	    new Integer(-2),
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
 
 		},
 				  cList1.toArray(0));
@@ -999,9 +999,9 @@ public class CyclicArrayListTest {
 	// add to list with length 3 list at beginning
 	//
 	list1 = Arrays.asList(new Integer[] {
-	    new Integer(-1),
-	    new Integer(-2),
-	    new Integer(-3)
+	    Integer.valueOf(-1),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3)
 	});
 
 	step = System.currentTimeMillis();
@@ -1016,12 +1016,12 @@ public class CyclicArrayListTest {
 	step = System.currentTimeMillis()-step;
 
 	Assert.assertArraysEquals(new Object[] {
-	    new Integer(-2),
-	    new Integer(-3),
+	    Integer.valueOf(-2),
+	    Integer.valueOf(-3),
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(-1),
+	    Integer.valueOf(-1),
 
 		},
 				  cList1.toArray(0));
@@ -1149,8 +1149,8 @@ public class CyclicArrayListTest {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3),
-	    new Integer(4)
+	    Integer.valueOf(3),
+	    Integer.valueOf(4)
 		};
 	cList1 = new CyclicArrayList<Integer>(objArray1);
 
@@ -1162,8 +1162,8 @@ public class CyclicArrayListTest {
 
 	Assert.assertTrue(objArray1 instanceof Integer[]);
 	objArray2 = new Integer[] {
-	    new Integer(3),
-	    new Integer(4),
+	    Integer.valueOf(3),
+	    Integer.valueOf(4),
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2)
@@ -1186,8 +1186,8 @@ public class CyclicArrayListTest {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3),
-	    new Integer(4)
+	    Integer.valueOf(3),
+	    Integer.valueOf(4)
 		};
 	cList1 = new CyclicArrayList<Integer>(objArray1);
 	
@@ -1200,8 +1200,8 @@ public class CyclicArrayListTest {
 	Assert.assertTrue(objArray1 instanceof Integer[]);
 	objArray2 = new Integer[] {
 	    Integer.valueOf(2),
-	    new Integer(3),
-	    new Integer(4),
+	    Integer.valueOf(3),
+	    Integer.valueOf(4),
 	    Integer.valueOf(0),
 	    Integer.valueOf(1)
 		};
@@ -1225,8 +1225,8 @@ public class CyclicArrayListTest {
 	    Integer.valueOf(0),
 	    Integer.valueOf(1),
 	    Integer.valueOf(2),
-	    new Integer(3),
-	    new Integer(4)
+	    Integer.valueOf(3),
+	    Integer.valueOf(4)
 		};
 	cList1 = new CyclicArrayList<Integer>(objArray1);
 
@@ -1237,8 +1237,8 @@ public class CyclicArrayListTest {
 	step = System.currentTimeMillis()-step;
 
 	objArray1 = new Integer[] {
-	    new Integer(4),
-	    new Integer(3),
+	    Integer.valueOf(4),
+	    Integer.valueOf(3),
 	    Integer.valueOf(2),
 	    Integer.valueOf(1),
 	    Integer.valueOf(0)

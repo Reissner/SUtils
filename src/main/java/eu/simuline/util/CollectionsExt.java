@@ -171,7 +171,7 @@ public abstract class CollectionsExt<E> {
 	class AbstractImmutableCollection<C extends Collection<E>, E> 
 	extends AbstractCollection<E> {
 
-    	private static final long serialVersionUID = -2479143000061671589L;
+    	//private static final long serialVersionUID = -2479143000061671589L;
 
     	/* ---------------------------------------------------------------- *
     	 * fields.                                                          *
@@ -510,8 +510,7 @@ public abstract class CollectionsExt<E> {
      *    the class of the elements of this collection. 
      */
     public static final class ImmutableCollection<E> 
-	extends AbstractImmutableCollection<Collection<E>, E> 
-	implements Collection<E> {
+	extends AbstractImmutableCollection<Collection<E>, E> {
 
    	/* ---------------------------------------------------------------- *
     	 * fields.                                                          *
@@ -1331,7 +1330,7 @@ public abstract class CollectionsExt<E> {
     abstract static class AbstractImmutableMultiSet<C extends MultiSet<E>, E> 
 	implements MultiSet<E> {
 
-    	private static final long serialVersionUID = -2479143000061671589L;
+    	//private static final long serialVersionUID = -2479143000061671589L;
 
     	/* ---------------------------------------------------------------- *
     	 * fields.                                                          *
@@ -1652,8 +1651,7 @@ public abstract class CollectionsExt<E> {
      *    the class of the elements of this list. 
      */
     static class ImmutableMultiSet<E> 
-	extends AbstractImmutableMultiSet<MultiSet<E>, E> 
-	implements MultiSet<E> {
+	extends AbstractImmutableMultiSet<MultiSet<E>, E> {
 
    	/* ---------------------------------------------------------------- *
     	 * fields.                                                          *
@@ -1897,7 +1895,7 @@ public abstract class CollectionsExt<E> {
 	for (Object cand : list) {
 	    if (cand instanceof List) {
 		// cand is a list. 
-		result[index] = recToArray((List) cand);
+		result[index] = recToArray((List<?>) cand);
 	    } else {
 		// cand is no list. 
 		result[index] = cand;

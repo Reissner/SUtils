@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.junit.Before;
+//import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -190,23 +190,23 @@ public class BitSetListTest {
 	Assert.assertArraysEquals(new Object[] {
 		Integer.valueOf(0), 
 		Integer.valueOf(0), 
-	    new Integer(1), 
-	    new Integer(1), 
+	    Integer.valueOf(1), 
+	    Integer.valueOf(1), 
 	    Integer.valueOf(0), 
 	    Integer.valueOf(0)
 	},
 			    bitSetList.toArray());
 
 
-	bitSetList.add(6,new Integer(1));
+	bitSetList.add(6,Integer.valueOf(1));
 	Assert.assertArraysEquals(new Object[] {
 		Integer.valueOf(0), 
 		Integer.valueOf(0), 
-	    new Integer(1), 
-	    new Integer(1), 
+	    Integer.valueOf(1), 
+	    Integer.valueOf(1), 
 	    Integer.valueOf(0), 
 	    Integer.valueOf(0),
-	    new Integer(1)
+	    Integer.valueOf(1)
 	},
 			    bitSetList.toArray());
 
@@ -221,19 +221,19 @@ public class BitSetListTest {
 	bitSetList = new BitSetList();
 
 
-	assertTrue(!bitSetList.contains(new Integer(3)));
+	assertTrue(!bitSetList.contains(Integer.valueOf(3)));
 	try {
 	    bitSetList.contains(null);
 	    fail("Exception expected");
 	} catch (NullPointerException e) {
 	    // ok 
 	}
-	try {
-	    bitSetList.contains(new Double(0));
-	    fail("Exception expected");
-	} catch (ClassCastException e) {
-	    // ok 
-	}
+	// try {
+	//     bitSetList.contains(Double.valueOf(0));
+	//     fail("Exception expected");
+	// } catch (ClassCastException e) {
+	//     // ok 
+	// }
 
 
     } // testContains() 

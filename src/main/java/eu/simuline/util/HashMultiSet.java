@@ -17,8 +17,7 @@ import java.util.HashMap;
  * @version 1.0
  */
 public final class HashMultiSet<T> 
-    extends AbstractMultiSet<Map<T, MultiSet.Multiplicity>, T> 
-    implements MultiSet<T> {
+    extends AbstractMultiSet<Map<T, MultiSet.Multiplicity>, T> {
 
 
     /* -------------------------------------------------------------------- *

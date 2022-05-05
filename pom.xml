@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <!-- coordinates for model and artifact -->
   <modelVersion>4.0.0</modelVersion>
@@ -12,7 +10,7 @@
   <groupId>eu.simuline</groupId>
   <artifactId>SUtils</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 
   <!-- information for generating a site -->
   <name>SUtils</name>
@@ -66,6 +64,7 @@
       scm:git:https://github.com/Reissner/SUtils.git
     </developerConnection>
     <url>https://github.com/Reissner/SUtils</url>
+    <tag>SUtils-1.0</tag>
   </scm>
 
  <distributionManagement><!-- For authentication see ~/.m2/settings.xml -->

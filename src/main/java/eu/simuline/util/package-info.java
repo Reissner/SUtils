@@ -5,40 +5,40 @@
  * maybe replaced by classes more commonly used. 
  * To decide this, it must be analyzed which projects need which classes. 
  * 
- * | Class                     | Arith   | Relana | ArithIntOct.. | Testhelp..  |
- * | ------------------------- | ------- | ------ | ------------- | ----------- |
- * | {@link AbstractMultiSet}  | -       |  -     | -             |  -          |
- * | {@link ArraysExt}         |ContFrac |        |               |             |
+ * | Class                      | Arith    | Relana | ArithIntOct.. | Testhelp..  |
+ * | -------------------------- | -------- | ------ | ------------- | ----------- |
+ * | {@link AbstractMultiSet}   | -        |  -     | -             |  -          |
+ * | {@link ArraysExt}          | ContFrac |        |               |             |
  * | {@link BasicTypesCompatibilityChecker}-      | -   |   -    |  - |  -    | internal
- * | {@link BitSetList}        | buffer |        |               |             |
- * | {@link Caster}            |   -    | -      | -             |  -          |internal
- * | {@link CollectionsExt}    | multip | -      | -             |  -          |
- * | {@link Comparators}       | l2ra   | -      | -             |  -          |
- * | {@link CyclicArrayList}   |graphDv | -      | -             |  -          |
- * | {@link CyclicIterator}    |graphDv | -      | -             |  -          |
- * | {@link CyclicList}        |graphDv | -      | -             |  -          |
- * | {@link DataModel}         |fpga    | -      | -             |  -          |
- * | {@link DetOs}             |fpga    |        |               |             |
- * | {@link EmptyCyclicListException}   | -      | -             |  -          |internal
- * | {@link FIFOList}          | -      | -      | -             |  -          |internal
- * | {@link Finder}            | tex    | -      | parser        |  -          |
- * | {@link HashMultiSet}      | -      |  -     | -             |  -          |
- * | {@link JavaPath}          | -      |  -     | -             |  x          |
- * | {@link ListMap}            |fpga   |  -     | -             |  -          | sgml
- * | {@link ListSet}            | -     |  -     | -             |  -          | internal
- * | {@link MultiSet}           | x     | -     |   -           |  -          |
- * | {@link MultiSetIterator}   | x     | -     |   -           |  -          |
- * | {@link NotYetImplementedException} |       |               |             |
- * | {@link PathFinder}         | -     | -     |  -            |  -          |
- * | {@link RealRepresentation} | -     | -     |  -            |  -          |
- * | {@link SoftEnum}           | -     | -     |  -            |  -          |
- * | {@link SortedMultiSet}     | x     | -     |   -           |  -          |
- * | {@link StringPool}         | -     | -     |  -            |  -          |
- * | {@link Strings}            | tex   | -     |  -            |  x          |
- * | {@link SwingWorker}        | -     | -     |  -            |  -          |
- * | {@link TreeMultiSet}       | x     | -     |   -           |  -          |
- * | {@link TwoSidedList}       | x     |       |               |             |
- * | {@link VMArgs}             | -     | -     | -             | -           |
+ * | {@link BitSetList}         | buffer   |        |               |             |
+ * | {@link Caster}             |   -      | -      | -             |  -          |internal
+ * | {@link CollectionsExt}     | multip   | -      | -             |  -          |
+ * | {@link Comparators}        | l2ra     | -      | -             |  -          |
+ * | {@link CyclicArrayList}    | graphDv  | -      | -             |  -          |
+ * | {@link CyclicIterator}     | graphDv  | -      | -             |  -          |
+ * | {@link CyclicList}         | graphDv  | -      | -             |  -          |
+ * | {@link DataModel}          | fpga     | -      | -             |  -          |
+ * | {@link DetOs}              | fpga     |        |               |             |
+ * | {@link EmptyCyclicListException}    -      | -             |  -          |internal
+ * | {@link FIFOList}           | -        | -      | -             |  -          |internal
+ * | {@link Finder}             | tex      | -      | parser        |  -          |
+ * | {@link HashMultiSet}       | -        |  -     | -             |  -          |
+ * | {@link JavaPath}           | -        |  -     | -             |  x          |
+ * | {@link ListMap}            |fpga      |  -     | -             |  -          | sgml
+ * | {@link ListSet}            | -        |  -     | -             |  -          | internal
+ * | {@link MultiSet}           | x        | -      |   -           |  -          |
+ * | {@link MultiSetIterator}   | x        | -      |   -           |  -          |
+ * | {@link NotYetImplementedException} |- |               |             |
+ * | {@link PathFinder}         | -        | -     |  -            |  -          |
+ * | {@link RealRepresentation} | -        | -     |  -            |  -          |
+ * | {@link SoftEnum}           | -        | -     |  -            |  -          |
+ * | {@link SortedMultiSet}     | x        | -     |   -           |  -          |
+ * | {@link StringPool}         | -        | -     |  -            |  -          |
+ * | {@link Strings}            | tex      | -     |  -            |  x          |
+ * | {@link SwingWorker}        | -        | -     |  -            |  -          |
+ * | {@link TreeMultiSet}       | x        | -     |   -           |  -          |
+ * | {@link TwoSidedList}       | x        |       |               |             |
+ * | {@link VMArgs}             | -        | -     | -             | -           |
  * <ul>
  * <li>
  * Framework providing the {@link MultiSet}s, 

@@ -252,7 +252,7 @@ public final class JavaPath {
 	    // by extraction. 
 	    // may throw IOException
 	    File ret = File
-		.createTempFile("JUnitGUI" + System.currentTimeMillis(),
+		.createTempFile("simuline_JavaPath" + System.currentTimeMillis(),
 				ClsSrc.Source.fileEnding());
 	    try (
 		 //new File("/tmp/HI.java"); //this.entry.getName());
@@ -345,7 +345,7 @@ public final class JavaPath {
      * -------------------------------------------------------------------- */
 
     /**
-     * Converts a class name into the into the corresponding name 
+     * Converts a class name into the corresponding name 
      * of a local source file or class file. 
      *
      * @param clsName 
@@ -399,32 +399,60 @@ public final class JavaPath {
      *    a temporal file is created. 
      *    In any case, the file returned exists 
      *    unless <code>null</code> is returned. 
-     */
+		 * @throws IOException
+		 *   if an IOException occurs 
+		 *   while searching <code>clsName</code> 
+		 *   in a zip/jar file 
+		 *   or while extracting that file from zip file.      */
     public File getFile(String clsName, ClsSrc clsSrc) {
-	return getFile(cls2locFile(clsName, clsSrc));
+			return getFile(cls2locFile(clsName, clsSrc));
     }
 
-    // may return null 
-    public File getFile(String localFilename) {
-	FileWrapper fileWr = locFile2Wrapper(localFilename);
-	
-	try {
-	    return fileWr == null ? null : fileWr.getFile();
-	} catch (IOException ioe) {
-	    return null;
-	}
+    /**
+		 * Returns the file given by <code>localFilename</code> 
+		 * if it is on the path; else <code>null</code>. 
+		 * Also files in zip files are found. 
+		 * 
+		 * @param localFilename
+		 *   the relative filename of the file to be found on this path. 
+		 * @return
+		 *   the file <code>localFilename</code>, 
+		 *   if found in a zip file as a new temporary file
+		 *   or <code>null</code> if not found on the path. 
+		 * @throws IOException
+		 *   if an IOException occurs 
+		 *   while searching <code>localFilename</code> 
+		 *   in a zip file 
+		 *   or while extracting file <code>localFilename</code> from zip file. 
+		 */
+    public File getFile(String localFilename) throws IOException {
+			// locFile2Wrapper may cause IOException during search
+			FileWrapper fileWr = locFile2Wrapper(localFilename);
+			// getFile may cause IOException if found in zip file 
+			// and reading or writing causes problems. 
+			return fileWr == null ? null : fileWr.getFile();
     }
 
+		/**
+		 * Returns the input stream 
+		 * to read the class with the given name <code>clsName</code> 
+		 * from a file or zip or jar file 
+		 * or <code>null</code> if no such file exists on this path. 
+		 * 
+		 * @return
+		 *   the class file as an input stream if found on the path 
+		 *   and <code>null</code> if it is not on this path. 
+		 * @throws IOException
+		 *   if during the search of <code>clsName</code> 
+		 *   a zip file (or in particular a jar file) was not searchable 
+		 *   or if no input stream could be formed from that file.  
+		 */
     public InputStream getInputStream(String clsName) throws IOException {
-	FileWrapper fileWrapper = locFile2Wrapper(cls2locFile(clsName,
-							      ClsSrc.Class));
-	if (fileWrapper == null) {
-	    return null;
-	}
-
-	return fileWrapper.getInputStream();
+			// locFile2Wrapper searches on path and in jar file. 
+			FileWrapper fileWrapper = locFile2Wrapper(cls2locFile(clsName,
+																								ClsSrc.Class));
+			return (fileWrapper == null) ? null : fileWrapper.getInputStream();
     }
-
 
     /**
      * Converts a local file name into the wrapper 
@@ -435,51 +463,54 @@ public final class JavaPath {
      *    the name of a local file as a <code>String</code> value. 
      * @return 
      *    a <code>FileWrapper</code> representing the first file 
-     *    found on the path with the appropriate name. 
+     *    found on the path with the appropriate name or <code>null</code> 
+		 *    if no such file is found. 
      *    If the file is found in a directory of the path, 
      *    an {@link OrdFileWrapper JavaPath.OrdFileWrapper} is returned, 
      *    if it is found within a zip- or jar-file, 
      *    a {@link ZipEntryWrapper JavaPath.ZipEntryWrapper} is returned. 
+		 * @throws IOException
+		 *   if there is a zip file (or in particular a jar file) in the path 
+		 *   which is not accessible during search of the file <code>localFilename</code>. 
+		 *   A corrupt zip file causes an exception only if it is on this path 
+		 *   in a position so that the file <code>localFilename</code> is not on the path 
+		 *   before that file. 
      */
-    private FileWrapper locFile2Wrapper(String localFilename) {
-	
-	File cand = null;
-	// otherwise: might not be initialized. 
-	// this is impossible because this.files is not empty. 
+    private FileWrapper locFile2Wrapper(String localFilename) throws IOException {
+			File cand = null;
+			// otherwise: might not be initialized. 
+			// this is impossible because this.files is not empty. 
 
-	// search for the file with the given name along the path. 
-	for (File candParent : this.roots) {
-	    if (candParent.isDirectory()) {
-		// find directly in the directory candParent
-		cand = new File(candParent, localFilename);
-		if (cand.exists() && cand.isFile()) {
-		    return new OrdFileWrapper(cand);
-		}
-	    } else {
-		// find directly in the zip- or jar-file candParent
-		assert !candParent.isDirectory();
-		if (!(candParent.getName().endsWith(ZIP_END) || 
-		      candParent.getName().endsWith(JAR_END))) {
-		    continue;
-		}
-		// here, we have a zip-file at least 
-		// if not a jar-file. 
-		ZipFile zipFile;
-		try {
-		    zipFile = new ZipFile(candParent);
-		} catch (IOException  e) {
-		    continue;
-		}
-		// Here, the zip-file is readable. 
-		ZipEntry entry = zipFile.getEntry(localFilename);
-		if (entry == null) {
-		    // file not found 
-		    continue;
-		}
-		return new ZipEntryWrapper(zipFile, entry);
-	    }
-	}
-	return null;
+	    // search for the file with the given name along the path. 
+			for (File candParent : this.roots) {
+				if (candParent.isDirectory()) {
+					// find directly in the directory candParent
+					cand = new File(candParent, localFilename);
+					if (cand.exists() && cand.isFile()) {
+		    		return new OrdFileWrapper(cand);
+					}
+	    	} else {
+					// find directly in the zip- or jar-file candParent
+					assert !candParent.isDirectory();
+					if (!(candParent.getName().endsWith(ZIP_END) || 
+		      	candParent.getName().endsWith(JAR_END))) {
+		    		continue;
+					}
+					// here, we have a zip-file at least 
+					// if not a jar-file. 
+					ZipFile zipFile;
+		    	zipFile = new ZipFile(candParent);
+					// Here, the zip-file is readable. 
+					ZipEntry entry = zipFile.getEntry(localFilename);
+					if (entry == null) {
+		    		// file not found 
+		    		continue;
+					}
+					return new ZipEntryWrapper(zipFile, entry);
+	    	}
+			} // for 
+			// Here, no file has been found 
+			return null;
     }
 
 

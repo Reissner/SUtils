@@ -39,6 +39,7 @@ public final class Benchmarker {
    * Before first started this is <code>0</code>. 
    */
   private static long TIME_TIC_NS;
+  private static long TIME_TIC_MS;
 
   /**
    * If {@link #isStarted}, this is the used memory in bytes at start, 
@@ -62,25 +63,53 @@ public final class Benchmarker {
     assert !isStarted;
     isStarted = !isStarted;
     MEMORY_BYTES = usedMemoryBytes();
-    //return TIME_TIC_NS = System.nanoTime();
-    return TIME_TIC_NS = System.currentTimeMillis();
+    //return 
+    TIME_TIC_NS = System.nanoTime();
+    return TIME_TIC_MS = System.currentTimeMillis();
   }
 
   public static long mtoc() {
     assert isStarted;
     isStarted = !isStarted;
-    //TIME_TIC_NS = System.nanoTime() - TIME_TIC_NS;
-    TIME_TIC_NS = System.currentTimeMillis() - TIME_TIC_NS;
+    TIME_TIC_NS = System.nanoTime() - TIME_TIC_NS;
+    TIME_TIC_MS = System.currentTimeMillis() - TIME_TIC_MS;
     MEMORY_BYTES = usedMemoryBytes() - MEMORY_BYTES;
-    return TIME_TIC_NS;
+    return TIME_TIC_MS;
   }
 
-  public static long getStartTime() {
-    assert isStarted;
-    return TIME_TIC_NS;
+  // public static long getStartTimeMs() {
+  //   assert isStarted;
+  //   return TIME_TIC_MS;
+  // }
+  // public static double getStartTimeD() {
+  //   assert isStarted;
+  //   double res = (double)TIME_TIC_MS;
+  //   assert res == TIME_TIC_MS;
+  //   return TIME_TIC_MS;
+  // }
+
+
+  // public static long getStartTimeP() {
+  //   assert isStarted;
+  //   return TIME_TIC_NS;
+  // }
+
+  public static double getTimeMs() {
+    assert !isStarted;
+    double res = (double)TIME_TIC_MS;
+    assert res == TIME_TIC_MS;
+    return res;//TIME_TIC_MS;///1_000_000.;
+    //return TIME_TIC_MS;///1_000_000.;
   }
 
-  public static long getTimeMs() {
+  // public static double getTimeMsD() {
+  //   assert !isStarted;
+  //   double res = (double)TIME_TIC_MS;
+  //   assert res == TIME_TIC_MS;
+  //   return res;//TIME_TIC_MS;///1_000_000.;
+  // }
+
+  public static long getTimeMsP() {
     assert !isStarted;
     return TIME_TIC_NS;///1_000_000.;
   }

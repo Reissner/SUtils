@@ -65,15 +65,16 @@ public final class Benchmarker {
     MEMORY_BYTES = usedMemoryBytes();
     //return 
     TIME_TIC_NS = System.nanoTime();
-    return TIME_TIC_MS = System.currentTimeMillis();
+    TIME_TIC_MS = System.currentTimeMillis();
+    return TIME_TIC_MS;
   }
 
   public static long mtoc() {
     assert isStarted;
     isStarted = !isStarted;
-    TIME_TIC_NS = System.nanoTime() - TIME_TIC_NS;
+    TIME_TIC_NS = System.nanoTime()          - TIME_TIC_NS;
     TIME_TIC_MS = System.currentTimeMillis() - TIME_TIC_MS;
-    MEMORY_BYTES = usedMemoryBytes() - MEMORY_BYTES;
+    MEMORY_BYTES = usedMemoryBytes()         - MEMORY_BYTES;
     return TIME_TIC_MS;
   }
 
@@ -109,9 +110,9 @@ public final class Benchmarker {
   //   return res;//TIME_TIC_MS;///1_000_000.;
   // }
 
-  public static long getTimeMsP() {
+  public static double getTimeMsP() {
     assert !isStarted;
-    return TIME_TIC_NS;///1_000_000.;
+    return TIME_TIC_NS/1_000_000.;
   }
 
   public static double getMemoryMB() {

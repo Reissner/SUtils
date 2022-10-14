@@ -102,6 +102,8 @@
     <!-- Using platform encoding to copy filtered resources; 
     without project.build.sourceEncoding the build is platform dependent! -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <versionPmd>6.49.0</versionPmd>
+    <versionPmdMvnPlugin>3.19.0</versionPmdMvnPlugin>
   </properties>
 
   <dependencies>
@@ -149,6 +151,59 @@
         <version>3.3.2</version>
       </extension>
     </extensions>
+
+    <pluginManagement>
+      <plugins>
+               <!-- pmd plugin -->
+               <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${versionPmdMvnPlugin}</version>
+                <!-- if update then also config/myruleset.xml as described there -->
+                <!--executions>
+              <execution>
+              <goals>
+              <goal>check</goal>
+              </goals>
+              </execution>
+              </executions-->
+
+                <dependencies>
+                  <dependency>
+                    <groupId>net.sourceforge.pmd</groupId>
+                    <artifactId>pmd-core</artifactId>
+                    <version>${versionPmd}</version>
+                  </dependency>
+                  <dependency>
+                    <groupId>net.sourceforge.pmd</groupId>
+                    <artifactId>pmd-java</artifactId>
+                    <version>${versionPmd}</version>
+                  </dependency>
+                  <dependency>
+                    <groupId>eu.simuline</groupId>
+                    <artifactId>qMngmnt</artifactId>
+                    <version>0.0.4-SNAPSHOT</version>
+                  </dependency>
+                </dependencies>
+
+                <configuration>
+                  <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
+                  <format>html</format>
+                  <!--  in addition to "none", "csv", "xml", "txt"
+           or the full class name of the PMD renderer to use. -->
+                  <skip>false</skip>
+                  <skipEmptyReport>false</skipEmptyReport>
+                  <!--suppressMarker>NOPMD</suppressMarker-->
+                  <includeTests>false</includeTests>
+                  <minimumTokens>100</minimumTokens>            <!-- for cpd -->
+                  <rulesets>
+                    <!-- refers to the dependency qMngmnt -->
+                    <ruleset>eu/simuline/qMngmnt/pmd/myPmdRuleset.xml</ruleset>
+                  </rulesets>
+                </configuration>
+              </plugin>
+      </plugins>
+    </pluginManagement>
 
     <plugins>
       <!-- at the moment just to enforce maven version

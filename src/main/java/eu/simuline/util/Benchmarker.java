@@ -20,6 +20,52 @@ package eu.simuline.util;
  * 
  */
 public final class Benchmarker {
+  /**
+   * A snapshot represents a time and an amount of memory. 
+   * after creation, this is the current time and the current memory 
+   * whereas after invocation of {@link #stop()} it is the time elapsed 
+   * and the memory allocated since creation. 
+   * Freed memory is indicated as negative allocated memory. 
+   */
+  public static class Snapshot {
+
+    /**
+     * If {@link #isStarted}, this is the start time in nanoseconds (10^{-9} seconds), 
+     * while if stopped, this is the time it ran last, i.e. between starting and stopping. 
+     * Before first started this is <code>0</code>. 
+     */
+    private long timeTicNs;
+
+    /**
+     * If {@link #isStarted}, this is the used memory in bytes at start, 
+     * while if stopped, this is the additional memory since started, 
+     * which may also be negative indicating freed memory. 
+     * Before first started this is <code>0</code>. 
+     * For proper evaluation, before measuring the JVM is asked to run the garbage collector. 
+     */
+    private long memBytes;
+
+    Snapshot() {
+      this.timeTicNs = System.nanoTime();
+      this.memBytes = usedMemoryBytes();
+    }
+
+    public void stop() {
+      this.timeTicNs = System.nanoTime() - this.timeTicNs;
+      this.memBytes  = usedMemoryBytes() - this.memBytes;
+    }
+
+    public double getTimeMs() {
+      assert !isStarted;
+      return this.timeTicNs/1_000_000.;
+    }
+
+    public double getMemoryMB() {
+      assert !isStarted;
+      return this.memBytes/1_000_000.;
+    }
+
+  } // class Snapshot 
 
   /**
    * Indicates whether timer is started. 
@@ -33,21 +79,7 @@ public final class Benchmarker {
 
   private static final Runtime RUNTIME = Runtime.getRuntime();
 
-  /**
-   * If {@link #isStarted}, this is the start time in nanoseconds (10^{-9} seconds), 
-   * while if stopped, this is the time it ran last, i.e. between starting and stopping. 
-   * Before first started this is <code>0</code>. 
-   */
-  private static long TIME_TIC_NS;
-
-  /**
-   * If {@link #isStarted}, this is the used memory in bytes at start, 
-   * while if stopped, this is the additional memory since started, 
-   * which may also be negative indicating freed memory. 
-   * Before first started this is <code>0</code>. 
-   * For proper evaluation, before measuring the JVM is asked to run the garbage collector. 
-   */
-  private static long MEMORY_BYTES;
+  private static Snapshot snapshot = null;
 
   private Benchmarker() {
     // solely to avoid instantiation 
@@ -59,28 +91,22 @@ public final class Benchmarker {
   }
 
   public static void mtic() {
+    assert isStarted == (snapshot != null);
     assert !isStarted;
     isStarted = !isStarted;
-    MEMORY_BYTES = usedMemoryBytes();
-    TIME_TIC_NS = System.nanoTime();
+     snapshot = new Snapshot();
+    assert isStarted == (snapshot != null);
   }
 
-  public static double mtoc() {
+  public static Snapshot mtoc() {
+    assert isStarted == (snapshot != null);
     assert isStarted;
     isStarted = !isStarted;
-    TIME_TIC_NS  = System.nanoTime() - TIME_TIC_NS;
-    MEMORY_BYTES = usedMemoryBytes() - MEMORY_BYTES;
-    return getTimeMs();
-  }
-
-  public static double getTimeMs() {
-    assert !isStarted;
-    return TIME_TIC_NS/1_000_000.;
-  }
-
-  public static double getMemoryMB() {
-    assert !isStarted;
-    return MEMORY_BYTES/1_000_000.;
+    snapshot.stop();
+    Snapshot res = snapshot;
+    snapshot = null;
+    assert isStarted == (snapshot != null);
+    return res;
   }
 
   public static boolean isStarted() {

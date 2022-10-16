@@ -75,11 +75,12 @@ public final class Benchmarker {
      * methods. *
      * ------------------------------------------------------------------ */
 
-    protected void stop() {
+    protected Snapshot stop() {
       assert !this.isStopped;
       this.timeTicNs = System.nanoTime() - this.timeTicNs;
       this.memBytes  = usedMemoryBytes() - this.memBytes;
       this.isStopped = true;
+      return this;
     }
 
     public double getTimeMs() {
@@ -104,17 +105,6 @@ public final class Benchmarker {
    * fields. *
    * -------------------------------------------------------------------- */
 
-  /**
-   * Indicates whether timer is started. 
-   * Initially this is <code>false</code>. 
-   * If not, this allows invoking {@link #mtic} 
-   * to start the timer. 
-   * If it is set, this allows invoking {@link #mtoc} to stop the timer.
-   * In addition, 
-   * this leads to different interpretations of {@link #TIME_TIC_NS}
-   */
-  private static boolean isStarted = false;
-
   private static final Runtime RUNTIME = Runtime.getRuntime();
 
   private static Snapshot snapshot = null;
@@ -130,31 +120,35 @@ public final class Benchmarker {
    * methods (static only). *
    * -------------------------------------------------------------------- */
 
-   private static long usedMemoryBytes() {
+  private static long usedMemoryBytes() {
     RUNTIME.gc();
     return RUNTIME.maxMemory() - RUNTIME.freeMemory();
   }
 
   public static void mtic() {
-    assert isStarted == (snapshot != null);
-    assert !isStarted;
-    isStarted = !isStarted;
+    assert snapshot == null;
     snapshot = new Snapshot();
-    assert isStarted == (snapshot != null);
+    assert snapshot != null;
   }
 
   public static Snapshot mtoc() {
-    assert isStarted == (snapshot != null);
-    assert isStarted;
-    isStarted = !isStarted;
-    snapshot.stop();
-    Snapshot res = snapshot;
+    assert snapshot != null;
+    Snapshot res = snapshot.stop();
     snapshot = null;
-    assert isStarted == (snapshot != null);
+    assert snapshot == null;
     return res;
   }
 
+  /**
+   * Indicates whether timer is started. 
+   * Initially this is <code>false</code>. 
+   * If not, this allows invoking {@link #mtic} 
+   * to start the timer. 
+   * If it is set, this allows invoking {@link #mtoc} to stop the timer.
+   * In addition, 
+   * this leads to different interpretations of time and memory in {@link #snapshot}. 
+   */
   public static boolean isStarted() {
-    return isStarted;
+    return snapshot != null;
   }
 }

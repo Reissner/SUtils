@@ -107,10 +107,19 @@ public final class Benchmarker {
 
     protected Snapshot toggleStartStop(boolean doStop) {
       assert this.isStopped != doStop;
-      this.timeNs = System.nanoTime() - this.timeNs;
+      // The following two lines of code hold whether stopped or not, 
+      // but the meaning depends. 
+      this.timeNs    = System.nanoTime() - this.timeNs;
       this.memBytes  = usedMemoryBytes() - this.memBytes;
       this.isStopped = doStop;
       return this;
+    }
+
+    protected void add(Snapshot snap) {
+      assert snap.isStopped();
+      assert this.isStopped();
+      this.timeNs   += snap.timeNs;
+      this.memBytes += snap.memBytes;
     }
 
     public double getTimeMs() {
@@ -118,6 +127,17 @@ public final class Benchmarker {
       return this.timeNs/1_000_000.;
     }
 
+    /**
+     * The memory allocated on MB. 
+     * This is the difference 
+     * between memory when starting the test and when finishing. 
+     * So this may well be negative indicating freed memory. 
+     * Memory is determined after the garbage collector is triggered. 
+     * Since there is no way to force the VM to perform a complete garbage collection, 
+     * there is no guarantee on the precision of this value. 
+     * In an extreme case, the garbage collector is not run at all 
+     * and so the result is not very significant. 
+     */
     public double getMemoryMB() {
       assert this.isStopped;
       return this.memBytes/1_000_000.;
@@ -139,9 +159,27 @@ public final class Benchmarker {
    * fields. *
    * -------------------------------------------------------------------- */
 
+   /**
+    * The runtime needed to determine memory consumption. 
+    */
   private static final Runtime RUNTIME = Runtime.getRuntime();
 
-  private static Stack<Snapshot> snapshots = new Stack<Snapshot>();
+  /**
+   * A stack of enclosing measurements which is empty at least initially. 
+   * All but the last measurements must be paused 
+   * and the last measurement may be paused or not. 
+   * <ul>
+   * <li>{@link #mtic()} pauses the top entry and adds a new running one. 
+   * <li>{@link #pause()} pauses the top entry. 
+   * <li>{@link #resume()} resumes the top entry. 
+   * <li>{@link #mtoc()} stops the top entry, removes it from the stack 
+   * and returns it. 
+   * As a side effect, 
+   * it adds time and memory consumption to the new top level 
+   * and restarts it. 
+  * </ul>
+   */
+  private static final Stack<Snapshot> snapshots = new Stack<Snapshot>();
 
   /* -------------------------------------------------------------------- *
    * constructor. *
@@ -160,9 +198,45 @@ public final class Benchmarker {
     return RUNTIME.maxMemory() - RUNTIME.freeMemory();
   }
 
+  /**
+   * Resets benchmarking erasing all measurements. 
+   * The state is as at class initialization. 
+   */
+  public static void reset() {
+    snapshots.clear();
+  }
+
+  /**
+   * Starts a new time/memory measurement, 
+   * which is allowed only if there is no enclosing measurement at all 
+   * or if the enclosing measurement is not paused. 
+   * Equivalently: no enclosing measurements is paused. 
+   * This holds in particular if there is no enclosing measurement. 
+   * <p>
+   * As a side effect, pauses the enclosing measurement 
+   * before starting the new one. 
+   * That way, time consumed by {@link #mtic()} itself 
+   * invoking garbage collection which is required for memory measurement 
+   * is not taken into account. TBD: NOT TRUE
+   * 
+   * @return
+   *   The hash code of the current snapshot holding time and memory. 
+   *   Note that a snapshot itself can be returned only, 
+   *   if stopped and cannot be restarted. 
+   *   In this implementation this means it is off the stack. 
+   * @see #mtoc
+   */
   public static int mtic() {
-    assert snapshots.isEmpty();
-    Snapshot snap = new Snapshot();
+    //assert snapshots.isEmpty();
+    Snapshot snap;
+    if (!snapshots.isEmpty()) {
+      snap = snapshots.peek();
+      assert !snap.isStopped();
+      snap.toggleStartStop(true);
+      assert snap.isStopped();
+    }
+    // Note here, 
+    snap = new Snapshot();
     snapshots.push(snap);
     assert !snap.isStopped();// also not empty
     return snap.hashCode();
@@ -182,24 +256,58 @@ public final class Benchmarker {
     assert !snap.isStopped();// also not empty
   }
 
+  /**
+   * Ends a time/memory meansurement initiated with {@link #mtic()}
+   * which presupposes that there is a measurement and that it is not stopped. 
+   * If there is an enclosing measurement, 
+   * it was paused and so time and memory consumption is added to it 
+   * and then it is restarted, 
+   * because it can be assumed that it was running when starting this meansurement. 
+   * Finally, returns a snapshot mit time/memory consumption of this measurement. 
+   * 
+   * @return
+   *   A stopped {@link Snapshot} containing time and memory consumption. 
+   */
   public static Snapshot mtoc() {
     assert !snapshots.isEmpty();
-    Snapshot snap = snapshots.pop().toggleStartStop(true);
-    assert snapshots.isEmpty();
-    assert snap.isStopped();
-    return snap;
+    Snapshot res = snapshots.pop().toggleStartStop(true);
+    //assert snapshots.isEmpty();
+    if (!snapshots.isEmpty()) {
+      Snapshot snap = snapshots.peek();
+      // checks that both snap and res are stopped 
+      snap.add(res);
+      //assert snap.isStopped();
+      snap.toggleStartStop(false);
+      assert !snap.isStopped();
+    }
+    assert res.isStopped();
+    return res;
   }
 
   /**
-   * Indicates whether timer is started. 
-   * Initially this is <code>false</code>. 
-   * If not, this allows invoking {@link #mtic} 
+   * Returns the number of nested measurements. 
+   * Initially this is <code>0</code>, {@link #mtic} increases this by one, 
+   * and, if not 0, {@link #mtoc} decreases by one. 
    * to start the timer. 
    * If it is set, this allows invoking {@link #mtoc} to stop the timer.
    * In addition, 
    * this leads to different interpretations of time and memory in {@link #snapshot}. 
    */
-  public static boolean isStarted() {
-    return !snapshots.isEmpty();
+  public static int numNestedMeasurements() {
+    return snapshots.size();
+  }
+
+  /**
+   * Returns whether the topmost measurement is stopped. 
+   * This may be invoked only if there is a measurement 
+   * according to {@link #numNestedMeasurements()}. 
+   * Only if it is not stopped, {@link #mtic()} may be invoked. 
+   * 
+   * @return
+   *    whether the topmost measurement is stopped. 
+   */
+  public static boolean isStopped() {
+    assert !snapshots.isEmpty();
+    return snapshots.peek().isStopped;
   }
 }

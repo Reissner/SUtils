@@ -1,5 +1,7 @@
 package eu.simuline.util;
 
+import java.util.Stack;
+
 /**
  * Provides methods for benchmarking. 
  * It is inspired by according matlab functions tic and toc 
@@ -139,7 +141,7 @@ public final class Benchmarker {
 
   private static final Runtime RUNTIME = Runtime.getRuntime();
 
-  private static Snapshot snapshot = null;
+  private static Stack<Snapshot> snapshots = new Stack<Snapshot>();
 
   /* -------------------------------------------------------------------- *
    * constructor. *
@@ -159,28 +161,27 @@ public final class Benchmarker {
   }
 
   public static void mtic() {
-    assert snapshot == null;
-    snapshot = new Snapshot();
-    assert !snapshot.isStopped();// also not null
+    assert snapshots.isEmpty();
+    snapshots.push(new Snapshot());
+    assert !snapshots.peek().isStopped();// also not empty
   }
 
   public static void pause() {
-    assert snapshot != null;
-    snapshot.toggleStartStop(true);
-    assert snapshot.isStopped();// also not null
+    assert !snapshots.isEmpty();
+    snapshots.peek().toggleStartStop(true);
+    assert snapshots.peek().isStopped();// also not empty
   }
 
   public static void resume() {
-    assert snapshot != null;
-    snapshot.toggleStartStop(false);
-    assert !snapshot.isStopped();// also not null
+    assert !snapshots.isEmpty();
+    snapshots.peek().toggleStartStop(false);
+    assert !snapshots.peek().isStopped();// also not empty
   }
 
   public static Snapshot mtoc() {
-    assert snapshot != null;
-    Snapshot res = snapshot.toggleStartStop(true);
-    snapshot = null;
-    assert snapshot == null;
+    assert !snapshots.isEmpty();
+    Snapshot res = snapshots.pop().toggleStartStop(true);
+    assert snapshots.isEmpty();
     assert res.isStopped();
     return res;
   }
@@ -195,6 +196,6 @@ public final class Benchmarker {
    * this leads to different interpretations of time and memory in {@link #snapshot}. 
    */
   public static boolean isStarted() {
-    return snapshot != null;
+    return !snapshots.isEmpty();
   }
 }

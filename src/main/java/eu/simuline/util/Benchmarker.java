@@ -29,7 +29,7 @@ public final class Benchmarker {
    * A snapshot represents a time and an amount of memory. 
    * after creation via {@link #Snapshot()}, 
    * this is the current time and the current memory, 
-   * whereas after invocation of {@link #stop()} it is the time elapsed 
+   * whereas after invocation of {@link #toggleStartStop()} it is the time elapsed 
    * and the memory allocated since creation. 
    * Freed memory is indicated as negative allocated memory. 
    */
@@ -40,33 +40,61 @@ public final class Benchmarker {
      * ------------------------------------------------------------------ */
 
     /**
-     * Immediately after creation, 
-     * this is the start time in nanoseconds (10^{-9} seconds), 
-     * while if stopped, this is the time it ran last, 
-     * i.e. between starting and stopping. 
+     * Indicates whether recording stopped. 
+     * Initially, 
+     * i.e. after invocation of the constructor {@link #Snapshot}, 
+     * this is false. 
+     * This can be toggled via invocation of {@link #toggleStartStop(boolean)} 
+     * with the proper parameter. 
+     * <p>
+     * This value determines the meaning of the values {@link #timeNs} 
+     * and {@link #memBytes}. 
      */
-    private long timeTicNs;
+    private boolean isStopped;
+
+    /**
+     * Immediately after creation, 
+     * this is the current point of time 
+     * in nanoseconds (10^{-9} seconds) as returned by {@link System#nanoTime()}, 
+     * while if stopped, this is the span of time it ran, 
+     * i.e. between starting and stopping. 
+     * <p>
+     * More general, recording can be started and stopped more than once. 
+     * Then if stopped, 
+     * this field contains the accumulated (span of) running time, 
+     * whereas when running it is the (theoretic) starting (point of) time 
+     * so that when stopping 
+     * it again contains the accumulated (span of) running time. 
+     * This is so to speak the start time leading to the correct running time 
+     * if running were without a pause. 
+     */
+    private long timeNs;
 
     /**
      * Immediately after creation, this is the used memory in bytes at start, 
-     * while if stopped, this is the additional memory since started, 
+     * while if stopped, this is the additional memory elapsed since started, 
      * which may also be negative indicating freed memory. 
+     * So in the first case it is memory used at a point in time, 
+     * whereas in the second case 
+     * it is the additional memory elapsed in a span of time. 
      * For proper evaluation, 
-     * before measuring the JVM is asked to run the garbage collector. 
+     * before measuring the memory, the JVM is asked to run the garbage collector. 
+     * <p>
+     * More general, recording can be started and stopped more than once. 
+     * Then if stopped, 
+     * this field contains the accumulated elapsed memory while running, 
+     * whereas when running it is the (theoretic) used memory when started, 
+     * so that when stopping 
+     * it again contains the accumulated memory elapsed. 
      */
     private long memBytes;
-
-    /**
-     * Indicates whether the method {@link stop()} has already been invoked.
-     */
-    private boolean isStopped;
 
     /* ------------------------------------------------------------------ *
      * constructor. *
      * ------------------------------------------------------------------ */
 
     Snapshot() {
-      this.timeTicNs = System.nanoTime();
+      this.timeNs = System.nanoTime();
       this.memBytes = usedMemoryBytes();
       this.isStopped = false;
     }
@@ -75,22 +103,26 @@ public final class Benchmarker {
      * methods. *
      * ------------------------------------------------------------------ */
 
-    protected Snapshot stop() {
-      assert !this.isStopped;
-      this.timeTicNs = System.nanoTime() - this.timeTicNs;
+    protected Snapshot toggleStartStop(boolean doStop) {
+      assert this.isStopped != doStop;
+      this.timeNs = System.nanoTime() - this.timeNs;
       this.memBytes  = usedMemoryBytes() - this.memBytes;
-      this.isStopped = true;
+      this.isStopped = doStop;
       return this;
     }
 
     public double getTimeMs() {
       assert this.isStopped;
-      return this.timeTicNs/1_000_000.;
+      return this.timeNs/1_000_000.;
     }
 
     public double getMemoryMB() {
       assert this.isStopped;
       return this.memBytes/1_000_000.;
+    }
+
+    public boolean isStopped() {
+      return this.isStopped;
     }
 
     public String toString() {
@@ -112,6 +144,7 @@ public final class Benchmarker {
   /* -------------------------------------------------------------------- *
    * constructor. *
    * -------------------------------------------------------------------- */
+
   private Benchmarker() {
     // solely to avoid instantiation 
   }
@@ -128,14 +161,27 @@ public final class Benchmarker {
   public static void mtic() {
     assert snapshot == null;
     snapshot = new Snapshot();
+    assert !snapshot.isStopped();// also not null
+  }
+
+  public static void pause() {
     assert snapshot != null;
+    snapshot.toggleStartStop(true);
+    assert snapshot.isStopped();// also not null
+  }
+
+  public static void resume() {
+    assert snapshot != null;
+    snapshot.toggleStartStop(false);
+    assert !snapshot.isStopped();// also not null
   }
 
   public static Snapshot mtoc() {
     assert snapshot != null;
-    Snapshot res = snapshot.stop();
+    Snapshot res = snapshot.toggleStartStop(true);
     snapshot = null;
     assert snapshot == null;
+    assert res.isStopped();
     return res;
   }
 

@@ -227,7 +227,6 @@ public final class Benchmarker {
    * @see #mtoc
    */
   public static int mtic() {
-    //assert snapshots.isEmpty();
     Snapshot snap;
     if (!snapshots.isEmpty()) {
       snap = snapshots.peek();
@@ -271,12 +270,10 @@ public final class Benchmarker {
   public static Snapshot mtoc() {
     assert !snapshots.isEmpty();
     Snapshot res = snapshots.pop().toggleStartStop(true);
-    //assert snapshots.isEmpty();
     if (!snapshots.isEmpty()) {
       Snapshot snap = snapshots.peek();
       // checks that both snap and res are stopped 
       snap.add(res);
-      //assert snap.isStopped();
       snap.toggleStartStop(false);
       assert !snap.isStopped();
     }

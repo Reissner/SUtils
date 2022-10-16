@@ -160,30 +160,34 @@ public final class Benchmarker {
     return RUNTIME.maxMemory() - RUNTIME.freeMemory();
   }
 
-  public static void mtic() {
+  public static int mtic() {
     assert snapshots.isEmpty();
-    snapshots.push(new Snapshot());
-    assert !snapshots.peek().isStopped();// also not empty
+    Snapshot snap = new Snapshot();
+    snapshots.push(snap);
+    assert !snap.isStopped();// also not empty
+    return snap.hashCode();
   }
 
   public static void pause() {
     assert !snapshots.isEmpty();
-    snapshots.peek().toggleStartStop(true);
-    assert snapshots.peek().isStopped();// also not empty
+    Snapshot snap = snapshots.peek();
+    snap.toggleStartStop(true);
+    assert snap.isStopped();// also not empty
   }
 
   public static void resume() {
     assert !snapshots.isEmpty();
-    snapshots.peek().toggleStartStop(false);
-    assert !snapshots.peek().isStopped();// also not empty
+    Snapshot snap = snapshots.peek();
+    snap.toggleStartStop(false);
+    assert !snap.isStopped();// also not empty
   }
 
   public static Snapshot mtoc() {
     assert !snapshots.isEmpty();
-    Snapshot res = snapshots.pop().toggleStartStop(true);
+    Snapshot snap = snapshots.pop().toggleStartStop(true);
     assert snapshots.isEmpty();
-    assert res.isStopped();
-    return res;
+    assert snap.isStopped();
+    return snap;
   }
 
   /**

@@ -76,7 +76,20 @@ public class BenchmarkerTest {
       assertEquals(hash1,  snap1.hashCode());
       assertTrue(snap1.isStopped());
 
- 
+      // snapshotting 
+      hash1 = Benchmarker.mtic();
+      Thread.sleep(timeMs);
+      snap2 = Benchmarker.snap();
+      assertEquals(1*timeMs, snap2.getTimeMs(), 1.0);
+      Thread.sleep(timeMs);
+      snap2 = Benchmarker.snap();
+      assertEquals(2*timeMs, snap2.getTimeMs(), 1.0);
+      Thread.sleep(timeMs);
+      snap1 = Benchmarker.mtoc();
+      assertEquals(3*timeMs, snap1.getTimeMs(), 1.0);
+      assertEquals(hash1,  snap1.hashCode());
+      assertTrue(snap1.isStopped());
+
 
     } // void testTicToc() 
   } // class TestAll 

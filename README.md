@@ -32,3 +32,9 @@ and by doing the innermost memory measurement outside innermost time measurement
 
 Besides simple `mtic()` and `mtoc()`, the `Benchmarker` also offers `pause()` and `resume()` 
 pausing and resuming both time and memory measurement. 
+
+Note that MATLABs original `tic()` and `toc()` cannot be nested. 
+So two `tic()`s without intermediate `toc()` are equivalent with the second `tic()`, 
+but it is possible to have more than one `toc()` for that `tic()` measuring spans of time from that `tic()` 
+to the following `toc()`s. 
+The surrogat for this is the `snap()`. 

@@ -94,12 +94,19 @@ public final class Benchmarker {
     private long memBytes;
 
     /* ------------------------------------------------------------------ *
-     * constructor. *
+     * constructors. *
      * ------------------------------------------------------------------ */
 
     Snapshot() {
       this.isStopped = true;
       toggleStartStop(false);
+    }
+
+    Snapshot(Snapshot other) {
+      assert other.isStopped();
+      this.isStopped = other.isStopped;
+      this.timeNs    = other.timeNs;
+      this.memBytes  = other.memBytes;
     }
 
     /* ------------------------------------------------------------------ *
@@ -295,6 +302,16 @@ public final class Benchmarker {
     Snapshot snap = snapshots.peek();
     snap.toggleStartStop(false);
     assert !snap.isStopped();// also not empty
+  }
+
+  public static Snapshot snap() {
+    assert !snapshots.isEmpty();
+    Snapshot snap = snapshots.peek();
+    assert !snap.isStopped();
+    snap.toggleStartStop(true);
+    Snapshot res = new Snapshot(snap);
+    snap.toggleStartStop(false);
+    return res;
   }
 
   /**

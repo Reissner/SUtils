@@ -28,12 +28,14 @@ public final class Benchmarker {
    * -------------------------------------------------------------------- */
 
   /**
-   * A snapshot represents a time and an amount of memory. 
-   * after creation via {@link #Snapshot()}, 
-   * this is the current time and the current memory, 
-   * whereas after invocation of {@link #toggleStartStop()} it is the time elapsed 
-   * and the memory allocated since creation. 
-   * Freed memory is indicated as negative allocated memory. 
+   * A snapshot can either be started or stopped. 
+   * If started it represents the point of time and the amount of used memory 
+   * when started. 
+   * If stopped, it represents the span of time elapsed and an amount of memory allocated; 
+   * negative values representing freed memory. 
+   * After creation via {@link #Snapshot()}, it is started, 
+   * but it can switch between states started and stopped 
+   * invoking {@link #toggleStartStop(boolean)}. 
    */
   public static class Snapshot {
 
@@ -329,9 +331,9 @@ public final class Benchmarker {
    * Initially this is <code>0</code>, {@link #mtic} increases this by one, 
    * and, if not 0, {@link #mtoc} decreases by one. 
    * to start the timer. 
-   * If it is set, this allows invoking {@link #mtoc} to stop the timer.
-   * In addition, 
-   * this leads to different interpretations of time and memory in {@link #snapshot}. 
+   * A precondition for invoking {@link #mtoc} is that the return value is positive, 
+   * whereas {@link #mtic} can be invoked if it is zero. 
+   * For more conditions see {@link #isStopped()}
    */
   public static int numNestedMeasurements() {
     return snapshots.size();
@@ -341,7 +343,11 @@ public final class Benchmarker {
    * Returns whether the topmost measurement is stopped. 
    * This may be invoked only if there is a measurement 
    * according to {@link #numNestedMeasurements()}. 
-   * Only if it is not stopped, {@link #mtic()} may be invoked. 
+   * Assumed there is a measurement at all, 
+   * both {@link #mtic()} and {@link #mtoc()} may be invoked 
+   * if and only if the top level measurement is not stopped. 
+   * Note that {@link #mtoc()} returns a stopped snapshot, 
+   * whereas {@link #mtic()} returns the hash of a started snapshot only. 
    * 
    * @return
    *    whether the topmost measurement is stopped. 

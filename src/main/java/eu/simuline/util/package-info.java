@@ -9,7 +9,8 @@
  * | -------------------------- | -------- | ------ | ------------- | ----------- |
  * | {@link AbstractMultiSet}   | -        |  -     | -             |  -          |
  * | {@link ArraysExt}          | ContFrac |        |               |             |
- * | {@link BasicTypesCompatibilityChecker}-      | -   |   -    |  - |  -    | internal
+ * | {@link BasicTypesCompatibilityChecker}- | -    |   -           |  -          | internal
+ * | {@link Benchmarker}        | perf.    | -      |
  * | {@link BitSetList}         | buffer   |        |               |             |
  * | {@link Caster}             |   -      | -      | -             |  -          |internal
  * | {@link CollectionsExt}     | multip   | -      | -             |  -          |
@@ -29,7 +30,7 @@
  * | {@link MultiSet}           | x        | -      |   -           |  -          |
  * | {@link MultiSetIterator}   | x        | -      |   -           |  -          |
  * | {@link NotYetImplementedException} |- |               |             |
- * | {@link PathFinder}         | -        | -     |  -            |  -          |
+ * |         PathFinder         | -        | -     |  -            |  -          |
  * | {@link RealRepresentation} | -        | -     |  -            |  -          |
  * | {@link SoftEnum}           | -        | -     |  -            |  -          |
  * | {@link SortedMultiSet}     | x        | -     |   -           |  -          |

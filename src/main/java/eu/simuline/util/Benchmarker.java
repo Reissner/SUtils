@@ -96,25 +96,51 @@ public final class Benchmarker {
      * ------------------------------------------------------------------ */
 
     Snapshot() {
-      this.timeNs = System.nanoTime();
-      this.memBytes = usedMemoryBytes();
-      this.isStopped = false;
+      this.isStopped = true;
+      toggleStartStop(false);
     }
 
     /* ------------------------------------------------------------------ *
      * methods. *
      * ------------------------------------------------------------------ */
 
+     /**
+      * If this snapshot is started, stop and if stop start. 
+      * The parameter <code>doStop</code> is redundant 
+      * and for consistency check only. 
+      * 
+      * @param doStop
+      * @return
+      *    this snapshot. 
+      */
     protected Snapshot toggleStartStop(boolean doStop) {
       assert this.isStopped != doStop;
-      // The following two lines of code hold whether stopped or not, 
+      // The two lines of code hold whether stopping or starting, 
       // but the meaning depends. 
-      this.timeNs    = System.nanoTime() - this.timeNs;
-      this.memBytes  = usedMemoryBytes() - this.memBytes;
+      // The order is chosen 
+      // to avoid recording the time needed by usedMemoryBytes 
+      // and in particular garbage collection 
+      if (doStop) {
+        // stopping 
+        this.timeNs    = System.nanoTime() - this.timeNs;
+        this.memBytes  = usedMemoryBytes() - this.memBytes;
+      } else {
+        // starting 
+        this.memBytes  = usedMemoryBytes() - this.memBytes;
+        this.timeNs    = System.nanoTime() - this.timeNs;
+      }
       this.isStopped = doStop;
       return this;
     }
 
+    /**
+     * Assuming that both this and <code>snap</code> are stopped, 
+     * i.e. both represent a span of time and memory increase, 
+     * add the time and the memory and store the result in this snapshot. 
+     * 
+     * @param snap
+     *    another stopped snapshot. 
+     */
     protected void add(Snapshot snap) {
       assert snap.isStopped();
       assert this.isStopped();

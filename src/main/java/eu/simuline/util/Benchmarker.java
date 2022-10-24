@@ -121,8 +121,18 @@ public final class Benchmarker {
       * @param doStop
       * @return
       *    this snapshot. 
+      * @throws IllegalStateException
+      *    if trying to resume if already running 
+      *    or if trying to pause if already stopped. 
       */
     protected Snapshot toggleStartStop(boolean doStop) {
+      if (this.isStopped == doStop) {
+        // Exception
+        String msg = doStop
+        ? "Tried to pause already stopped. "
+        : "Tried to resume already running. ";
+        throw new IllegalStateException(msg);
+      }
       assert this.isStopped != doStop;
       // The two lines of code hold whether stopping or starting, 
       // but the meaning depends. 
@@ -149,8 +159,14 @@ public final class Benchmarker {
      * 
      * @param snap
      *    another stopped snapshot. 
+     * @throws IllegalStateException
+     *    If this or <code>snap</code> is not stopped. 
      */
     protected void add(Snapshot snap) {
+      if (!(snap.isStopped() && this.isStopped())) {
+        throw new IllegalStateException
+          ("Trying to add two snapshots which are not both stopped. ");
+      }
       assert snap.isStopped();
       assert this.isStopped();
       this.timeNs   += snap.timeNs;
@@ -271,12 +287,17 @@ public final class Benchmarker {
    *   Note that a snapshot itself can be returned only, 
    *   if stopped and cannot be restarted. 
    *   In this implementation this means it is off the stack. 
+   * @throws IllegalStateException
+   *   If there is an enclosing mtic and this is stopped. 
    * @see #mtoc
    */
   public static int mtic() {
     Snapshot snap;
     if (!snapshots.isEmpty()) {
       snap = snapshots.peek();
+      if (snap.isStopped()) {
+        throw new IllegalStateException("Added tic on stopped tic. ");
+      }
       assert !snap.isStopped();
       snap.toggleStartStop(true);
       assert snap.isStopped();
@@ -289,25 +310,61 @@ public final class Benchmarker {
   }
 
   // no return value: by design: only stopped snapshots are returned. 
+  /**
+   * Pauses the current tic if present and running. 
+   * 
+   * @throws IllegalStateException
+   *   If there is not tic at all or that tic is stopped already. 
+   */
   public static void pause() {
+    if (snapshots.isEmpty()) {
+      throw new IllegalStateException("No tic to pause. ");
+    }
     assert !snapshots.isEmpty();
     Snapshot snap = snapshots.peek();
+    // throws exception if stopped already 
     snap.toggleStartStop(true);
     assert snap.isStopped();// also not empty
   }
 
   // no return value: by design: only stopped snapshots are returned. 
+  /**
+   * Resumes the current tic if present and paused. 
+   * 
+   * @throws IllegalStateException
+   *   If there is not tic at all or that tic is running already. 
+   */
   public static void resume() {
+    if (snapshots.isEmpty()) {
+      throw new IllegalStateException("No tic to resume. ");
+    }
     assert !snapshots.isEmpty();
     Snapshot snap = snapshots.peek();
+    // throws exception if running already 
     snap.toggleStartStop(false);
     assert !snap.isStopped();// also not empty
   }
 
+  /**
+   * Performs an intermediate a time/memory meansurement initiated with {@link #mtic()}
+   * which presupposes that there is a measurement and that it is not stopped. 
+   * @return
+   *   A stopped {@link Snapshot} containing time and memory consumption 
+   *   since the last tic. 
+   *   In contrast to {@link #mtoc()} the snapshot returned 
+   *   is not required to have the hash code returned by the according {@link #mtic()}. 
+   * @throws IllegalStateException
+   *   If there is not tic at all or that tic is stopped. 
+   * @see #mtic()
+   * @see #mtoc()
+   */
   public static Snapshot snap() {
+    if (snapshots.isEmpty()) {
+      throw new IllegalStateException("No tic to snapshot. ");
+    }
     assert !snapshots.isEmpty();
     Snapshot snap = snapshots.peek();
-    assert !snap.isStopped();
+    // throws exception if stopped already 
     snap.toggleStartStop(true);
     Snapshot res = new Snapshot(snap);
     snap.toggleStartStop(false);
@@ -324,13 +381,21 @@ public final class Benchmarker {
    * Finally, returns a snapshot mit time/memory consumption of this measurement. 
    * 
    * @return
-   *   A stopped {@link Snapshot} containing time and memory consumption. 
+   *   A stopped {@link Snapshot} containing time and memory consumption 
+   *   since the last according tic. 
    *   This snapshot cannot be resumed any more, 
    *   so its values are fixed. 
-   * @see #mtic()
+   *   Its hash code is the number returned by the according {@link #mtic()}. 
+   * @throws IllegalStateException
+   *   If there is not tic at all or that tic is stopped. 
+    * @see #mtic()
    */
   public static Snapshot mtoc() {
+    if (snapshots.isEmpty()) {
+      throw new IllegalStateException("No tic to toc. ");
+    }
     assert !snapshots.isEmpty();
+    // throws exception if the according tic is not running 
     Snapshot res = snapshots.pop().toggleStartStop(true);
     if (!snapshots.isEmpty()) {
       Snapshot snap = snapshots.peek();

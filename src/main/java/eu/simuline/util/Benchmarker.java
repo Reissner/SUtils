@@ -179,6 +179,18 @@ public final class Benchmarker {
         es, getTimeMs(), getMemoryMB());
     }
 
+    /**
+     * The hash code does not depend on the content. 
+     * It is immutable in lifetime of a snapshot. 
+     */
+    public final int hashCode() {
+      return super.hashCode();
+    }
+
+    @SuppressWarnings("PMD.UselessOverridingMethod")
+    public final boolean equals(Object obj) {
+      return super.equals(obj);
+    }
   } // class Snapshot 
 
   /* -------------------------------------------------------------------- *
@@ -243,7 +255,7 @@ public final class Benchmarker {
    * before starting the new one. 
    * That way, time consumed by {@link #mtic()} itself 
    * invoking garbage collection which is required for memory measurement 
-   * is not taken into account. TBD: NOT TRUE
+   * is not taken into account. 
    * 
    * @return
    *   The hash code of the current snapshot holding time and memory. 
@@ -267,6 +279,7 @@ public final class Benchmarker {
     return snap.hashCode();
   }
 
+  // no return value: by design: only stopped snapshots are returned. 
   public static void pause() {
     assert !snapshots.isEmpty();
     Snapshot snap = snapshots.peek();
@@ -274,6 +287,7 @@ public final class Benchmarker {
     assert snap.isStopped();// also not empty
   }
 
+  // no return value: by design: only stopped snapshots are returned. 
   public static void resume() {
     assert !snapshots.isEmpty();
     Snapshot snap = snapshots.peek();
@@ -292,6 +306,9 @@ public final class Benchmarker {
    * 
    * @return
    *   A stopped {@link Snapshot} containing time and memory consumption. 
+   *   This snapshot cannot be resumed any more, 
+   *   so its values are fixed. 
+   * @see #mtic()
    */
   public static Snapshot mtoc() {
     assert !snapshots.isEmpty();

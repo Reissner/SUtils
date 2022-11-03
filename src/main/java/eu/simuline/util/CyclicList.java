@@ -199,7 +199,7 @@ public interface CyclicList<E> extends Collection<E> {
      *    is not a supertype of the runtime type 
      *    of every element in this list. 
      */
-    <E> E[] toArray(int index, E[] array);
+    <T> T[] toArray(int index, T[] array);
 
     /**
      * Returns a List containing all of the elements in this cyclic list 

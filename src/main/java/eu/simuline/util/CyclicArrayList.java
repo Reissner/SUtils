@@ -970,7 +970,7 @@ public final class CyclicArrayList<E>
 	return toArray(0);
     }
 
-    public <E> E[] toArray(E[] ret) {
+    public <T> T[] toArray(T[] ret) {
 	return toArray(0, ret);
     }
 
@@ -1016,8 +1016,8 @@ public final class CyclicArrayList<E>
      *    is not a supertype of the runtime type 
      *    of every element in this list. 
      */
-    public <E> E[] toArray(int index, E[] ret) {
-	return cycle(index).list.toArray(ret);
+    public <T> T[] toArray(int index, T[] ret) {
+			return cycle(index).list.toArray(ret);
     }
 
     public List<E> asList(int index) {
@@ -1186,7 +1186,7 @@ public final class CyclicArrayList<E>
     public int hashCodeCyclic() {
 	int hashCode = 0;
 	for (E element : this.list) {
-	    hashCode += (element == null ? 0 : element.hashCode());
+	    hashCode += element == null ? 0 : element.hashCode();
 	}
 	return hashCode;
     }

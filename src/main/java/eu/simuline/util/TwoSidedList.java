@@ -748,7 +748,7 @@ public final class TwoSidedList<E> implements List<E> {
      *    an <code>Object[]</code> value
      */
     // api-docs provided by javadoc. 
-    public <E> E[] toArray(final E[] objArr) {
+    public <T> T[] toArray(final T[] objArr) {
 	return this.list.toArray(objArr);
     }
 

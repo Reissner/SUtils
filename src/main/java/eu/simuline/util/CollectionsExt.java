@@ -1119,13 +1119,13 @@ public abstract class CollectionsExt<E> {
 	public Object[] toArray(int index) {
 	    throw new NotYetImplementedException();
 	}
-	public <E> E[] toArray(int index, E[] array) {
+	public <T> T[] toArray(int index, T[] array) {
 	    throw new NotYetImplementedException();
 	}
 	public Object[] toArray() {
 	    throw new NotYetImplementedException();
 	}
-	public <E> E[] toArray(E[] ret) {
+	public <T> T[] toArray(T[] ret) {
 	    throw new NotYetImplementedException();
 	}
 	public List<E> asList(int index) {

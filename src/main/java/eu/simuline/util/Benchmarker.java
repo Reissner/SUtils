@@ -3,23 +3,88 @@ package eu.simuline.util;
 import java.util.Stack;
 
 /**
- * Provides methods for benchmarking. 
- * It is inspired by according matlab functions tic and toc 
- * but besides cpu benchmarking (at the moment wall-time) 
- * also provides memory benchmarking. 
+ * Provides methods for benchmarking 
+ * inspired by according MATLAB functions <code>tic</code> and <code>toc</code> 
+ * which are also available with octave 
+ * and which are described in  https://www.mathworks.com/help/matlab/ref/tic.html 
+ * and in https://octave.sourceforge.io/octave/function/tic.html. 
  * <p>
- * To be close to matlab and a bit to octave see 
- * https://www.mathworks.com/help/matlab/ref/tic.html. 
- * This implementes a kind of stacked time spans, 
- * whereas https://octave.sourceforge.io/octave/function/tic.html works with IDs. 
- * While the first variant seems more intuitive, the second one is more general. 
- * It is possible to implement both at once. 
- * We start with the first one. 
+ * Whereas the original implementation from MATLAB and octave offer cpu benchmarking only, 
+ * this implementation also provides memory benchmarking. 
+ * To distinguish, 
+ * the according (static) methods are called {@link #mtic()} and {@link #mtoc()}, 
+ * with <code>m</code> standing for 'memory'. 
+ * Note that in general in java used memory cannot be measured exactly, 
+ * because there is no way to force a full garbage collection. 
+ * So the quality of the measurements depends on the implementation of the virtual machine. 
+ * <p>
+ * As with the original benchmarking, measurement is started with {@link #mtic()} 
+ * which determines the current point of time and memory consumption, 
+ * and it is ended with {@link #mtoc()} 
+ * measuring the span of time passed between {@link #mtic()} and {@link #mtoc()} 
+ * and the difference in used memory. 
+ * Unlike the time passed, memory difference may well be negative indicating freed memory. 
+ * Unlike the original <code>tic</code> and <code>toc</code> mechanism, 
+ * this class also provides a way to {@link #pause()} and to {@link #resume()} a measurement 
+ * and it is pretty clear what this means. 
+ * <p>
+ * MATLABs <code>tic</code> and <code>toc</code> measurements may also overlap 
+ * using the identifier returned by <code>tic</code> and consumed by <code>toc</code>. 
+ * As benchmarking follows program structures which consist of nested function invocations 
+ * and also nested structures in function bodies, 
+ * in fact no general overlapping measurements are required 
+ * but only nested measurements. 
+ * A new measurement is always added as the innermost of the nested measurements 
+ * if there are any ongoing measurements. 
+ * An ongoing measurement may be paused or running. 
+ * <p>
+ * A measurement is represented as a {@link Snapshot}. 
+ * The containment hierarchy is implemented as a stack {@link #snapshots} of snapshots, 
+ * where {@link #mtic()} adds a new snapshot to the stack 
+ * and {@link #mtoc()} stops a measurement, pops it from the stack and returns it. 
+ * In contrast, {@link #mtic()} returns only the (immutual) hashcode of the snapshot as an identifier 
+ * to identify corresponding invocations of {@link #mtic()} and {@link #mtoc()}. 
+ * Only stopped measurements which cannot be resumed are handed over to the user. 
+ * Thus {@link #pause()} and {@link #resume()} have no return values. 
+ * Only snapshots on the stack can be paused or resumed, 
+ * whereas {@link #mtoc()} is a final stop. 
+ * <p>
+ * Whereas neither of the above methods require a lot of memory, 
+ * all of them are time consuming and above all, it is because of their memory measurement. 
+ * To avoid influence on time measurement requires specific considerations. 
+ * Methods starting or resuming a measurement, measure memory before time and 
+ * methods pausing or ending a measurement measure time before memory. 
+ * This ensures influence on the current time measurement. 
+ * For enclosing measurements this is done by the constraint that 
+ * (if there is an enclosing measurement at all) on the stack all measurements are paused, 
+ * except possibly the last one. 
+ * A new measurement can be started via {@link #mtic()} only, 
+ * if there is no enclosing measurement or if the innermost enclosing is running. 
+ * Then it is paused before adding the new running measurement. 
+ * Conversely {@link #mtoc()} assumes that there is a current measurement, 
+ * and that it is running, whereas enclosing measurements, if any, are paused. 
+ * Then {@link #mtoc()} stops the current measurement, returns the according snapshot 
+ * and resumes the enclosing measurement, if any. 
+ * That way, all methods have to pause/resume no more than 2 measurements 
+ * limiting influence of this benchmarker on the time measurement. 
+ * Note that effectively {@link #pause()} pauses all ongoing measurements not only the innermost one, 
+ * and accordingly {@link #resume()} resumes all of them. 
+ * <p>
+ * The original tic/toc mechanism provided by MATLAB allows to start more than one measurement at one time: 
+ * just a single <code>tic</code> can be the startpoint of various measurements with <code>toc</code>. 
+ * Essentially, we had to invoke {@link #mtic()} more than once 
+ * which leads to a minor overhead which may still be confusing. 
+ * To overcome this, a method {@link #mtic(int)} allowing to start multiple measurements is provided. 
+ * Accordingly, {@link #mtoc(int)} completes multiple measurements. 
+ * MATLAB does not provide a counterpart for that. 
+ * Note that in a degenerate case, one may start and stop several measurements simultaneously, 
+ * so that they cover the same span of time. 
+ * Still they are nested in a predefined order given by the ordering the according snapshots are stored on the stack. 
  * <p>
  * Planned are improvements providing cpu-time and that like. 
  * Useful links are e.g. https://stackoverflow.com/questions/7467245/cpu-execution-time-in-java 
  * and https://github.com/openjdk/jmh. 
- * 
+ * See also https://www.baeldung.com/java-microbenchmark-harness
  */
 public final class Benchmarker {
 

@@ -2,6 +2,7 @@ package eu.simuline.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -32,6 +33,10 @@ public class BenchmarkerTest {
 
   public static class TestAll {
 
+    @Before public void setUp() {
+	    Benchmarker.reset();
+	  }
+
     @Test 
     public void testTicToc() throws InterruptedException {
       int timeDelta = 4;
@@ -41,15 +46,19 @@ public class BenchmarkerTest {
       int hash1, hash2;
       Benchmarker.Snapshot snap1, snap2;
 
-      // single tic-toc pair. 
+      // single tic-toc pair: time. 
       hash1 = Benchmarker.mtic();
       Thread.sleep(timeMs);
       snap1 = Benchmarker.mtoc();
-      assertEquals("", timeMs, snap1.getTimeMs(), timeDelta);
-      assertEquals("", mem0,   snap1.getMemoryMB(), memDelta);
-      assertEquals("", hash1,  snap1.hashCode());
-      assertTrue("", snap1.isStopped());
-      assertEquals("", 0, Benchmarker.numNestedMeasurements());
+      assertEquals("time elapsed out of range. ",
+        timeMs, snap1.getTimeMs(), timeDelta);
+      assertEquals("memory elapsed out of range. ",
+        mem0,   snap1.getMemoryMB(), memDelta);
+      assertEquals("wrong hash. ",
+        hash1,  snap1.hashCode());
+      assertTrue("toc not stopped. ", snap1.isStopped());
+      assertEquals("Incomplete measurements. ",
+        0, Benchmarker.numNestedMeasurements());
 
 
       // nested tic-toc pairs
@@ -61,15 +70,22 @@ public class BenchmarkerTest {
       Thread.sleep(timeMs);
       snap1 = Benchmarker.mtoc();
 
-      assertEquals("", 3*timeMs, snap1.getTimeMs(), timeDelta);
-      assertEquals("",   timeMs, snap2.getTimeMs(), timeDelta);
-      assertEquals("", mem0,     snap1.getMemoryMB(), memDelta);
-      assertEquals("", mem0,     snap2.getMemoryMB(), memDelta);
-      assertEquals("", hash1,  snap1.hashCode());
-      assertEquals("", hash2,  snap2.hashCode());
-      assertTrue("", snap1.isStopped());
-      assertTrue("", snap1.isStopped());
-      assertEquals("", 0, Benchmarker.numNestedMeasurements());
+      assertEquals("time elapsed out of range. ",
+        3*timeMs, snap1.getTimeMs(), timeDelta);
+      assertEquals("time elapsed out of range. ",
+        1*timeMs, snap2.getTimeMs(), timeDelta);
+      assertEquals("memory elapsed out of range. ",
+        mem0,     snap1.getMemoryMB(), memDelta);
+      assertEquals("memory elapsed out of range. ",
+        mem0,     snap2.getMemoryMB(), memDelta);
+      assertEquals("wrong hash. ",
+        hash1,  snap1.hashCode());
+      assertEquals("wrong hash. ",
+        hash2,  snap2.hashCode());
+      assertTrue("toc not stopped. ", snap1.isStopped());
+      assertTrue("toc not stopped. ", snap1.isStopped());
+      assertEquals("Incomplete measurements. ",
+        0, Benchmarker.numNestedMeasurements());
 
 
       // pause and resume
@@ -80,30 +96,38 @@ public class BenchmarkerTest {
       Benchmarker.resume();
       Thread.sleep(timeMs);
       snap1 = Benchmarker.mtoc();
-      assertEquals("", 2*timeMs, snap1.getTimeMs(), timeDelta);
-      assertEquals("", mem0,   snap1.getMemoryMB(), memDelta);
-      assertEquals("", hash1,  snap1.hashCode());
-      assertTrue("", snap1.isStopped());
+      assertEquals("time elapsed out of range. ",
+        2*timeMs, snap1.getTimeMs(), timeDelta);
+      assertEquals("memory elapsed out of range. ",
+        mem0,   snap1.getMemoryMB(), memDelta);
+      assertEquals("wrong hash. ",
+        hash1,  snap1.hashCode());
+      assertTrue("toc not stopped. ", snap1.isStopped());
 
       // snapshotting 
       hash1 = Benchmarker.mtic();
       Thread.sleep(timeMs);
       snap2 = Benchmarker.snap();
-      assertEquals("", 1*timeMs, snap2.getTimeMs(), timeDelta);
+      assertEquals("time elapsed out of range. ",
+        1*timeMs, snap2.getTimeMs(), timeDelta);
       Thread.sleep(timeMs);
       snap2 = Benchmarker.snap();
-      assertEquals("", 2*timeMs, snap2.getTimeMs(), timeDelta);
+      assertEquals("time elapsed out of range. ",
+        2*timeMs, snap2.getTimeMs(), timeDelta);
       Thread.sleep(timeMs);
       snap1 = Benchmarker.mtoc();
-      assertEquals("", 3*timeMs, snap1.getTimeMs(), timeDelta);
-      assertEquals("", hash1,  snap1.hashCode());
-      assertTrue("", snap1.isStopped());
+      assertEquals("time elapsed out of range. ",
+        3*timeMs, snap1.getTimeMs(), timeDelta);
+      assertEquals("wrong hash. ",
+        hash1,  snap1.hashCode());
+      assertTrue("toc not stopped. ", snap1.isStopped());
 
       // test reset/numNestedMeasurements
       Benchmarker.mtic();
       Benchmarker.mtic();
       Benchmarker.reset();
-      assertEquals("", 0, Benchmarker.numNestedMeasurements());
+      assertEquals("Incomplete measurements. ",
+        0, Benchmarker.numNestedMeasurements());
 
     } // testTicToc()
 
@@ -118,7 +142,8 @@ public class BenchmarkerTest {
         assertTrue("IllegalStateException expected. ", false);// NOPMD
         return;
       } catch(IllegalStateException e) {
-        assertEquals("", "No tic to toc. ", e.getMessage());
+        assertEquals("Wrong exception message. ",
+          "No tic to toc. ", e.getMessage());
       }
 
       // test exceptions of mtic() 
@@ -129,7 +154,8 @@ public class BenchmarkerTest {
         Benchmarker.mtic();
         assertTrue("IllegalStateException expected. ", false);// NOPMD
       } catch(IllegalStateException e) {
-        assertEquals("", "Added tic on stopped tic. ", e.getMessage());
+        assertEquals("Wrong exception message. ",
+          "Added tic on stopped tic. ", e.getMessage());
       }
 
 
@@ -140,7 +166,8 @@ public class BenchmarkerTest {
         assertTrue("IllegalStateException expected. ", false);// NOPMD
         return;
       } catch(IllegalStateException e) {
-        assertEquals("", "No tic to pause. ", e.getMessage());
+        assertEquals("Wrong exception message. ",
+          "No tic to pause. ", e.getMessage());
       }
 
       Benchmarker.reset();
@@ -150,7 +177,8 @@ public class BenchmarkerTest {
         Benchmarker.pause();
         assertTrue("IllegalStateException expected. ", false);// NOPMD
       } catch(IllegalStateException e) {
-        assertEquals("", "Tried to pause already stopped. ", e.getMessage());
+        assertEquals("Wrong exception message. ",
+          "Tried to pause already stopped. ", e.getMessage());
       }
 
       // test exceptions of resume() 
@@ -159,7 +187,8 @@ public class BenchmarkerTest {
         Benchmarker.resume();
         assertTrue("IllegalStateException expected. ", false);// NOPMD
       } catch(IllegalStateException e) {
-        assertEquals("", "No tic to resume. ", e.getMessage());
+        assertEquals("Wrong exception message. ",
+          "No tic to resume. ", e.getMessage());
       }
 
       Benchmarker.reset();
@@ -169,7 +198,8 @@ public class BenchmarkerTest {
         Benchmarker.resume();
         assertTrue("IllegalStateException expected. ", false);// NOPMD
       } catch(IllegalStateException e) {
-        assertEquals("", "Tried to resume already running. ", e.getMessage());
+        assertEquals("Wrong exception message. ",
+          "Tried to resume already running. ", e.getMessage());
       }
 
 
@@ -179,7 +209,8 @@ public class BenchmarkerTest {
         Benchmarker.snap();
         assertTrue("IllegalStateException expected. ", false);// NOPMD
       } catch(IllegalStateException e) {
-        assertEquals("", "No tic to snapshot. ", e.getMessage());
+        assertEquals("Wrong exception message. ",
+          "No tic to snapshot. ", e.getMessage());
       }
 
       Benchmarker.reset();
@@ -189,7 +220,8 @@ public class BenchmarkerTest {
         Benchmarker.snap();
         assertTrue("IllegalStateException expected. ", false);// NOPMD
       } catch(IllegalStateException e) {
-        assertEquals("", "Tried to pause already stopped. ", e.getMessage());
+        assertEquals("Wrong exception message. ",
+          "Tried to pause already stopped. ", e.getMessage());
       }
     } // void testTicTocExceptions() 
 
@@ -214,23 +246,27 @@ public class BenchmarkerTest {
       Thread.sleep(timeMs);
       snaps1 = Benchmarker.mtoc(numTocs);
 
-      assertEquals("", numTics, hashs1.length);
-      assertEquals("", numTocs, snaps1.length);
+      assertEquals("Wrong number of hashs. ", numTics, hashs1.length);
+      assertEquals("Wrong number of snaps. ", numTocs, snaps1.length);
       for (int idx = 0; idx < numTocs; idx++) {
         snap1 = snaps1[idx];
-        System.out.println("time: "+idx+" "+snap1.getTimeMs());
-        System.out.println("mem: "+idx+" "+snap1.getMemoryMB());
-        assertEquals("", timeMs,    snap1.getTimeMs(), timeDelta);
-        assertEquals("", mem0,      snap1.getMemoryMB(), memDelta);
-        assertEquals("", hashs1[idx], snap1.hashCode());
-        assertTrue("", snap1.isStopped());
+        assertEquals("time elapsed out of range. ",
+          timeMs,    snap1.getTimeMs(), timeDelta);
+        assertEquals("memory elapsed out of range. ",
+          mem0,      snap1.getMemoryMB(), memDelta);
+        assertEquals("wrong hash. ",
+          hashs1[idx], snap1.hashCode());
+        assertTrue("toc not stopped. ", snap1.isStopped());
       }
       snap1 = snaps1[numTocs-1];
       for (int idx = 0; idx < numTocs-1; idx++) {
-        assertEquals("", snap1.getTimeMs(),    snaps1[idx].getTimeMs(), 0);
-        assertEquals("", snap1.getMemoryMB(),  snaps1[idx].getMemoryMB(), 0);
+        assertEquals("time elapsed not the same. ",
+          snap1.getTimeMs(),    snaps1[idx].getTimeMs(), 0);
+        assertEquals("memory elapsed not the same. ", snap1.getMemoryMB(),
+          snaps1[idx].getMemoryMB(), 0);
       }
-      assertEquals("", 0, Benchmarker.numNestedMeasurements());
+      assertEquals("Incomplete measurements. ", 
+        0, Benchmarker.numNestedMeasurements());
 
       // single tic, split toc 
       hashs1 = Benchmarker.mtic(4);
@@ -241,28 +277,41 @@ public class BenchmarkerTest {
       Thread.sleep(timeMs);
       snap2 = Benchmarker.mtoc();
 
-      assertEquals("", 4, hashs1.length);
-      assertEquals("", 2, snaps1.length);
-      assertEquals("", timeMs,    snap1.getTimeMs(), timeDelta);
-      assertEquals("", mem0,      snap1.getMemoryMB(), memDelta);
-      assertEquals("", hashs1[3], snap1.hashCode());
-      assertTrue("", snap1.isStopped());
+      assertEquals("Wrong number of hashs. ", 4, hashs1.length);
+      assertEquals("Wrong number of snaps. ", 2, snaps1.length);
+      assertEquals("time elapsed out of range. ",
+        timeMs,    snap1.getTimeMs(), timeDelta);
+      assertEquals("time elapsed out of range. ",
+        mem0,      snap1.getMemoryMB(), memDelta);
+      assertEquals("wrong hash. ",
+        hashs1[3], snap1.hashCode());
+      assertTrue("toc not stopped. ", snap1.isStopped());
 
-      assertEquals("", 2*timeMs,  snaps1[1].getTimeMs(), timeDelta);
-      assertEquals("", mem0,      snaps1[1].getMemoryMB(), memDelta);
-      assertEquals("", hashs1[2], snaps1[1].hashCode());
-      assertTrue("", snaps1[1].isStopped());
-      assertEquals("", 2*timeMs,  snaps1[0].getTimeMs(), timeDelta);
-      assertEquals("", mem0,      snaps1[0].getMemoryMB(), memDelta);
-      assertEquals("", hashs1[1], snaps1[0].hashCode());
-      assertTrue("", snaps1[0].isStopped());
+      assertEquals("time elapsed out of range. ",
+        2*timeMs,  snaps1[1].getTimeMs(), timeDelta);
+      assertEquals("memory elapsed out of range. ",
+        mem0,      snaps1[1].getMemoryMB(), memDelta);
+      assertEquals("wrong hash. ",
+        hashs1[2], snaps1[1].hashCode());
+      assertTrue("toc not stopped. ", snaps1[1].isStopped());
+      assertEquals("time elapsed out of range. ",
+        2*timeMs,  snaps1[0].getTimeMs(), timeDelta);
+      assertEquals("memory elapsed out of range. ",
+        mem0,      snaps1[0].getMemoryMB(), memDelta);
+      assertEquals("wrong hash. ",
+        hashs1[1], snaps1[0].hashCode());
+      assertTrue("toc not stopped. ", snaps1[0].isStopped());
 
-      assertEquals("", 3*timeMs,  snap2.getTimeMs(), timeDelta);
-      assertEquals("", mem0,      snap2.getMemoryMB(), memDelta);
-      assertEquals("", hashs1[0], snap2.hashCode());
-      assertTrue("", snaps1[1].isStopped());
+      assertEquals("time elapsed out of range. ",
+        3*timeMs,  snap2.getTimeMs(), timeDelta);
+      assertEquals("memory elapsed out of range. ",
+        mem0,      snap2.getMemoryMB(), memDelta);
+      assertEquals("wrong hash. ",
+        hashs1[0], snap2.hashCode());
+      assertTrue("toc not stopped. ", snaps1[1].isStopped());
 
-      assertEquals("", 0, Benchmarker.numNestedMeasurements());
+      assertEquals("Incomplete measurements. ",
+        0, Benchmarker.numNestedMeasurements());
 
 
       // split tic, single toc 
@@ -274,30 +323,43 @@ public class BenchmarkerTest {
       Thread.sleep(timeMs);
       snaps1 = Benchmarker.mtoc(4);
 
-      assertEquals("", 2, hashs1.length);
-      assertEquals("", 4, snaps1.length);
+      assertEquals("Wrong number of hashs. ", 2, hashs1.length);
+      assertEquals("Wrong number of snaps. ", 4, snaps1.length);
 
-      assertEquals("", 1*timeMs, snaps1[3].getTimeMs(), timeDelta);
-      assertEquals("", mem0,     snaps1[3].getMemoryMB(), memDelta);
-      assertEquals("", hash2,    snaps1[3].hashCode());
-      assertTrue("", snaps1[3].isStopped());
+      assertEquals("time elapsed out of range. ",
+        1*timeMs, snaps1[3].getTimeMs(), timeDelta);
+      assertEquals("memory elapsed out of range. ",
+        mem0,     snaps1[3].getMemoryMB(), memDelta);
+      assertEquals("wrong hash. ",
+        hash2,    snaps1[3].hashCode());
+      assertTrue("toc not stopped. ", snaps1[3].isStopped());
 
-      assertEquals("", 2*timeMs,  snaps1[2].getTimeMs(), timeDelta);
-      assertEquals("", mem0,      snaps1[2].getMemoryMB(), memDelta);
-      assertEquals("", hashs1[1], snaps1[2].hashCode());
-      assertTrue("", snaps1[2].isStopped());
+      assertEquals("time elapsed out of range. ",
+        2*timeMs,  snaps1[2].getTimeMs(), timeDelta);
+      assertEquals("memory elapsed out of range. ",
+        mem0,      snaps1[2].getMemoryMB(), memDelta);
+      assertEquals("wrong hash. ",
+        hashs1[1], snaps1[2].hashCode());
+      assertTrue("toc not stopped. ", snaps1[2].isStopped());
 
-      assertEquals("", 2*timeMs,  snaps1[1].getTimeMs(), timeDelta);
-      assertEquals("", mem0,      snaps1[1].getMemoryMB(), memDelta);
-      assertEquals("", hashs1[0], snaps1[1].hashCode());
-      assertTrue("", snaps1[1].isStopped());
+      assertEquals("time elapsed out of range. ",
+        2*timeMs,  snaps1[1].getTimeMs(), timeDelta);
+      assertEquals("memory elapsed out of range. ",
+        mem0,      snaps1[1].getMemoryMB(), memDelta);
+      assertEquals("wrong hash. ",
+        hashs1[0], snaps1[1].hashCode());
+      assertTrue("toc not stopped. ", snaps1[1].isStopped());
 
-      assertEquals("", 3*timeMs, snaps1[0].getTimeMs(), timeDelta);
-      assertEquals("", mem0,     snaps1[0].getMemoryMB(), memDelta);
-      assertEquals("", hash1,    snaps1[0].hashCode());
-      assertTrue("", snaps1[0].isStopped());
+      assertEquals("time elapsed out of range. ",
+        3*timeMs, snaps1[0].getTimeMs(), timeDelta);
+      assertEquals("memory elapsed out of range. ",
+        mem0,     snaps1[0].getMemoryMB(), memDelta);
+      assertEquals("wrong hash. ",
+        hash1,    snaps1[0].hashCode());
+      assertTrue("toc not stopped. ", snaps1[0].isStopped());
 
-      assertEquals("", 0, Benchmarker.numNestedMeasurements());
+      assertEquals("Incomplete measurements. ",
+        0, Benchmarker.numNestedMeasurements());
 
    } // testTicTocMult() 
 

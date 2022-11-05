@@ -162,11 +162,20 @@ public final class Benchmarker {
      * constructors. *
      * ------------------------------------------------------------------ */
 
-    Snapshot() {
+     /**
+      * Constructor to create a new snapshot which is started if specified so. 
+      *
+      * @param doStart
+      *    whether the snapshot to be created is started or not. 
+      */
+    Snapshot(boolean doStart) {
       this.isStopped = true;
-      toggleStartStop(false);
+      if (doStart) {
+        toggleStartStop(false);
+      }
     }
 
+    // TBD: maybe this shall be eliminated: if Benchmarker.snap is eliminated. 
     Snapshot(Snapshot other) {
       assert other.isStopped();
       this.isStopped = other.isStopped;
@@ -293,19 +302,26 @@ public final class Benchmarker {
   private static final Runtime RUNTIME = Runtime.getRuntime();
 
   /**
-   * A stack of enclosing measurements which is empty at least initially. 
-   * All but the last measurements must be paused 
+   * A stack of measurements, one enclosing the next, which is empty at least initially. 
+   * Here, enclosing refers to the span of time of ongoing measurement including pauses. 
+   * All but the last (innermost) measurements must be paused 
    * and the last measurement may be paused or not. 
    * <ul>
-   * <li>{@link #mtic()} pauses the top entry and adds a new running one. 
-   * <li>{@link #pause()} pauses the top entry. 
-   * <li>{@link #resume()} resumes the top entry. 
-   * <li>{@link #mtoc()} stops the top entry, removes it from the stack 
-   * and returns it. 
-   * As a side effect, 
-   * it adds time and memory consumption to the new top level 
-   * and restarts it. 
-  * </ul>
+   * <li>{@link #mtic()} pauses the top entry if any and adds a new running one. 
+   * <li>{@link #mtic(int)} pauses the top entry if any and adds new ones, 
+   *     all paused but the innermost which is running. 
+   * <li>{@link #pause()} pauses the top entry if any and if running. 
+   * <li>{@link #resume()} resumes the top entry if any and if paused. 
+   * <li>{@link #mtoc()} stops the top entry, removes it from the stack and returns it. 
+   *     As a side effect, 
+   *     it adds time and memory consumption to the new top level if any 
+   *     and restarts it. 
+   * <li>{@link #mtoc(int)} stops the top entry, removes it from the stack and 
+   *     adds time and memory consumption to the new top level. 
+   *     Does so the given number of times. 
+   *     Then restarts the remaining top level if any. 
+   *     Finally returns the snapshots removed from the stack in order from outer to inner. 
+   * </ul>
    */
   private static final Stack<Snapshot> snapshots = new Stack<Snapshot>();
 
@@ -335,26 +351,34 @@ public final class Benchmarker {
   }
 
   /**
-   * Starts a new time/memory measurement, 
-   * which is allowed only if there is no enclosing measurement at all 
-   * or if the enclosing measurement is not paused. 
-   * Equivalently: no enclosing measurements is paused. 
-   * This holds in particular if there is no enclosing measurement. 
+   * Starts a new time/memory measurement represented by a {@link Snapshot} 
+   * and returns its hashcode. 
+   * This is allowed only if there is no enclosing measurement at all 
+   * or if the (innermost) enclosing measurement is running. 
    * <p>
-   * As a side effect, pauses the enclosing measurement 
+   * As a side effect, pauses the innermost enclosing measurement 
    * before starting the new one. 
    * That way, time consumed by {@link #mtic()} itself 
    * invoking garbage collection which is required for memory measurement 
    * is not taken into account. 
+   * <p>
+   * Initially, the innermost enclosing measurement 
+   * is represented by the top {@link Snapshot} on the stack {@link #snapshots}, 
+   * finally, the new measurement is pushed on top of the stack as a new snapshot. 
    * 
    * @return
    *   The hash code of the current snapshot holding time and memory. 
-   *   Note that a snapshot itself can be returned only, 
+   *   Note that the hash code reflects the identity 
+   *   and does not change if a snapshot is started or stopped or else changed. 
+   *   Also note that a snapshot itself can be returned only, 
    *   if stopped and cannot be restarted. 
    *   In this implementation this means it is off the stack. 
+   *   Thus what is returned is the hash code only rather than the Snapshot itself. 
+   *   The hashcode returned belongs to the topmost snapshot on the stack. 
    * @throws IllegalStateException
    *   If there is an enclosing mtic and this is stopped. 
-   * @see #mtoc
+   * @see #mtoc()
+   * @see #mtic(int)
    */
   public static int mtic() {
     Snapshot snap;
@@ -363,15 +387,82 @@ public final class Benchmarker {
       if (snap.isStopped()) {
         throw new IllegalStateException("Added tic on stopped tic. ");
       }
-      assert !snap.isStopped();
+      //assert !snap.isStopped();
       snap.toggleStartStop(true);
       assert snap.isStopped();
     }
-    // Note here, 
-    snap = new Snapshot();
-    snapshots.push(snap);
+    // Note here, all enclosing snapshots are paused 
+    snap = new Snapshot(true);
     assert !snap.isStopped();// also not empty
+    snapshots.push(snap);
     return snap.hashCode();
+  }
+
+  /**
+   * Defines the start of <code>numTics</code> new time/memory measurements at the same time 
+   * each represented as a {@link Snapshot} and return their hashcodes. 
+   * This is allowed only if there is no enclosing measurement at all 
+   * or if the (innermost) enclosing measurement is running. 
+   * <p>
+   * As a side effect, pauses the innermost enclosing measurement before adding the new ones. 
+   * Keep all but the innermost new measurements paused also 
+   * only the innermost start as running. 
+   * This sets all new measurements to the same start time and start memory. 
+   * That way, impact of running this method on the time measurement is minimized. 
+   * 
+   * @param numTics
+   *   A positive number signifying the number of measurements defined and in parallel. 
+   * @return
+   *   The <code>numTics</code> hash codes of the snapshots defining the new masurements. 
+   *   Note that the hash code reflects the identity 
+   *   and does not change if a snapshot is started or stopped or else changed. 
+   *   Also note that a snapshot itself can be returned only, 
+   *   if stopped and cannot be restarted. 
+   *   In this implementation this means it is off the stack. 
+   *   Thus what is returned are the hash codes only rather than the Snapshots themselves. 
+   *   The ordering of the hash codes 
+   *   reflects the ordering of the Snapshots on the stack {@link #snapshots}, 
+   *   where the last hash code belongs to the topmost Snapshot 
+   *   which is the only one which is started. 
+   * @throws IllegalArgumentException
+   *   if <code>numTics</code> is not positive. 
+   * @throws IllegalStateException
+   *   If there is an enclosing mtic and this is stopped. 
+   * @see #mtoc(int)
+   * @see #mtic()
+   */
+  public static int[] mtic(int numTics) {
+    if (numTics <= 0) {
+      throw new IllegalArgumentException
+       ("Expected a positive number of tics but found " + numTics + ". ");
+    }
+    assert numTics > 0;
+    Snapshot snap;
+    if (!snapshots.isEmpty()) {
+      snap = snapshots.peek();
+      if (snap.isStopped()) {
+        throw new IllegalStateException("Added tic on stopped tic. ");
+      }
+      //assert !snap.isStopped();
+      snap.toggleStartStop(true);
+      assert snap.isStopped();
+    }
+    int[] hashCodes = new int[numTics];
+    for (int i = 0; i < numTics-1; i++) {
+      snap = new Snapshot(false);
+      assert snap.isStopped();
+      snapshots.push(snap);
+      hashCodes[i] = snap.hashCode();
+    }
+    snap = new Snapshot(true);
+    assert !snap.isStopped();// also not empty
+    snapshots.push(snap);
+    hashCodes[numTics-1] = snap.hashCode();
+    return hashCodes;
+  }
+
+  public static int mtic2() {
+    return mtic(1)[0];
   }
 
   // no return value: by design: only stopped snapshots are returned. 
@@ -410,6 +501,7 @@ public final class Benchmarker {
     assert !snap.isStopped();// also not empty
   }
 
+  // TBD: maybe this shall be eliminated. 
   /**
    * Performs an intermediate a time/memory meansurement initiated with {@link #mtic()}
    * which presupposes that there is a measurement and that it is not stopped. 
@@ -437,23 +529,26 @@ public final class Benchmarker {
   }
 
   /**
-   * Ends a time/memory meansurement initiated with {@link #mtic()}
-   * which presupposes that there is a measurement and that it is not stopped. 
+   * Ends a time/memory measurement 
+   * initiated with {@link #mtic()} or with {@link #mtic(int)}
+   * which presupposes that there is a current measurement and that it is not paused. 
+   * First that measurement is stopped and removed from the stack. 
    * If there is an enclosing measurement, 
-   * it was paused and so time and memory consumption is added to it 
+   * it is already paused and so time and memory consumption is added to it 
    * and then it is restarted, 
    * because it can be assumed that it was running when starting this meansurement. 
    * Finally, returns a snapshot mit time/memory consumption of this measurement. 
    * 
    * @return
-   *   A stopped {@link Snapshot} containing time and memory consumption 
+   *   The snapshot of the current measurement containing time and memory consumption 
    *   since the last according tic. 
    *   This snapshot cannot be resumed any more, 
    *   so its values are fixed. 
    *   Its hash code is the number returned by the according {@link #mtic()}. 
    * @throws IllegalStateException
    *   If there is not tic at all or that tic is stopped. 
-    * @see #mtic()
+   * @see #mtic()
+   * @see #mtoc(int)
    */
   public static Snapshot mtoc() {
     if (snapshots.isEmpty()) {
@@ -471,6 +566,78 @@ public final class Benchmarker {
     }
     assert res.isStopped();
     return res;
+  }
+
+  /**
+   * Ends <code>numTocs</code> time/memory measurements 
+   * initiated with {@link #mtic()} or with {@link #mtic(int)}
+   * which presupposes that there are <code>numTocs</code> current measurements 
+   * and that the innermost is not paused. 
+   * First that measurement is stopped.  
+   * There shall be at least <code>numTocs</code> measurements 
+   * and so time and memory consumption is added in a cascade accumulating these values 
+   * and these snapshots are removed from the stack. 
+   * If there is still an enclosing environment, 
+   * it is already paused and so time and memory consumption accumulated so far is added to it 
+   * and then it is restarted, 
+   * because it can be assumed that it was running when starting this meansurement. 
+   * Finally, returns an array of snapshots mit time/memory consumption of this measurement 
+   * removed from the stack in order so that the topmost (innermost) is last. 
+   * 
+  * @param numTocs
+   *   A positive number signifying the number of measurements completed in parallel. 
+   * @return
+   *   The <code>numTics</code> stopped {@link Snapshot}s 
+   *   containing time and memory consumption of the innermost measurements ended. 
+   *   This snapshot cannot be resumed any more, 
+   *   so their values are fixed. 
+   *   Their hash codes are the numbers returned by the according {@link #mtic()}s. 
+   *   The ordering of the snapshots 
+   *   reflects the ordering of the Snapshots they had on the stack {@link #snapshots}, 
+   *   where the last hash code belongs to the topmost Snapshot 
+   *   which is the only one which is started. 
+   * @throws IllegalArgumentException
+   *   if <code>numTocs</code> is not positive. 
+   * @throws IllegalStateException
+   *   If there are not enough enclosing tics or the innermost tic is stopped. 
+   * @see #mtic(int)
+   * @see #mtoc()
+   */
+  public static Snapshot[] mtoc(int numTocs) {
+    if (numTocs <= 0) {
+      throw new IllegalArgumentException
+       ("Expected a positive number of tics but found " + numTocs + ". ");
+    }
+    assert numTocs > 0;
+    if (snapshots.size() < numTocs) {
+      throw new IllegalStateException
+        (String.format("Only %d tics for %d tocs. ", snapshots.size(), numTocs));
+    }
+    // throws exception if the according tic is not running 
+    Snapshot[] res = new Snapshot[numTocs];
+    Snapshot snap;
+    // throws an IllegalStateException if the top snapshot is not running 
+    Snapshot snapLast = snapshots.pop().toggleStartStop(true);
+    res[numTocs-1] = snapLast;
+    for (int i = numTocs-2; i >= 0; i--) {
+      snap = snapshots.pop();
+      snap.add(snapLast);
+      res[i] = snap;
+      snapLast = snap;
+    }
+    // Here, res contains only stopped snapshots 
+    if (!snapshots.isEmpty()) {
+      snap = snapshots.peek();
+      // checks that both snap and res[last] are stopped 
+      snap.add(snapLast);
+      snap.toggleStartStop(false);
+      assert !snap.isStopped();
+    }
+    return res;
+  }
+
+  public static Snapshot mtoc2() {
+    return mtoc(1)[0];
   }
 
   /**

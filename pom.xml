@@ -102,7 +102,7 @@
     <!-- Using platform encoding to copy filtered resources; 
     without project.build.sourceEncoding the build is platform dependent! -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <versionPmd>6.49.0</versionPmd>
+    <versionPmd>6.50.0</versionPmd>
     <versionPmdMvnPlugin>3.19.0</versionPmdMvnPlugin>
   </properties>
 

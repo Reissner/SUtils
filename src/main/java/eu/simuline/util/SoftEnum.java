@@ -271,7 +271,7 @@ public abstract class SoftEnum<E extends SoftEnum<E>>
         throw new InvalidObjectException("can't deserialize enum");
     }
 
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
+    @SuppressWarnings({"PMD.UnusedPrivateMethod", "unused"})
     private void readObjectNoData() throws ObjectStreamException {
         throw new InvalidObjectException("can't deserialize enum");
     }

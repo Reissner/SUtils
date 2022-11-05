@@ -3,7 +3,9 @@ package eu.simuline.util;
 import eu.simuline.testhelpers.Actions;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +34,7 @@ public class TwoSidedListTest {
      * framework.                                                           *
      * -------------------------------------------------------------------- */
 
-    static TwoSidedListTest TEST = new TwoSidedListTest();
+    private static final TwoSidedListTest TEST = new TwoSidedListTest();
 
     public static class TestAll {
 
@@ -87,15 +89,15 @@ public class TwoSidedListTest {
 
 	tsList1 = new TwoSidedList<Integer>(0);
 	tsList2 = new TwoSidedList<Integer>(1);
-	assertTrue(!tsList1.equals(tsList2));
+	assertNotEquals(tsList1, tsList2);
     }
 
     // contains tests for constructors and for factory methods 
     void testConstructors() {
 	List<         Integer> list;
 	List<? extends Number> list2;
-	TwoSidedList<Integer> tsList, tsListCmp;
-	TwoSidedList<Number>  tsList2, tsListCmp2;
+	TwoSidedList<Integer> tsList;//, tsListCmp;
+	TwoSidedList<Number>  tsList2;//, tsListCmp2;
 	    
 	// create a TSList 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {3,4,5}));
@@ -108,7 +110,7 @@ public class TwoSidedListTest {
 	tsList.remove(3,TwoSidedList.Direction.Right2Left);
 
 	// test that the copy is not affected 
-	assertEquals(Arrays.asList(new Integer[] {3,4,5}),tsList2.list());
+	assertEquals("", Arrays.asList(new Integer[] {3,4,5}),tsList2.list());
     }
 
     void testAdd() {
@@ -133,7 +135,7 @@ public class TwoSidedListTest {
 	}));
 	tsListCmp = new TwoSidedList<Integer>(list,2);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
 
 	// test add(index,E,Direction)
@@ -150,7 +152,7 @@ public class TwoSidedListTest {
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {3,-4,4,5}));
 	tsListCmp = new TwoSidedList<Integer>(list,3);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
 
 	// create a TSList 
@@ -164,13 +166,13 @@ public class TwoSidedListTest {
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {3,4,-4,5}));
 	tsListCmp = new TwoSidedList<Integer>(list,2);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
     } // testAdd 
 
     void testAddAll() {
 	List<Integer> list;
-	TwoSidedList<Integer> tsList, tsListAdd, tsListCmp;
+	TwoSidedList<Integer> tsList, tsListCmp;//tsListAdd, 
 	boolean changed;
 
 	// test addAllFirst and addAllLast 
@@ -183,10 +185,10 @@ public class TwoSidedListTest {
 	// add something 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {1,2}));
 	changed = tsList.addAllFirst(list);
-	assertTrue(changed);
+	assertTrue("", changed);
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {6,7,8}));
 	changed = tsList.addAllLast(list);
-	assertTrue(changed);
+	assertTrue("", changed);
 
 	// create expected result 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {
@@ -194,7 +196,7 @@ public class TwoSidedListTest {
 	}));
 	tsListCmp = new TwoSidedList<Integer>(list,1);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
 
 	// test addAll(index,coll,Direction)
@@ -207,14 +209,14 @@ public class TwoSidedListTest {
 	// add something 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {1,2}));
 	changed = tsList.addAll(4,list,TwoSidedList.Direction.Left2Right);
-	assertTrue(changed);
+	assertTrue("", changed);
 
 	// create expected result 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {
 	    3,1,2,4,5}));
 	tsListCmp = new TwoSidedList<Integer>(list,3);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
 
 	// create a TSList 
@@ -225,14 +227,14 @@ public class TwoSidedListTest {
 	// add something 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {1,2}));
 	changed = tsList.addAll(4,list,TwoSidedList.Direction.Right2Left);
-	assertTrue(changed);
+	assertTrue("", changed);
 
 	// create expected result 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {
 	    3,4,5,1,2}));
 	tsListCmp = new TwoSidedList<Integer>(list,1);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
 
     } // testAddAll() 
@@ -249,16 +251,16 @@ public class TwoSidedListTest {
 	// Here, integer 4 occurs twice. 
 
 	// check if obj \notin tsList 
-	assertEquals(2,tsList.indexOf(-1));
+	assertEquals("", 2,tsList.indexOf(-1));
 
 	// check if obj \in tsList 
-	assertEquals(4,tsList.indexOf(4));
+	assertEquals("", 4,tsList.indexOf(4));
 
 	// check if obj \notin tsList 
-	assertEquals(2,tsList.lastIndexOf(-1));
+	assertEquals("", 2,tsList.lastIndexOf(-1));
 
 	// check if obj \in tsList 
-	assertEquals(5,tsList.lastIndexOf(4));
+	assertEquals("", 5,tsList.lastIndexOf(4));
 
     } // testIndexOf
 
@@ -272,12 +274,12 @@ public class TwoSidedListTest {
 	tsList = new TwoSidedList<Integer>(list,3);
 	// Here, integer n is at the nth place 
 
-	assertEquals(4,tsList.get(4)  .intValue());
-	assertEquals(4,tsList.set(4,8).intValue());
-	assertEquals(8,tsList.get(4)  .intValue());
+	assertEquals("", 4,tsList.get(4)  .intValue());
+	assertEquals("", 4,tsList.set(4,8).intValue());
+	assertEquals("", 8,tsList.get(4)  .intValue());
 
 	tsList.shiftRight(1);
-	assertEquals(8,tsList.get(5).intValue());
+	assertEquals("", 8,tsList.get(5).intValue());
     }
 
     void testRemove() {
@@ -304,7 +306,7 @@ public class TwoSidedListTest {
 	}));
 	tsListCmp = new TwoSidedList<Integer>(list,4);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
 	// test remove(index,E,Direction)
 
@@ -315,13 +317,13 @@ public class TwoSidedListTest {
 
 	// remove something 
 	removed = tsList.remove(4,TwoSidedList.Direction.Left2Right);
-	assertEquals(4,removed);
+	assertEquals("", 4, removed);
 
 	// create expected result 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {3,5}));
 	tsListCmp = new TwoSidedList<Integer>(list,3);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
 
 	// create a TSList 
@@ -330,20 +332,20 @@ public class TwoSidedListTest {
 	// Here, integer n is at the nth place 
 
 	removed = tsList.remove(4,TwoSidedList.Direction.Right2Left);
-	assertEquals(4,removed);
+	assertEquals("", 4, removed);
 
 	// create expected result 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {3,5}));
 	tsListCmp = new TwoSidedList<Integer>(list,4);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
     } // testRemove 
 
 
     void testRemoveAll() {
 	List<Integer> list;
-	TwoSidedList<Integer> tsList, tsListAdd, tsListCmp;
+	TwoSidedList<Integer> tsList, tsListCmp;//tsListAdd, 
 	boolean changed;
 
 	// test removeAll(coll,Direction)
@@ -358,7 +360,7 @@ public class TwoSidedListTest {
 	// remove something 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {4,8}));
 	changed = tsList.removeAll(list,TwoSidedList.Direction.Left2Right);
-	assertTrue(changed);
+	assertTrue("", changed);
 
 	// create expected result 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {
@@ -366,7 +368,7 @@ public class TwoSidedListTest {
 	}));
 	tsListCmp = new TwoSidedList<Integer>(list,3);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
 
 	// create a TSList 
@@ -379,7 +381,7 @@ public class TwoSidedListTest {
 	// remove something 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {4,8}));
 	changed = tsList.removeAll(list,TwoSidedList.Direction.Right2Left);
-	assertTrue(changed);
+	assertTrue("", changed);
 
 	// create expected result 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {
@@ -387,7 +389,7 @@ public class TwoSidedListTest {
 	}));
 	tsListCmp = new TwoSidedList<Integer>(list,6);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
 // **** missing: testcases remove which leave this list unchanged. 
 // **** missing: testcases add    which leave this list unchanged. 
@@ -399,7 +401,7 @@ public class TwoSidedListTest {
 
     void testRetainAll() {
 	List<Integer> list;
-	TwoSidedList<Integer> tsList, tsListAdd, tsListCmp;
+	TwoSidedList<Integer> tsList, tsListCmp;//tsListAdd, 
 	boolean changed;
 
 	// test retainAll(coll,Direction)
@@ -414,7 +416,7 @@ public class TwoSidedListTest {
 	// retain something 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {4,8}));
 	changed = tsList.retainAll(list,TwoSidedList.Direction.Left2Right);
-	assertTrue(changed);
+	assertTrue("", changed);
 
 	// create expected result 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {
@@ -422,7 +424,7 @@ public class TwoSidedListTest {
 	}));
 	tsListCmp = new TwoSidedList<Integer>(list,3);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
 
 	// create a TSList 
@@ -435,7 +437,7 @@ public class TwoSidedListTest {
 	// retain something 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {4,8}));
 	changed = tsList.retainAll(list,TwoSidedList.Direction.Right2Left);
-	assertTrue(changed);
+	assertTrue("", changed);
 
 	// create expected result 
 	list = new ArrayList<Integer>(Arrays.asList(new Integer[] {
@@ -443,7 +445,7 @@ public class TwoSidedListTest {
 	}));
 	tsListCmp = new TwoSidedList<Integer>(list,7);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
     } // testRetainAll 
 
@@ -465,13 +467,13 @@ public class TwoSidedListTest {
 	}));
 	tsListCmp = new TwoSidedList<Integer>(list,5);
 	// compare 
-	assertEquals(tsListCmp,tsList);
+	assertEquals("", tsListCmp, tsList);
 
     } // testSubList 
 
     void testListIterator() {
 	List<Integer> list;
-	TwoSidedList<Integer> tsList, tsListCmp;
+	TwoSidedList<Integer> tsList;//, tsListCmp;
 	ListIterator<Integer> iter;
 
 	// create a TSList 
@@ -482,16 +484,16 @@ public class TwoSidedListTest {
 	// Here, integer n is at the nth place 
 
 	iter = tsList.listIterator(6);
-	assertEquals(6,iter.next().intValue());
-	assertEquals(7,iter.next().intValue());
-	assertEquals(8,iter.next().intValue());
-	assertTrue(!iter.hasNext());
+	assertEquals("", 6,iter.next().intValue());
+	assertEquals("", 7,iter.next().intValue());
+	assertEquals("", 8,iter.next().intValue());
+	assertFalse("", iter.hasNext());
 
 	iter = tsList.listIterator(6);
-	assertEquals(5,iter.previous().intValue());
-	assertEquals(4,iter.previous().intValue());
-	assertEquals(3,iter.previous().intValue());
-	assertTrue(!iter.hasPrevious());
+	assertEquals("", 5,iter.previous().intValue());
+	assertEquals("", 4,iter.previous().intValue());
+	assertEquals("", 3,iter.previous().intValue());
+	assertFalse("", iter.hasPrevious());
     }
 
     /* -------------------------------------------------------------------- *

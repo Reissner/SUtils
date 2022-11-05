@@ -51,13 +51,13 @@ public final class JavaPath {
      * The entry of property <code>file.separator</code> as a char. 
      */
     private static final char FILE_SEP = 
-	System.getProperty("file.separator").charAt(0);
+			System.getProperty("file.separator").charAt(0);
 
     /**
      * The entry of property <code>path.separator</code>. 
      */
     private static final String PATH_SEP = 
-	System.getProperty("path.separator");
+			System.getProperty("path.separator");
 
     /**
      * Java's class separator <code>.</code> 
@@ -96,22 +96,22 @@ public final class JavaPath {
      * Determines whether a class file or a source file is meant. 
      */
     public enum ClsSrc {
-	Class {
-	    String fileEnding() {
-		return ".class";
-	    }
-	    String trimInnerClass(String clsName) {
-		return clsName;
-	    }
-	}, 
-	Source {
-	    String fileEnding() {
-		return ".java";
-	    }
-	    String trimInnerClass(String clsName) {
-		return clsName.replaceAll(INNER_CLASS_SEP + ".*", "");
-	    }
-	};
+			Class {
+	    	String fileEnding() {
+					return ".class";
+	    	}
+	    	String trimInnerClass(String clsName) {
+					return clsName;
+	    	}
+			},
+			Source {
+	    	String fileEnding() {
+					return ".java";
+	    	}
+	    	String trimInnerClass(String clsName) {
+					return clsName.replaceAll(INNER_CLASS_SEP + ".*", "");
+	    	}
+			};
 
 	/**
 	 * Returns the ending of a class file or of a source file. 
@@ -148,182 +148,181 @@ public final class JavaPath {
      */
     interface FileWrapper {
 
-	/**
-	 * Returns whether the wrapped file is within a zip-archive. 
-	 * If this is the case, the file wrapped was created newly. 
-	 *
-	 * @return 
-	 *    a <code>boolean</code> value signifying 
-	 *    whether the wrapped file is within a zip-archive. 
-	 */
-	boolean coversZip();
+		/**
+		 * Returns whether the wrapped file is within a zip-archive. 
+		 * If this is the case, the file wrapped was created newly. 
+		 *
+		 * @return 
+		 *    a <code>boolean</code> value signifying 
+		 *    whether the wrapped file is within a zip-archive. 
+		 */
+		boolean coversZip();
 
-	/**
-	 * Returns the file wrapped.  
-	 * If the wrapped file is within a zip-archive, 
-	 * it was created newly by this <code>FileWrapper</code>. 
-	 *
-	 * @return 
-	 *    the <code>File</code> wrapped. 
-	 * @throws IOException 
-	 *    if an error occurs
-	 */
-	File getFile() throws IOException;
+		/**
+		 * Returns the file wrapped.  
+		 * If the wrapped file is within a zip-archive, 
+		 * it was created newly by this <code>FileWrapper</code>. 
+		 *
+		 * @return 
+		 *    the <code>File</code> wrapped. 
+		 * @throws IOException 
+		 *    if an error occurs
+		 */
+		File getFile() throws IOException;
 
-	/**
-	 * Returns an input stream for the file wrapped.  
-	 *
-	 * @return 
-	 *    the <code>InputStream</code> of the file wrapped. 
-	 * @throws IOException 
-	 *    if an error occurs
-	 */
-	InputStream getInputStream() throws IOException;
-    } // interface FileWrapper 
+		/**
+		 * Returns an input stream for the file wrapped.  
+		 *
+		 * @return 
+		 *    the <code>InputStream</code> of the file wrapped. 
+		 * @throws IOException 
+	 	 *    if an error occurs
+		 */
+		InputStream getInputStream() throws IOException;
+  } // interface FileWrapper 
 
-    /**
-     * Represents an ordinary file {@link #file} on a file system. 
-     */
-    static class OrdFileWrapper implements FileWrapper {
+  /**
+   * Represents an ordinary file {@link #file} on a file system. 
+   */
+  static class OrdFileWrapper implements FileWrapper {
 
-	private final File file;
+		private final File file;
 
-	OrdFileWrapper(File file) {
-	    this.file = file;
-	}
+		OrdFileWrapper(File file) {
+		    this.file = file;
+		}
 
-	// api-docs inherited from interface FileWrapper 
-	public boolean coversZip() {
-	    return false;
-	}
+		// api-docs inherited from interface FileWrapper 
+		public boolean coversZip() {
+		    return false;
+		}
 
-	// api-docs inherited from interface FileWrapper 
-	public File getFile() {
-	    return this.file;
-	}
+		// api-docs inherited from interface FileWrapper 
+		public File getFile() {
+		    return this.file;
+		}
 
-	// api-docs inherited from interface FileWrapper 
-	public InputStream getInputStream() throws IOException {
+		// api-docs inherited from interface FileWrapper 
+		public InputStream getInputStream() throws IOException {
 	    return new FileInputStream(this.file);
-	}
-    } // class OrdFileWrapper 
+		}
+  } // class OrdFileWrapper 
 
-    // **** missing: closing of InputStream: 
-    // both stream and zipfile: zipFile.close();  stream.close();
-    /**
-     * Represents a file {@link #entry} 
-     * which is an entry in a zip-file {@link #zipFile}. 
-     * The zip-file may be in any zip format 
-     * and in particular a jar-archive 
-     * (which is the common application case). 
-     */
-    static class ZipEntryWrapper implements FileWrapper {
+  // **** missing: closing of InputStream: 
+  // both stream and zipfile: zipFile.close();  stream.close();
+  /**
+   * Represents a file {@link #entry} 
+   * which is an entry in a zip-file {@link #zipFile}. 
+   * The zip-file may be in any zip format 
+   * and in particular a jar-archive 
+   * (which is the common application case). 
+   */
+  static class ZipEntryWrapper implements FileWrapper {
 
-	/**
-	 * A filter input stream 
-	 * closing {@link JavaPath.ZipEntryWrapper#zipFile} 
-	 * when closing the stream. 
-	 */
-	class WrappedInputStream extends FilterInputStream {
-	    WrappedInputStream(InputStream inputStream) {
-		super(inputStream);
+		/**
+		 * A filter input stream 
+		 * closing {@link JavaPath.ZipEntryWrapper#zipFile} 
+		 * when closing the stream. 
+		 */
+		class WrappedInputStream extends FilterInputStream {
+			WrappedInputStream(InputStream inputStream) {
+				super(inputStream);
 	    }
 	    public void close() throws IOException {
-		super.close();
-		ZipEntryWrapper.this.zipFile.close();
+				super.close();
+				ZipEntryWrapper.this.zipFile.close();
 	    }
-	} // class WrappedInputStream 
+		} // class WrappedInputStream 
 
-	private final ZipFile zipFile;
-	private final ZipEntry entry;
+		private final ZipFile zipFile;
+		private final ZipEntry entry;
 
-	ZipEntryWrapper(ZipFile zipFile, ZipEntry entry) {
+		ZipEntryWrapper(ZipFile zipFile, ZipEntry entry) {
 	    this.zipFile = zipFile;
 	    this.entry = entry;
-	}
+		}
 
-	// api-docs inherited from interface FileWrapper 
-	public boolean coversZip() {
+		// api-docs inherited from interface FileWrapper 
+		public boolean coversZip() {
 	    return true;
-	}
+		}
 
-	// api-docs inherited from interface FileWrapper 
-	public File getFile() throws IOException {
+		// api-docs inherited from interface FileWrapper 
+		public File getFile() throws IOException {
 	    // by extraction. 
 	    // may throw IOException
-	    File ret = File
-		.createTempFile("simuline_JavaPath" + System.currentTimeMillis(),
+	    File ret = File.createTempFile("simuline_JavaPath"
+				+ System.currentTimeMillis(),
 				ClsSrc.Source.fileEnding());
 	    try (
-		 //new File("/tmp/HI.java"); //this.entry.getName());
-		 //ret.createNewFile(); 
-		 // **** does not work well: shall be rec!!!
-		 // may throw IOException
-		 InputStream inStream = getInputStream();
-		 // may throw IOException
-		 FileOutputStream outStream = new FileOutputStream(ret);
-		 ) {
+		 	//new File("/tmp/HI.java"); //this.entry.getName());
+		 	//ret.createNewFile(); 
+		 	// **** does not work well: shall be rec!!!
+			 // may throw IOException
+				InputStream inStream = getInputStream();
+		 	// may throw IOException
+		 		FileOutputStream outStream = new FileOutputStream(ret)) {
 		    byte[] buf = new byte[LEN_BUFFER];
 		    int numRead = inStream.read(buf, 0, LEN_BUFFER - 1);
 		    while (numRead != -1) {
-			/*     */outStream.write(buf, 0, numRead);
-			numRead = inStream.read (buf, 0, LEN_BUFFER - 1);
+					/*     */outStream.write(buf, 0, numRead);
+					numRead = inStream.read (buf, 0, LEN_BUFFER - 1);
 		    }
-	    }
+	    } // try 
 
 	    return ret;
-	}
+		}
 
-	// api-docs inherited from interface FileWrapper 
-	public InputStream getInputStream() throws IOException {
+		// api-docs inherited from interface FileWrapper 
+		public InputStream getInputStream() throws IOException {
 	    return this.zipFile.getInputStream(this.entry);
-	}
+		}
 
-    } // class ZipEntryWrapper 
+  } // class ZipEntryWrapper 
 
 
-    /* -------------------------------------------------------------------- *
-     * fields.                                                              *
-     * -------------------------------------------------------------------- */
+  /* -------------------------------------------------------------------- *
+   * fields.                                                              *
+   * -------------------------------------------------------------------- */
 
-    /**
-     * The list of entries of this path. 
-     * This serves as root path for the source files and class files 
-     * under consideration. 
-     * CAUTION: Note that besides directories 
-     * also <code>.zip</code>-files and  <code>.jar</code>-files are allowed. 
-     */
-    private final List<File> roots;
+  /**
+   * The list of entries of this path. 
+   * This serves as root path for the source files and class files 
+   * under consideration. 
+   * CAUTION: Note that besides directories 
+   * also <code>.zip</code>-files and  <code>.jar</code>-files are allowed. 
+   */
+  private final List<File> roots;
 
-    /* -------------------------------------------------------------------- *
-     * constructor.                                                         *
-     * -------------------------------------------------------------------- */
+  /* -------------------------------------------------------------------- *
+   * constructor.                                                         *
+   * -------------------------------------------------------------------- */
 
-    /**
-     * Creates a new <code>JavaPath</code> instance.
-     * Essentially, {@link #roots} is initialized. 
-     *
-     * @param path
-     *    a path as a <code>String</code> value. 
-     *    note that the entries of the path must not be the empty string. 
-     * @throws IllegalArgumentException
-     *    if two path separators immediately follow on one another 
-     *    or if they stand at the beginning or at the end 
-     *    of <code>path</code>. 
-     */
-    public JavaPath(String path) {
-	// split the path along the path separator. 
-	String[] fileNames = path.split(PATH_SEP);
-	if (fileNames.length == 0) {
+  /**
+   * Creates a new <code>JavaPath</code> instance.
+   * Essentially, {@link #roots} is initialized. 
+   *
+   * @param path
+   *    a path as a <code>String</code> value. 
+   *    note that the entries of the path must not be the empty string. 
+   * @throws IllegalArgumentException
+   *    if two path separators immediately follow on one another 
+   *    or if they stand at the beginning or at the end 
+   *    of <code>path</code>. 
+   */
+  public JavaPath(String path) {
+		// split the path along the path separator. 
+		String[] fileNames = path.split(PATH_SEP);
+		if (fileNames.length == 0) {
 	    throw new IllegalArgumentException
-		("String \"" + path + "\" is not a path. ");
-	}
+				("String \"" + path + "\" is not a path. ");
+		}
 
-	this.roots = new ArrayList<File>(fileNames.length);
-	for (String fileName :fileNames) {
+		this.roots = new ArrayList<File>(fileNames.length);
+		for (String fileName :fileNames) {
 	    if (fileName.length() == 0) {
-		System.out.println
-		    ("Warning: Found file \"\" in path \"" + path + "\". ");
+				System.out.println
+		  	  ("Warning: Found file \"\" in path \"" + path + "\". ");
 
 // 		throw new IllegalArgumentException
 // 		    ("Found file \"\" in path \"" + path + "\". ");
@@ -337,30 +336,30 @@ public final class JavaPath {
 // // 		    ("Found file \"\" in path \"" + path + "\". ");
 // 	    }
 	    this.roots.add(new File(fileName));
-	}
-    }
+		}
+  } // JavaPath 
 
-    /* -------------------------------------------------------------------- *
-     * methods.                                                             *
-     * -------------------------------------------------------------------- */
+  /* -------------------------------------------------------------------- *
+   * methods.                                                             *
+   * -------------------------------------------------------------------- */
 
-    /**
-     * Converts a class name into the corresponding name 
-     * of a local source file or class file. 
-     *
-     * @param clsName 
-     *    the name of the class as a <code>String</code> value. 
-     * @param clsSrc 
-     *    a <code>ClsSrc</code> which determines 
-     *    whether to convert the class name 
-     *    into a class file or into a source file. 
-     * @return 
-     *    the name of the local class or source file 
-     *    of the given class. 
-     *    Note that this is no absolute pathname of course: 
-     *    {@link #roots} is not read. 
-     */
-    private String cls2locFile(String clsName, ClsSrc clsSrc) {
+  /**
+   * Converts a class name into the corresponding name 
+   * of a local source file or class file. 
+   *
+   * @param clsName 
+   *    the name of the class as a <code>String</code> value. 
+   * @param clsSrc 
+   *    a <code>ClsSrc</code> which determines 
+   *    whether to convert the class name 
+   *    into a class file or into a source file. 
+   * @return 
+   *    the name of the local class or source file 
+   *    of the given class. 
+   *    Note that this is no absolute pathname of course: 
+   *    {@link #roots} is not read. 
+   */
+  private String cls2locFile(String clsName, ClsSrc clsSrc) {
 /*
 	if (cls.isArray()) {
 	    throw new IllegalArgumentException
@@ -371,203 +370,204 @@ public final class JavaPath {
 		("Tried to load primitive class " + cls + " by path. ");
 	}
 */
-	// replace file separator / by .
-	String localFilename = clsName.replace(CLASS_SEP, FILE_SEP);
-	// for source files: remove names of inner classes 
-	localFilename = clsSrc.trimInnerClass(localFilename);
-	// append the appropriate file ending 
-	StringBuffer fileNameBuf = new StringBuffer(localFilename);
-	fileNameBuf.append(clsSrc.fileEnding());
-	return fileNameBuf.toString();
-    }
+		// replace file separator / by .
+		String localFilename = clsName.replace(CLASS_SEP, FILE_SEP);
+		// for source files: remove names of inner classes 
+		localFilename = clsSrc.trimInnerClass(localFilename);
+		// append the appropriate file ending 
+		StringBuffer fileNameBuf = new StringBuffer(localFilename);
+		fileNameBuf.append(clsSrc.fileEnding());
+		return fileNameBuf.toString();
+  }
 
-    /**
-     * Converts a class name into the corresponding source file or class file 
-     * if possible. 
-     *
-     * @param clsName 
-     *    the name of the class as a <code>String</code> value. 
-     * @param clsSrc 
-     *    a <code>ClsSrc</code> which determines 
-     *    whether to convert the class name 
-     *    into a class file or into a source file. 
-     * @return 
-     *    the source or class <code>File</code> 
-     *    corresponding with the given classname if there is one; 
-     *    otherwise returns <code>null</code>. 
-     *    Note that if the file is found within a zip- or jar-file, 
-     *    a temporal file is created. 
-     *    In any case, the file returned exists 
-     *    unless <code>null</code> is returned. 
-		 * @throws IOException
-		 *   if an IOException occurs 
-		 *   while searching <code>clsName</code> 
-		 *   in a zip/jar file 
-		 *   or while extracting that file from zip file.      */
-    public File getFile(String clsName, ClsSrc clsSrc) {
-			return getFile(cls2locFile(clsName, clsSrc));
-    }
+  /**
+   * Converts a class name into the corresponding source file or class file 
+   * if possible. 
+   *
+   * @param clsName 
+   *    the name of the class as a <code>String</code> value. 
+   * @param clsSrc 
+   *    a <code>ClsSrc</code> which determines 
+   *    whether to convert the class name 
+   *    into a class file or into a source file. 
+   * @return 
+   *    the source or class <code>File</code> 
+   *    corresponding with the given classname if there is one; 
+   *    otherwise returns <code>null</code>. 
+   *    Note that if the file is found within a zip- or jar-file, 
+   *    a temporal file is created. 
+   *    In any case, the file returned exists 
+   *    unless <code>null</code> is returned. 
+	 * @throws IOException
+	 *   if an IOException occurs 
+	 *   while searching <code>clsName</code> 
+	 *   in a zip/jar file 
+	 *   or while extracting that file from zip file.
+	 */
+  public File getFile(String clsName, ClsSrc clsSrc) throws IOException {
+		return getFile(cls2locFile(clsName, clsSrc));
+  }
 
-    /**
-		 * Returns the file given by <code>localFilename</code> 
-		 * if it is on the path; else <code>null</code>. 
-		 * Also files in zip files are found. 
-		 * 
-		 * @param localFilename
-		 *   the relative filename of the file to be found on this path. 
-		 * @return
-		 *   the file <code>localFilename</code>, 
-		 *   if found in a zip file as a new temporary file
-		 *   or <code>null</code> if not found on the path. 
-		 * @throws IOException
-		 *   if an IOException occurs 
-		 *   while searching <code>localFilename</code> 
-		 *   in a zip file 
-		 *   or while extracting file <code>localFilename</code> from zip file. 
-		 */
-    public File getFile(String localFilename) throws IOException {
-			// locFile2Wrapper may cause IOException during search
-			FileWrapper fileWr = locFile2Wrapper(localFilename);
-			// getFile may cause IOException if found in zip file 
-			// and reading or writing causes problems. 
-			return fileWr == null ? null : fileWr.getFile();
-    }
+  /**
+	 * Returns the file given by <code>localFilename</code> 
+	 * if it is on the path; else <code>null</code>. 
+	 * Also files in zip files are found. 
+	 * 
+	 * @param localFilename
+	 *   the relative filename of the file to be found on this path. 
+	 * @return
+	 *   the file <code>localFilename</code>, 
+	 *   if found in a zip file as a new temporary file
+	 *   or <code>null</code> if not found on the path. 
+	 * @throws IOException
+	 *   if an IOException occurs 
+	 *   while searching <code>localFilename</code> 
+	 *   in a zip file 
+	 *   or while extracting file <code>localFilename</code> from zip file. 
+	 */
+  public File getFile(String localFilename) throws IOException {
+		// locFile2Wrapper may cause IOException during search
+		FileWrapper fileWr = locFile2Wrapper(localFilename);
+		// getFile may cause IOException if found in zip file 
+		// and reading or writing causes problems. 
+		return fileWr == null ? null : fileWr.getFile();
+  }
 
-		/**
-		 * Returns the input stream 
-		 * to read the class with the given name <code>clsName</code> 
-		 * from a file or zip or jar file 
-		 * or <code>null</code> if no such file exists on this path. 
-		 * 
-		 * @return
-		 *   the class file as an input stream if found on the path 
-		 *   and <code>null</code> if it is not on this path. 
-		 * @throws IOException
-		 *   if during the search of <code>clsName</code> 
-		 *   a zip file (or in particular a jar file) was not searchable 
-		 *   or if no input stream could be formed from that file.  
-		 */
-    public InputStream getInputStream(String clsName) throws IOException {
-			// locFile2Wrapper searches on path and in jar file. 
-			FileWrapper fileWrapper = locFile2Wrapper(cls2locFile(clsName,
-																								ClsSrc.Class));
-			return (fileWrapper == null) ? null : fileWrapper.getInputStream();
-    }
+	/**
+	 * Returns the input stream 
+	 * to read the class with the given name <code>clsName</code> 
+	 * from a file or zip or jar file 
+	 * or <code>null</code> if no such file exists on this path. 
+	 * 
+	 * @return
+	 *   the class file as an input stream if found on the path 
+	 *   and <code>null</code> if it is not on this path. 
+	 * @throws IOException
+	 *   if during the search of <code>clsName</code> 
+	 *   a zip file (or in particular a jar file) was not searchable 
+	 *   or if no input stream could be formed from that file.  
+	 */
+  public InputStream getInputStream(String clsName) throws IOException {
+		// locFile2Wrapper searches on path and in jar file. 
+		FileWrapper fileWrapper = locFile2Wrapper(cls2locFile(clsName,
+																							ClsSrc.Class));
+		return (fileWrapper == null) ? null : fileWrapper.getInputStream();
+  }
 
-    /**
-     * Converts a local file name into the wrapper 
-     * of the file found on the path. 
-     * Note that also within zip- or jar-file is searched. 
-     *
-     * @param localFilename 
-     *    the name of a local file as a <code>String</code> value. 
-     * @return 
-     *    a <code>FileWrapper</code> representing the first file 
-     *    found on the path with the appropriate name or <code>null</code> 
-		 *    if no such file is found. 
-     *    If the file is found in a directory of the path, 
-     *    an {@link OrdFileWrapper JavaPath.OrdFileWrapper} is returned, 
-     *    if it is found within a zip- or jar-file, 
-     *    a {@link ZipEntryWrapper JavaPath.ZipEntryWrapper} is returned. 
-		 * @throws IOException
-		 *   if there is a zip file (or in particular a jar file) in the path 
-		 *   which is not accessible during search of the file <code>localFilename</code>. 
-		 *   A corrupt zip file causes an exception only if it is on this path 
-		 *   in a position so that the file <code>localFilename</code> is not on the path 
-		 *   before that file. 
-     */
-    private FileWrapper locFile2Wrapper(String localFilename) throws IOException {
-			File cand = null;
-			// otherwise: might not be initialized. 
-			// this is impossible because this.files is not empty. 
+  /**
+   * Converts a local file name into the wrapper 
+   * of the file found on the path. 
+   * Note that also within zip- or jar-file is searched. 
+   *
+   * @param localFilename 
+   *    the name of a local file as a <code>String</code> value. 
+   * @return 
+   *    a <code>FileWrapper</code> representing the first file 
+   *    found on the path with the appropriate name or <code>null</code> 
+	 *    if no such file is found. 
+   *    If the file is found in a directory of the path, 
+   *    an {@link OrdFileWrapper JavaPath.OrdFileWrapper} is returned, 
+   *    if it is found within a zip- or jar-file, 
+   *    a {@link ZipEntryWrapper JavaPath.ZipEntryWrapper} is returned. 
+	 * @throws IOException
+	 *   if there is a zip file (or in particular a jar file) in the path 
+	 *   which is not accessible during search of the file <code>localFilename</code>. 
+	 *   A corrupt zip file causes an exception only if it is on this path 
+	 *   in a position so that the file <code>localFilename</code> is not on the path 
+	 *   before that file. 
+   */
+	//@SuppressWarnings("PMD.CognitiveComplexity")// reportLevel is 15, maybe shall be 16
+  private FileWrapper locFile2Wrapper(String localFilename) throws IOException {
+		File cand = null;
+		// otherwise: might not be initialized. 
+		// this is impossible because this.files is not empty. 
 
-	    // search for the file with the given name along the path. 
-			for (File candParent : this.roots) {
-				if (candParent.isDirectory()) {
-					// find directly in the directory candParent
-					cand = new File(candParent, localFilename);
-					if (cand.exists() && cand.isFile()) {
-		    		return new OrdFileWrapper(cand);
-					}
-	    	} else {
-					// find directly in the zip- or jar-file candParent
-					assert !candParent.isDirectory();
-					if (!(candParent.getName().endsWith(ZIP_END) || 
-		      	candParent.getName().endsWith(JAR_END))) {
-		    		continue;
-					}
-					// here, we have a zip-file at least 
-					// if not a jar-file. 
-					ZipFile zipFile;
-		    	zipFile = new ZipFile(candParent);
-					// Here, the zip-file is readable. 
-					ZipEntry entry = zipFile.getEntry(localFilename);
-					if (entry == null) {
-		    		// file not found 
-		    		continue;
-					}
-					return new ZipEntryWrapper(zipFile, entry);
-	    	}
-			} // for 
-			// Here, no file has been found 
-			return null;
-    }
+	  // search for the file with the given name along the path. 
+		for (File candParent : this.roots) {
+			if (candParent.isDirectory()) {
+				// find directly in the directory candParent
+				cand = new File(candParent, localFilename);
+				if (cand.exists() && cand.isFile()) {
+	    		return new OrdFileWrapper(cand);
+				}
+    	} else {
+				// find directly in the zip- or jar-file candParent
+				assert !candParent.isDirectory();
+				if (!(candParent.getName().endsWith(ZIP_END)
+				   || candParent.getName().endsWith(JAR_END))) {
+	    		continue;
+				}
+				// here, we have a zip-file at least 
+				// if not a jar-file. 
+				ZipFile zipFile;
+	    	zipFile = new ZipFile(candParent);
+				// Here, the zip-file is readable. 
+				ZipEntry entry = zipFile.getEntry(localFilename);
+				if (entry == null) {
+	    		// file not found 
+	    		continue;
+				}
+				return new ZipEntryWrapper(zipFile, entry);
+    	}
+		} // for 
+		// Here, no file has been found 
+		return null;
+  }
 
-
-    // **** no support for zip- and jar-files. 
-    // returns null if not found on the path. 
-    public String getLocFileName(File absFile) {
-	String fileName = absFile.getPath();
-	for (File cand : this.roots) {
+  // **** no support for zip- and jar-files. 
+  // returns null if not found on the path. 
+  public String getLocFileName(File absFile) {
+		String fileName = absFile.getPath();
+		for (File cand : this.roots) {
 
 	    if (fileName.startsWith(cand.getPath())) {
-		fileName = fileName.substring(cand.getPath().length() + 1,
-					      fileName      .length());
-		return fileName;
+				fileName = fileName.substring(cand.getPath().length() + 1,
+					         fileName                         .length());
+				return fileName;
 	    }
-	}
-	// Here, the file was not found on the path 
-	return null;
-    }
+		}
+		// Here, the file was not found on the path 
+		return null;
+  }
 
-    public String locFile2cls(String locFileName, ClsSrc clsSrc) {
-	if (!locFileName.endsWith(clsSrc.fileEnding())) {
+  public String locFile2cls(String locFileName, ClsSrc clsSrc) {
+		if (!locFileName.endsWith(clsSrc.fileEnding())) {
 	    throw new IllegalArgumentException
-		("Expected filename with ending \"" + clsSrc.fileEnding() 
-		 + "\" but found \"" + locFileName + "\". ");
-	}
-	locFileName = locFileName.substring(0,
-					    /*    */locFileName.length() - 
-					    clsSrc.fileEnding().length());
-	 locFileName = locFileName.replace(FILE_SEP, CLASS_SEP);
-	 return locFileName;
-    }
+				("Expected filename with ending \"" + clsSrc.fileEnding()
+				 + "\" but found \"" + locFileName + "\". ");
+		}
+		locFileName = locFileName.substring(0,
+				  /*    */locFileName.length()
+					- clsSrc.fileEnding().length());
+		locFileName = locFileName.replace(FILE_SEP, CLASS_SEP);
+		return locFileName;
+  }
 
-    public String absFile2cls(File absFile, ClsSrc clsSrc) {
-	String locFileName = getLocFileName(absFile);
-System.out.println("locFileName: " + locFileName);
+  public String absFile2cls(File absFile, ClsSrc clsSrc) {
+		String locFileName = getLocFileName(absFile);
+		System.out.println("locFileName: " + locFileName);
 	
-	if (locFileName == null) {
+		if (locFileName == null) {
 	    return null;
-	}
-	return locFile2cls(locFileName, clsSrc);
-    }
+		}
+		return locFile2cls(locFileName, clsSrc);
+  }
 
-    public String toString() {
-	StringBuffer ret = new StringBuffer();
-	ret.append("<JavaPath>");
-	ret.append(this.roots);
-	ret.append("</JavaPath>");
-	return ret.toString();
-    }
+  public String toString() {
+		StringBuffer ret = new StringBuffer();
+		ret.append("<JavaPath>");
+		ret.append(this.roots);
+		ret.append("</JavaPath>");
+		return ret.toString();
+  }
 
-    public static void main(String[] args) {
-	//System.out.println("tt: "+new JavaPath(":"));
-	//System.out.println("tt: "+new JavaPath(""));
-	System.out.println("tt: " + new JavaPath("/home/ernst"));
-	System.out.println("tt: " + new JavaPath("/home/ernst:/usr/bin"));
+  public static void main(String[] args) {
+		//System.out.println("tt: "+new JavaPath(":"));
+		//System.out.println("tt: "+new JavaPath(""));
+		System.out.println("tt: " + new JavaPath("/home/ernst"));
+		System.out.println("tt: " + new JavaPath("/home/ernst:/usr/bin"));
 
-	//JavaPath jPath = new JavaPath("/home/ernst/.../src/");
+		//JavaPath jPath = new JavaPath("/home/ernst/.../src/");
 /*
 	System.out.println("tt: "+
 			   jPath.getFile(AddArrays.class, ClsSrc.Class));
@@ -575,5 +575,5 @@ System.out.println("locFileName: " + locFileName);
 			   jPath.getFile(AddArrays.class, ClsSrc.Source));
 
 */
-    }
+  }
 }

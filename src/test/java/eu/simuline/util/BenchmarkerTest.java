@@ -171,7 +171,7 @@ public class BenchmarkerTest {
         return;
       } catch(IllegalStateException e) {
         assertEquals("Wrong exception message. ",
-          "No tic to toc. ", e.getMessage());
+          "Only 0 tic(s) for 1 toc(s). ", e.getMessage());
       }
 
       // test exceptions of mtic() 

@@ -91,25 +91,26 @@ import java.util.Stack;
  */
 public final class Benchmarker {
 
-  /* -------------------------------------------------------------------- *
+  /* ----------------------------------------------------------------------- *
    * inner classes. *
-   * -------------------------------------------------------------------- */
+   * ----------------------------------------------------------------------- */
 
   /**
    * A snapshot can either be started or stopped. 
    * If started it represents the point of time and the amount of used memory 
    * when started. 
-   * If stopped, it represents the span of time elapsed and an amount of memory allocated; 
+   * If stopped, 
+   * it represents the span of time elapsed and an amount of memory allocated; 
    * negative values representing freed memory. 
-   * After creation via {@link #Snapshot()}, it is started, 
+   * After creation via {@link #Snapshot(boolean)}, it is started/stopped, 
    * but it can switch between states started and stopped 
    * invoking {@link #toggleStartStop(boolean)}. 
    */
   public static class Snapshot {
 
-    /* ------------------------------------------------------------------ *
+    /* --------------------------------------------------------------------- *
      * fields. *
-     * ------------------------------------------------------------------ */
+     * --------------------------------------------------------------------- */
 
     /**
      * Indicates whether recording stopped. 
@@ -127,7 +128,8 @@ public final class Benchmarker {
     /**
      * Immediately after creation, 
      * this is the current point of time 
-     * in nanoseconds (10^{-9} seconds) as returned by {@link System#nanoTime()}, 
+     * in nanoseconds (10^{-9} seconds) 
+     * as returned by {@link System#nanoTime()}, 
      * while if stopped, this is the span of time it ran, 
      * i.e. between starting and stopping. 
      * <p>
@@ -150,7 +152,8 @@ public final class Benchmarker {
      * whereas in the second case 
      * it is the additional memory elapsed in a span of time. 
      * For proper evaluation, 
-     * before measuring the memory, the JVM is asked to run the garbage collector. 
+     * before measuring the memory, 
+     * the JVM is asked to run the garbage collector. 
      * <p>
      * More general, recording can be started and stopped more than once. 
      * Then if stopped, 
@@ -161,9 +164,9 @@ public final class Benchmarker {
      */
     private long memBytes;
 
-    /* ------------------------------------------------------------------ *
+    /* --------------------------------------------------------------------- *
      * constructors. *
-     * ------------------------------------------------------------------ */
+     * --------------------------------------------------------------------- */
 
      /**
       * Constructor to create a new snapshot which is started if specified so. 
@@ -178,7 +181,8 @@ public final class Benchmarker {
       }
     }
 
-    // TBD: maybe this shall be eliminated: if Benchmarker.snap is eliminated. 
+    // TBD: maybe this shall be eliminated: 
+    // if Benchmarker.snap is eliminated. 
     Snapshot(Snapshot other) {
       assert other.isStopped();
       this.isStopped = other.isStopped;
@@ -186,9 +190,9 @@ public final class Benchmarker {
       this.memBytes  = other.memBytes;
     }
 
-    /* ------------------------------------------------------------------ *
+    /* --------------------------------------------------------------------- *
      * methods. *
-     * ------------------------------------------------------------------ */
+     * --------------------------------------------------------------------- */
 
      /**
       * If this snapshot is started, stop and if stop start. 
@@ -261,7 +265,8 @@ public final class Benchmarker {
      * between memory when starting the test and when finishing. 
      * So this may well be negative indicating freed memory. 
      * Memory is determined after the garbage collector is triggered. 
-     * Since there is no way to force the VM to perform a complete garbage collection, 
+     * Since there is no way 
+     * to force the VM to perform a complete garbage collection, 
      * there is no guarantee on the precision of this value. 
      * In an extreme case, the garbage collector is not run at all 
      * and so the result is not very significant. 
@@ -367,18 +372,21 @@ public final class Benchmarker {
    * invoking garbage collection which is required for memory measurement 
    * is not taken into account. 
    * <p>
-   * Initially, the innermost enclosing measurement 
-   * is represented by the top {@link Snapshot} on the stack {@link #snapshots}, 
-   * finally, the new measurement is pushed on top of the stack as a new snapshot. 
+   * Initially, the innermost enclosing measurement is represented 
+   * by the top {@link Snapshot} on the stack {@link #snapshots}, 
+   * finally, 
+   * the new measurement is pushed on top of the stack as a new snapshot. 
    * 
    * @return
    *   The hash code of the current snapshot holding time and memory. 
    *   Note that the hash code reflects the identity 
-   *   and does not change if a snapshot is started or stopped or else changed. 
+   *   and does not change 
+   *   if a snapshot is started or stopped or else changed. 
    *   Also note that a snapshot itself can be returned only, 
    *   if stopped and cannot be restarted. 
    *   In this implementation this means it is off the stack. 
-   *   Thus what is returned is the hash code only rather than the Snapshot itself. 
+   *   Thus what is returned is the hash code only, 
+   *   rather than the Snapshot itself. 
    *   The hashcode returned belongs to the topmost snapshot on the stack. 
    * @throws IllegalStateException
    *   If there is an enclosing mtic and this is stopped. 
@@ -580,25 +588,34 @@ public final class Benchmarker {
    * and that the innermost is not paused. 
    * First that measurement is stopped.  
    * There shall be at least <code>numTocs</code> measurements 
-   * and so time and memory consumption is added in a cascade accumulating these values 
+   * and so time and memory consumption is added 
+   * in a cascade accumulating these values 
    * and these snapshots are removed from the stack. 
    * If there is still an enclosing environment, 
-   * it is already paused and so time and memory consumption accumulated so far is added to it 
+   * it is already paused 
+   * and so time and memory consumption accumulated so far is added to it 
    * and then it is restarted, 
-   * because it can be assumed that it was running when starting this meansurement. 
-   * Finally, returns an array of snapshots mit time/memory consumption of this measurement 
+   * because it can be assumed 
+   * that it was running when starting this meansurement. 
+   * Finally, 
+   * returns an array of snapshots mit time/memory consumption 
+   * of this measurement 
    * removed from the stack in order so that the topmost (innermost) is last. 
    * 
   * @param numTocs
-   *   A positive number signifying the number of measurements completed in parallel. 
+   *   A positive number 
+   *   signifying the number of measurements completed in parallel. 
    * @return
    *   The <code>numTics</code> stopped {@link Snapshot}s 
-   *   containing time and memory consumption of the innermost measurements ended. 
+   *   containing time and memory consumption 
+   *   of the innermost measurements ended. 
    *   This snapshot cannot be resumed any more, 
    *   so their values are fixed. 
-   *   Their hash codes are the numbers returned by the according {@link #mtic()}s. 
+   *   Their hash codes are the numbers 
+   *   returned by the according {@link #mtic()}s. 
    *   The ordering of the snapshots 
-   *   reflects the ordering of the Snapshots they had on the stack {@link #snapshots}, 
+   *   reflects the ordering of the Snapshots 
+   *   they had on the stack {@link #snapshots}, 
    *   where the last hash code belongs to the topmost Snapshot 
    *   which is the only one which is started. 
    * @throws IllegalArgumentException

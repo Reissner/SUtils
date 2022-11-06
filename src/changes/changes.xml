@@ -18,6 +18,8 @@
         type parameter E is hiding the type E is because of methods toArray. 
         This seems to be just a bug in vscode java extension. 
       - in general, the path is eliminating code from this package in favor of more widely known code. 
+      - Benchmarker: maybe method snap() shall be removed 
+      - Benchmarker: there is a way to record heap memory and non-heap memory separately. 
     -->
     <release version="1.0" 
 	     date="2022-05-05" 

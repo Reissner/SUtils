@@ -43,8 +43,11 @@ public class BenchmarkerTest {
       int memDelta = 20;
       int timeMs = 1000;
       int mem0 = 0;
+      int memMB = 500;
+      int memTolMB = 3;
       int hash1, hash2;
       Benchmarker.Snapshot snap1, snap2;
+      byte[] arr;
 
       // single tic-toc pair: time. 
       hash1 = Benchmarker.mtic();
@@ -59,6 +62,31 @@ public class BenchmarkerTest {
       assertTrue("toc not stopped. ", snap1.isStopped());
       assertEquals("Incomplete measurements. ",
         0, Benchmarker.numNestedMeasurements());
+
+
+      // single tic-toc pairs: memory. 
+      hash1 = Benchmarker.mtic();
+      arr = new byte[1_000_000*memMB];
+      snap1 = Benchmarker.mtoc();
+      hash2 = Benchmarker.mtic();
+      arr = null;// NOPMD
+      assert arr == null;// To calm down the code checker 
+      snap2 = Benchmarker.mtoc();
+
+      System.out.println("time ms   allocate: " + snap1.getTimeMs());
+      System.out.println("time ms deallocate: " + snap2.getTimeMs());
+      assertEquals("memory allocated out of range. ",
+        +memMB,   snap1.getMemoryMB(), memTolMB);
+      assertEquals("memory freed out of range. ",
+        -memMB,   snap2.getMemoryMB(), memTolMB);
+      assertEquals("wrong hash. ",
+      hash1,  snap1.hashCode());
+      assertEquals("wrong hash. ",
+      hash2,  snap2.hashCode());
+      assertTrue("toc not stopped. ", snap1.isStopped());
+      assertTrue("toc not stopped. ", snap2.isStopped());
+      assertEquals("Incomplete measurements. ",
+      0, Benchmarker.numNestedMeasurements());
 
 
       // nested tic-toc pairs

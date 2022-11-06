@@ -1,5 +1,8 @@
 package eu.simuline.util;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.util.Stack;
 
 /**
@@ -297,9 +300,9 @@ public final class Benchmarker {
    * -------------------------------------------------------------------- */
 
    /**
-    * The runtime needed to determine memory consumption. 
+    * An object needed to determine memory consumption. 
     */
-  private static final Runtime RUNTIME = Runtime.getRuntime();
+  private static final MemoryMXBean MEM_BEAN = ManagementFactory.getMemoryMXBean();
 
   /**
    * A stack of measurements, one enclosing the next, which is empty at least initially. 
@@ -337,9 +340,11 @@ public final class Benchmarker {
    * methods (static only). *
    * -------------------------------------------------------------------- */
 
-  private static long usedMemoryBytes() {
-    RUNTIME.gc();
-    return RUNTIME.maxMemory() - RUNTIME.freeMemory();
+  private static final long usedMemoryBytes() {
+    MEM_BEAN.gc();
+    MemoryUsage memUsageHeap    = MEM_BEAN.getHeapMemoryUsage();
+    MemoryUsage memUsageNonHeap = MEM_BEAN.getNonHeapMemoryUsage();
+    return memUsageHeap.getUsed() + memUsageNonHeap.getUsed();
   }
 
   /**

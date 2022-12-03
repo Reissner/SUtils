@@ -9,7 +9,7 @@
   <!-- The Basics -->
   <groupId>eu.simuline</groupId>
   <artifactId>SUtils</artifactId>
-   <version>1.2-SNAPSHOT</version>
+   <version>1.1-SNAPSHOT</version>
    <packaging>jar</packaging>
 
   <!-- information for generating a site -->

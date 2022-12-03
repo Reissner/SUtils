@@ -9,7 +9,7 @@
   <!-- The Basics -->
   <groupId>eu.simuline</groupId>
   <artifactId>SUtils</artifactId>
-   <version>1.1</version>
+   <version>1.2-SNAPSHOT</version>
    <packaging>jar</packaging>
 
   <!-- information for generating a site -->
@@ -78,7 +78,7 @@
       scm:git:https://github.com/Reissner/SUtils.git
     </developerConnection>
     <url>https://github.com/Reissner/SUtils</url>
-    <tag>SUtils-1.1</tag>
+    <tag>HEAD</tag>
   </scm>
 
  <mailingLists>

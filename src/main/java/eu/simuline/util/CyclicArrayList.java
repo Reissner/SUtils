@@ -1371,8 +1371,8 @@ public final class CyclicArrayList<E>
 	// and so shiftIndex is defined. 
 	int newSize = oldList.size() + addList.size();
 	index = shiftIndex(index, newSize);
-	System.out.println("newSize: " + newSize);
-	System.out.println("index: " + index);
+	// System.out.println("newSize: " + newSize);
+	// System.out.println("index: " + index);
 
 	// Two cases: 
 	//

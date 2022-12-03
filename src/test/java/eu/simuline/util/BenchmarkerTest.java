@@ -73,8 +73,8 @@ public class BenchmarkerTest {
       assert arr == null;// To calm down the code checker 
       snap2 = Benchmarker.mtoc();
 
-      System.out.println("time ms   allocate: " + snap1.getTimeMs());
-      System.out.println("time ms deallocate: " + snap2.getTimeMs());
+      //System.out.println("time ms   allocate: " + snap1.getTimeMs());
+      //System.out.println("time ms deallocate: " + snap2.getTimeMs());
       assertEquals("memory allocated out of range. ",
         +memMB,   snap1.getMemoryMB(), memTolMB);
       assertEquals("memory freed out of range. ",

@@ -13,6 +13,30 @@
     <author email="reissner@simuline.eu">Ernst Reissner</author>
   </properties>
   <body>
+    <release version="1.0" 
+    date="2022-21-03" 
+    description="Essentially added Benchmarking">
+    <action dev='reissner' type='add'>
+      Added benchmarking through new class Benchmarker. 
+      Added an according link even in the readme file. 
+      Of course added an entry in the package documentation. 
+    </action>
+    <action dev='reissner' type='update'>
+      class JavaPath: modifications required for (classloader in) testhelpers. 
+    </action>
+    <action dev='reissner' type='update'>
+      Updated package list with dependencies to this project internal to simuline. 
+    </action>
+    <action dev='reissner' type='add'>
+      Quality management: Use PMD now. 
+      Eliminated several warnings. 
+    </action>
+    <action dev='reissner' type='add'>
+      Quality management: Using testhelpers: 
+      Added script to run individual tests and infrastructure. 
+    </action>
+  </release>
+
     <!-- release plan: 
       - eliminate warnings: 
         type parameter E is hiding the type E is because of methods toArray. 

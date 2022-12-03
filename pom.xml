@@ -263,6 +263,33 @@
         <version>3.1.0</version>
       </plugin>
 
+      <!-- This plugin will set properties values 
+        using dependency information -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>3.1.2</version>
+          <executions>
+            <execution>
+              <?m2e execute onConfiguration,onIncremental?>
+              <id>props</id>
+              <goals>
+                <goal>properties</goal>
+              </goals>
+            </execution>
+            <execution>
+              <?m2e execute onConfiguration,onIncremental?>
+              <goals>
+                <!--goal>list</goal-->          <!-- TBD: clarify what is needed -->
+                <goal>build-classpath</goal>
+              </goals>
+              <configuration>          <!-- TBD: maybe move to execution list, build-classpath -->
+                <outputFile>${project.build.directory}/classpath.txt</outputFile>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>

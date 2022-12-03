@@ -182,7 +182,7 @@
                   <dependency>
                     <groupId>eu.simuline</groupId>
                     <artifactId>qMngmnt</artifactId>
-                    <version>0.0.4-SNAPSHOT</version>
+                    <version>0.0.4</version>
                   </dependency>
                 </dependencies>
 

@@ -1,5 +1,8 @@
 {
   "javaPMD.rulesets": [
     "target/pmd/rulesets/myPmdRuleset.xml"
-  ]
+  ],
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false
 }
